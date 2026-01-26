@@ -1,0 +1,271 @@
+<div class="min-h-screen flex flex-col bg-gray-50 font-sans">
+
+    <app-header [activeRoute]="'profile'"></app-header>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow pt-16">
+        <div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+
+            <!-- Page Header -->
+            <div class="mb-8 flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900">My Profile</h1>
+                    <p class="mt-2 text-sm text-gray-600">Manage your personal and academic information</p>
+                </div>
+                <div *ngIf="!isEditMode">
+                    <button (click)="enableEditMode()"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z">
+                            </path>
+                        </svg>
+                        Edit Profile
+                    </button>
+                </div>
+                <div *ngIf="isEditMode" class="flex space-x-3">
+                    <button (click)="cancelEdit()"
+                        class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </button>
+                    <button (click)="updateProfile()"
+                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Update Profile
+                    </button>
+                </div>
+            </div>
+
+            <!-- Profile Completion Indicator -->
+            <div *ngIf="!isProfileComplete" class="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
+                <div class="flex items-start">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3 flex-1">
+                        <h3 class="text-sm font-medium text-yellow-800">Profile Incomplete ({{
+                            profileCompletionPercentage }}% complete)</h3>
+                        <div class="mt-2 text-sm text-yellow-700">
+                            <p>Please complete your profile to improve your job application chances. Missing fields:</p>
+                            <ul class="list-disc list-inside mt-1">
+                                <li *ngFor="let field of missingFields">{{ field }}</li>
+                            </ul>
+                        </div>
+                        <div class="mt-3">
+                            <div class="w-full bg-yellow-200 rounded-full h-2">
+                                <div [class]="getCompletionColor()" class="h-2 rounded-full transition-all duration-500"
+                                    [style.width.%]="profileCompletionPercentage"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Complete Badge -->
+            <div *ngIf="isProfileComplete" class="mb-6 bg-green-50 border-l-4 border-green-400 p-4 rounded-r-lg">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <svg class="h-5 w-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-green-800">✓ Your profile is 100% complete!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Header Section -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="px-6 py-8">
+                    <div class="flex items-center space-x-6">
+                        <!-- Profile Photo -->
+                        <div class="flex-shrink-0">
+                            <div
+                                class="h-24 w-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-3xl font-bold">
+                                {{ getInitials() }}
+                            </div>
+                        </div>
+                        <!-- Basic Info -->
+                        <div class="flex-1">
+                            <h2 class="text-2xl font-bold text-gray-900">{{ isEditMode ? editData.fullName :
+                                profileData.fullName }}</h2>
+                            <p class="text-sm text-gray-600 mt-1">{{ isEditMode ? editData.enrollmentNumber :
+                                profileData.enrollmentNumber }}</p>
+                            <div class="mt-3 flex flex-wrap gap-3">
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800">
+                                    {{ isEditMode ? editData.branch : profileData.branch }}
+                                </span>
+                                <span
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                    {{ isEditMode ? editData.year : profileData.year }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information Section -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Personal Information</h3>
+                </div>
+                <div class="px-6 py-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Full Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                            <input *ngIf="isEditMode" [(ngModel)]="editData.fullName" type="text"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.fullName }}</p>
+                        </div>
+
+                        <!-- Email -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                            <input *ngIf="isEditMode" [(ngModel)]="editData.email" type="email"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.email }}</p>
+                        </div>
+
+                        <!-- Phone -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                            <input *ngIf="isEditMode" [(ngModel)]="editData.phone" type="tel"
+                                placeholder="Enter phone number"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <p *ngIf="!isEditMode && profileData.phone" class="text-sm text-gray-900 py-2">{{
+                                profileData.phone }}</p>
+                            <p *ngIf="!isEditMode && !profileData.phone" class="text-sm text-gray-400 italic py-2">Not
+                                provided</p>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                            <input *ngIf="isEditMode" [(ngModel)]="editData.dateOfBirth" type="date"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <p *ngIf="!isEditMode && profileData.dateOfBirth" class="text-sm text-gray-900 py-2">{{
+                                profileData.dateOfBirth }}</p>
+                            <p *ngIf="!isEditMode && !profileData.dateOfBirth"
+                                class="text-sm text-gray-400 italic py-2">Not provided</p>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                            <textarea *ngIf="isEditMode" [(ngModel)]="editData.address" rows="3"
+                                placeholder="Enter your complete address"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                            <p *ngIf="!isEditMode && profileData.address" class="text-sm text-gray-900 py-2">{{
+                                profileData.address }}</p>
+                            <p *ngIf="!isEditMode && !profileData.address" class="text-sm text-gray-400 italic py-2">Not
+                                provided</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Information Section -->
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900">Academic Information</h3>
+                </div>
+                <div class="px-6 py-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Branch -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Branch / Department</label>
+                            <select *ngIf="isEditMode" [(ngModel)]="editData.branch"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">Select Branch</option>
+                                <option value="Computer Science">Computer Science</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Electronics">Electronics</option>
+                                <option value="Mechanical">Mechanical</option>
+                            </select>
+                            <p *ngIf="!isEditMode && profileData.branch" class="text-sm text-gray-900 py-2">{{
+                                profileData.branch }}</p>
+                            <p *ngIf="!isEditMode && !profileData.branch" class="text-sm text-gray-400 italic py-2">Not
+                                provided</p>
+                        </div>
+
+                        <!-- Year -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Current Year</label>
+                            <select *ngIf="isEditMode" [(ngModel)]="editData.year"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="">Select Year</option>
+                                <option value="1st Year">1st Year</option>
+                                <option value="2nd Year">2nd Year</option>
+                                <option value="3rd Year">3rd Year</option>
+                                <option value="4th Year">4th Year</option>
+                            </select>
+                            <p *ngIf="!isEditMode && profileData.year" class="text-sm text-gray-900 py-2">{{
+                                profileData.year }}</p>
+                            <p *ngIf="!isEditMode && !profileData.year" class="text-sm text-gray-400 italic py-2">Not
+                                provided</p>
+                        </div>
+
+                        <!-- Enrollment Number -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Enrollment / Roll Number</label>
+                            <input *ngIf="isEditMode" [(ngModel)]="editData.enrollmentNumber" type="text"
+                                placeholder="Enter enrollment number"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <p *ngIf="!isEditMode && profileData.enrollmentNumber" class="text-sm text-gray-900 py-2">{{
+                                profileData.enrollmentNumber }}</p>
+                            <p *ngIf="!isEditMode && !profileData.enrollmentNumber"
+                                class="text-sm text-gray-400 italic py-2">Not provided</p>
+                        </div>
+
+                        <!-- CGPA -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">CGPA</label>
+                            <input *ngIf="isEditMode" [(ngModel)]="editData.cgpa" type="text" placeholder="e.g., 8.5"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <p *ngIf="!isEditMode && profileData.cgpa" class="text-sm text-gray-900 py-2">{{
+                                profileData.cgpa }}</p>
+                            <p *ngIf="!isEditMode && !profileData.cgpa" class="text-sm text-gray-400 italic py-2">Not
+                                provided</p>
+                        </div>
+
+                        <!-- Skills -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Skills</label>
+                            <div *ngIf="!isEditMode && profileData.skills && profileData.skills.length > 0"
+                                class="flex flex-wrap gap-2">
+                                <span *ngFor="let skill of profileData.skills"
+                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                    {{ skill }}
+                                </span>
+                            </div>
+                            <p *ngIf="!isEditMode && (!profileData.skills || profileData.skills.length === 0)"
+                                class="text-sm text-gray-400 italic py-2">No skills added yet</p>
+                            <input *ngIf="isEditMode" [(ngModel)]="editData.skills" type="text"
+                                placeholder="Enter skills separated by commas (e.g., Java, Python, React)"
+                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            <p *ngIf="isEditMode" class="mt-1 text-xs text-gray-500">Separate skills with commas (e.g.,
+                                Java, Python, React)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <app-footer></app-footer>
+
+</div>
