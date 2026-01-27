@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { JobService } from '../../services/job.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 
@@ -14,57 +15,98 @@ import { Footer } from '../../components/footer/footer';
 })
 export class Jobs implements OnInit {
   user: any;
+  jobs: any[] = [];
+  loading = false;
+  error = '';
 
-  // Dummy job data
-  jobs = [
-    {
-      id: 1,
-      companyName: 'Google',
-      jobTitle: 'Software Development Engineer',
-      location: 'Bangalore',
-      jobType: 'Full-Time',
-      package: '18-22 LPA',
-      minCGPA: 7.5,
-      eligibleBranches: ['CS', 'IT'],
-      hasApplied: false
-    },
-    {
-      id: 2,
-      companyName: 'Microsoft',
-      jobTitle: 'Software Engineer Intern',
-      location: 'Hyderabad',
-      jobType: 'Internship',
-      package: '₹50,000/month',
-      minCGPA: 7.0,
-      eligibleBranches: ['CS', 'IT', 'ECE'],
-      hasApplied: true
-    },
-    {
-      id: 3,
-      companyName: 'Amazon',
-      jobTitle: 'SDE-1',
-      location: 'Remote',
-      jobType: 'Full-Time',
-      package: '15-20 LPA',
-      minCGPA: 7.0,
-      eligibleBranches: ['CS', 'IT'],
-      hasApplied: false
-    }
-  ];
-
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private jobService: JobService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
+      const data = this.route.snapshot.data['jobs'];
+      if (data) {
+        this.jobs = data.map((job: any) => ({
+          ...job,
+          hasApplied: this.checkIfApplied(job)
+        }));
+      }
     } else {
       this.router.navigate(['/login']);
     }
   }
 
-  applyForJob(jobId: number): void {
-    console.log('Apply for job:', jobId);
-    // Apply logic here
+  fetchJobs(): void {
+    this.jobService.getJobs().subscribe({
+      next: (data) => {
+        this.jobs = data.map(job => ({
+          ...job,
+          hasApplied: this.checkIfApplied(job)
+        }));
+      },
+      error: (err) => {
+        console.error('Error fetching jobs:', err);
+        this.error = 'Failed to load jobs. Please try again later.';
+      }
+    });
+  }
+
+  checkIfApplied(job: any): boolean {
+    if (!this.user || !job.applications) return false;
+    return job.applications.some((app: any) =>
+      (app.student._id || app.student) === this.user._id
+    );
+  }
+
+  applyForJob(jobId: string): void {
+    if (confirm('Are you sure you want to apply for this job?')) {
+      console.log('Applying for job ID:', jobId);
+      console.log('Current user:', this.user);
+      this.jobService.applyForJob(jobId).subscribe({
+        next: (res) => {
+          console.log('Application successful:', res);
+          alert('Applied successfully!');
+
+          // Find and update the specific job
+          const jobIndex = this.jobs.findIndex(j => j._id === jobId);
+          console.log('Job index found:', jobIndex);
+          console.log('Job before update:', jobIndex !== -1 ? this.jobs[jobIndex] : 'NOT FOUND');
+          if (jobIndex !== -1) {
+            // Create a new job object with updated hasApplied flag
+            this.jobs[jobIndex] = {
+              ...this.jobs[jobIndex],
+              hasApplied: true,
+              applications: [
+                ...(this.jobs[jobIndex].applications || []),
+                {
+                  student: this.user._id,
+                  appliedAt: new Date(),
+                  status: 'applied'
+                }
+              ]
+            };
+
+            // Create a new array reference to trigger change detection
+            this.jobs = [...this.jobs];
+            console.log('Job after update:', this.jobs[jobIndex]);
+            console.log('hasApplied flag:', this.jobs[jobIndex].hasApplied);
+          }
+        },
+        error: (err) => {
+          console.error('Error applying for job:', err);
+          console.error('Error status:', err.status);
+          console.error('Error message:', err.error?.msg);
+
+          const errorMessage = err.error?.msg || err.message || 'Failed to apply for job.';
+          alert(`Application failed: ${errorMessage}`);
+        }
+      });
+    }
   }
 }

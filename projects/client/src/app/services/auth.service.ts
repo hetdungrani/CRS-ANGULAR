@@ -35,5 +35,19 @@ export class AuthService {
     setUser(user: any): void {
         localStorage.setItem('user', JSON.stringify(user));
     }
+
+    getMe(): Observable<any> {
+        const token = this.getToken();
+        return this.http.get<any>(`${this.apiUrl}/me`, {
+            headers: { 'x-auth-token': token || '' }
+        });
+    }
+
+    updateProfile(data: any): Observable<any> {
+        const token = this.getToken();
+        return this.http.put<any>(`${this.apiUrl}/profile`, data, {
+            headers: { 'x-auth-token': token || '' }
+        });
+    }
 }
 

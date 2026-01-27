@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
@@ -29,6 +29,7 @@ export class Dashboard implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private notificationService: NotificationService
   ) { }
 
@@ -42,20 +43,28 @@ export class Dashboard implements OnInit {
     }
   }
 
-  loadDashboardData() {
-    this.notificationService.getMyNotifications().subscribe({
-      next: (data) => {
-        this.notifications = data;
-        this.dashboardStats.unreadNotifications = data.length; // Simplified for now
-        this.recentActivities = data.slice(0, 4).map(n => ({
-          id: n._id,
-          type: n.type,
-          message: n.title + ': ' + n.message.substring(0, 50) + '...',
-          time: this.formatTime(n.createdAt),
-          icon: this.getIconForType(n.type)
-        }));
-      }
-    });
+  loadDashboardData(): void {
+    const results = this.route.snapshot.data['data'];
+    if (results) {
+      // Handle notifications
+      this.notifications = results.notifications || [];
+      this.dashboardStats.unreadNotifications = this.notifications.length;
+      this.recentActivities = this.notifications.slice(0, 4).map(n => ({
+        id: n._id,
+        type: n.type,
+        message: n.title + ': ' + n.message.substring(0, 50) + '...',
+        time: this.formatTime(n.createdAt),
+        icon: this.getIconForType(n.type)
+      }));
+
+      // Handle job stats
+      const allJobs = results.allJobs || [];
+      const appliedJobs = results.appliedJobs || [];
+
+      this.dashboardStats.availableJobs = allJobs.filter((j: any) => j.status === 'open').length;
+      this.dashboardStats.appliedJobs = appliedJobs.length;
+      this.dashboardStats.shortlisted = appliedJobs.filter((a: any) => a.status === 'shortlisted').length;
+    }
   }
 
   getIconForType(type: string): string {

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
@@ -17,27 +17,50 @@ export class Statistics implements OnInit {
 
   // Statistics data
   stats = {
-    totalApplied: 15,
-    shortlisted: 5,
-    selected: 2,
-    rejected: 3,
-    pending: 5,
-    internships: 6,
-    fullTime: 9
+    totalApplied: 0,
+    shortlisted: 0,
+    selected: 0,
+    rejected: 0,
+    pending: 0,
+    internships: 0,
+    fullTime: 0
   };
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
+      this.calculateStats();
     } else {
       this.router.navigate(['/login']);
     }
   }
 
+  calculateStats(): void {
+    const data = this.route.snapshot.data['stats'];
+    if (data) {
+      const { allJobs, appliedJobs } = data;
+      this.stats.totalApplied = appliedJobs.length || 0;
+      this.stats.shortlisted = appliedJobs.filter((a: any) => a.status === 'shortlisted').length;
+      this.stats.selected = appliedJobs.filter((a: any) => a.status === 'selected').length;
+      this.stats.rejected = appliedJobs.filter((a: any) => a.status === 'rejected').length;
+      this.stats.pending = appliedJobs.filter((a: any) => a.status === 'applied').length;
+
+      // Calculate based on job types if available (assuming role or package implies type for now)
+      // In a real app, 'type' field would be in Job model
+      this.stats.fullTime = allJobs.length;
+      this.stats.internships = Math.floor(allJobs.length / 3); // Sample logic
+    }
+  }
+
   getPercentage(value: number): number {
+    if (this.stats.totalApplied === 0) return 0;
     return (value / this.stats.totalApplied) * 100;
   }
 

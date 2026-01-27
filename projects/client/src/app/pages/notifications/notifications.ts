@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
@@ -22,6 +22,7 @@ export class Notifications implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private notificationService: NotificationService
   ) { }
 
@@ -35,23 +36,16 @@ export class Notifications implements OnInit {
     }
   }
 
-  loadNotifications() {
-    this.loading = true;
-    this.notificationService.getMyNotifications().subscribe({
-      next: (data) => {
-        this.allNotifications = data.map(n => ({
-          ...n,
-          isRead: false, // Local state
-          icon: this.getIconForType(n.type),
-          timestamp: this.formatTime(n.createdAt)
-        }));
-        this.loading = false;
-      },
-      error: (err) => {
-        console.error(err);
-        this.loading = false;
-      }
-    });
+  loadNotifications(): void {
+    const data = this.route.snapshot.data['notifications'];
+    if (data) {
+      this.allNotifications = data.map((n: any) => ({
+        ...n,
+        isRead: false,
+        icon: this.getIconForType(n.type),
+        timestamp: this.formatTime(n.createdAt)
+      }));
+    }
   }
 
   getIconForType(type: string): string {

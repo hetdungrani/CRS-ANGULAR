@@ -94,3 +94,48 @@ exports.login = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+// @desc    Get current user profile
+// @route   GET /api/auth/me
+// @access  Private
+exports.getMe = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+// @desc    Update user profile
+// @route   PUT /api/auth/profile
+// @access  Private
+exports.updateProfile = async (req, res) => {
+    try {
+        const { fullName, mobile, department, course, cgpa, gender } = req.body;
+
+        // Build user object
+        const profileFields = {};
+        if (fullName) profileFields.fullName = fullName;
+        if (mobile) profileFields.mobile = mobile;
+        if (department) profileFields.department = department;
+        if (course) profileFields.course = course;
+        if (cgpa) profileFields.cgpa = cgpa;
+        if (gender) profileFields.gender = gender;
+
+        let user = await User.findById(req.user.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        user = await User.findByIdAndUpdate(
+            req.user.id,
+            { $set: profileFields },
+            { new: true }
+        ).select('-password');
+
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};

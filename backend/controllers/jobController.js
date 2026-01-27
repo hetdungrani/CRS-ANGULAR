@@ -159,3 +159,82 @@ exports.getAllApplications = async (req, res) => {
         res.status(500).send('Server Error');
     }
 };
+
+// @desc    Apply for a job
+// @route   POST /api/jobs/:id/apply
+// @access  Private/Student
+exports.applyForJob = async (req, res) => {
+    try {
+        console.log('Apply for job request:', {
+            jobId: req.params.id,
+            userId: req.user?.id,
+            userDept: req.user?.department
+        });
+
+        const job = await Job.findById(req.params.id);
+        if (!job) {
+            console.log('Job not found:', req.params.id);
+            return res.status(404).json({ msg: 'Job not found' });
+        }
+
+        console.log('Job found:', { id: job._id, status: job.status, applicationsCount: job.applications.length });
+
+        if (job.status !== 'open') {
+            console.log('Job is not open:', job.status);
+            return res.status(400).json({ msg: 'Job is no longer open for applications' });
+        }
+
+        // Check if student has already applied
+        const alreadyApplied = job.applications.find(
+            app => app.student.toString() === req.user.id
+        );
+
+        if (alreadyApplied) {
+            console.log('Student already applied:', req.user.id);
+            return res.status(400).json({ msg: 'You have already applied for this job' });
+        }
+
+        // Add user to applications
+        job.applications.push({
+            student: req.user.id
+        });
+
+        await job.save();
+        console.log('Application successful for user:', req.user.id);
+        res.json({ msg: 'Applied successfully', job });
+    } catch (err) {
+        console.error('Error in applyForJob:', err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+// @desc    Get jobs current student applied for
+// @route   GET /api/jobs/applied
+// @access  Private/Student
+exports.getAppliedJobs = async (req, res) => {
+    try {
+        const jobs = await Job.find({
+            'applications.student': req.user.id
+        }).sort({ createdAt: -1 });
+
+        // Map to return only relevant data for the student
+        const applications = jobs.map(job => {
+            const application = job.applications.find(
+                app => app.student.toString() === req.user.id
+            );
+            return {
+                _id: job._id,
+                companyName: job.companyName,
+                role: job.role,
+                location: job.location,
+                status: application.status,
+                appliedAt: application.appliedAt
+            };
+        });
+
+        res.json(applications);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { JobService } from '../../services/job.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 
@@ -14,70 +15,82 @@ import { Footer } from '../../components/footer/footer';
 })
 export class AppliedJobs implements OnInit {
   user: any;
+  appliedJobs: any[] = [];
+  loading = false;
+  error = '';
 
-  // Dummy applied jobs data
-  appliedJobs = [
-    {
-      id: 1,
-      companyName: 'Google',
-      jobRole: 'Software Development Engineer',
-      jobType: 'Full-Time',
-      status: 'Shortlisted'
-    },
-    {
-      id: 2,
-      companyName: 'Microsoft',
-      jobRole: 'Software Engineer Intern',
-      jobType: 'Internship',
-      status: 'Interview Scheduled'
-    },
-    {
-      id: 3,
-      companyName: 'Amazon',
-      jobRole: 'SDE-1',
-      jobType: 'Full-Time',
-      status: 'Applied'
-    },
-    {
-      id: 4,
-      companyName: 'Infosys',
-      jobRole: 'System Engineer',
-      jobType: 'Full-Time',
-      status: 'Selected'
-    },
-    {
-      id: 5,
-      companyName: 'TCS',
-      jobRole: 'Digital Trainee',
-      jobType: 'Full-Time',
-      status: 'Rejected'
-    }
-  ];
+  // Modal state
+  selectedJob: any = null;
+  showModal = false;
+  detailsLoading = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private jobService: JobService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
+      const data = this.route.snapshot.data['appliedJobs'];
+      if (data) {
+        this.appliedJobs = data;
+      }
     } else {
       this.router.navigate(['/login']);
     }
   }
 
-  getStatusClass(status: string): string {
-    const statusClasses: { [key: string]: string } = {
-      'Applied': 'bg-blue-100 text-blue-800',
-      'Shortlisted': 'bg-yellow-100 text-yellow-800',
-      'Interview Scheduled': 'bg-purple-100 text-purple-800',
-      'Selected': 'bg-green-100 text-green-800',
-      'Rejected': 'bg-red-100 text-red-800'
-    };
-    return statusClasses[status] || 'bg-gray-100 text-gray-800';
+  fetchAppliedJobs(): void {
+    this.jobService.getAppliedJobs().subscribe({
+      next: (data) => {
+        this.appliedJobs = data;
+      },
+      error: (err) => {
+        console.error('Error fetching applied jobs:', err);
+        this.error = 'Failed to load applied jobs.';
+      }
+    });
   }
 
-  viewDetails(jobId: number): void {
-    console.log('View details for application:', jobId);
-    // Navigate to application details page
+  getStatusClass(status: string): string {
+    const s = status.toLowerCase();
+    const statusClasses: { [key: string]: string } = {
+      'applied': 'bg-blue-100 text-blue-700 font-bold',
+      'shortlisted': 'bg-yellow-100 text-yellow-700 font-bold',
+      'interview scheduled': 'bg-purple-100 text-purple-700 font-bold',
+      'selected': 'bg-green-100 text-green-700 font-bold',
+      'rejected': 'bg-red-100 text-red-700 font-bold'
+    };
+    return statusClasses[s] || 'bg-slate-100 text-slate-700 font-bold';
+  }
+
+  viewDetails(jobId: string): void {
+    console.log('Fetching details for job ID:', jobId);
+    this.showModal = true;
+    this.detailsLoading = true;
+
+    this.jobService.getJobById(jobId).subscribe({
+      next: (job) => {
+        this.selectedJob = job;
+        this.detailsLoading = false;
+      },
+      error: (err) => {
+        console.error('Error fetching job details:', err);
+        alert('Failed to load job details.');
+        this.showModal = false;
+        this.detailsLoading = false;
+      }
+    });
+  }
+
+  closeDetails(): void {
+    this.showModal = false;
+    setTimeout(() => {
+      this.selectedJob = null;
+    }, 300);
   }
 }
