@@ -13,12 +13,24 @@ connectDB();
 app.use(cors());
 app.use(express.json());
 
+app.get('/', (req, res) => {
+    res.send('CRS Backend API is running');
+});
+
 // Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
+app.use('/api/admin/jobs', require('./routes/jobRoutes'));
+app.use('/api/admin/notifications', require('./routes/notificationRoutes'));
+app.use('/api/notifications', require('./routes/studentNotificationRoutes'));
 
-app.get('/', (req, res) => {
-    res.send('CRS Backend API is running');
+// Global Error Handler
+app.use((err, req, res, next) => {
+    console.error('Stack Trace:', err.stack);
+    res.status(500).json({
+        msg: 'Something went wrong on the server',
+        error: err.message
+    });
 });
 
 // Start Server

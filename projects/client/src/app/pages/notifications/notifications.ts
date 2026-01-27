@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-notifications',
@@ -15,92 +16,63 @@ import { Footer } from '../../components/footer/footer';
 export class Notifications implements OnInit {
   user: any;
   selectedFilter: string = 'all';
+  allNotifications: any[] = [];
+  loading = false;
 
-  // Extended notification data
-  allNotifications = [
-    {
-      id: 1,
-      type: 'status_update',
-      title: 'Application Status Updated',
-      message: 'Your application for Software Engineer at Google has been Shortlisted',
-      isRead: false,
-      icon: '🎯',
-      timestamp: '2 hours ago'
-    },
-    {
-      id: 2,
-      type: 'new_job',
-      title: 'New Job Posted',
-      message: 'Amazon is hiring for SDE-1 role matching your profile',
-      isRead: false,
-      icon: '💼',
-      timestamp: '5 hours ago'
-    },
-    {
-      id: 3,
-      type: 'interview',
-      title: 'Interview Scheduled',
-      message: 'Interview scheduled for Software Engineer Intern at Microsoft on Feb 5, 2026 at 10:00 AM',
-      isRead: false,
-      icon: '📅',
-      timestamp: '1 day ago'
-    },
-    {
-      id: 4,
-      type: 'action',
-      title: 'Application Submitted',
-      message: 'You have successfully applied for Data Analyst at Infosys',
-      isRead: true,
-      icon: '✅',
-      timestamp: '2 days ago'
-    },
-    {
-      id: 5,
-      type: 'status_update',
-      title: 'Application Rejected',
-      message: 'Your application for Backend Developer at TCS was not selected',
-      isRead: true,
-      icon: '❌',
-      timestamp: '3 days ago'
-    },
-    {
-      id: 6,
-      type: 'new_job',
-      title: 'New Job Posted',
-      message: 'Wipro is hiring for System Engineer role matching your profile',
-      isRead: true,
-      icon: '💼',
-      timestamp: '4 days ago'
-    },
-    {
-      id: 7,
-      type: 'status_update',
-      title: 'Application Selected',
-      message: 'Congratulations! You have been selected for Frontend Developer at Accenture',
-      isRead: true,
-      icon: '🎉',
-      timestamp: '1 week ago'
-    },
-    {
-      id: 8,
-      type: 'interview',
-      title: 'Interview Reminder',
-      message: 'Reminder: Interview for Full Stack Developer at Cognizant tomorrow at 2:00 PM',
-      isRead: false,
-      icon: '⏰',
-      timestamp: '1 day ago'
-    }
-  ];
-
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
+      this.loadNotifications();
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  loadNotifications() {
+    this.loading = true;
+    this.notificationService.getMyNotifications().subscribe({
+      next: (data) => {
+        this.allNotifications = data.map(n => ({
+          ...n,
+          isRead: false, // Local state
+          icon: this.getIconForType(n.type),
+          timestamp: this.formatTime(n.createdAt)
+        }));
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error(err);
+        this.loading = false;
+      }
+    });
+  }
+
+  getIconForType(type: string): string {
+    const icons: { [key: string]: string } = {
+      'job': '💼',
+      'interview': '🎯',
+      'exam': '📅',
+      'result': '🎉',
+      'general': '📢'
+    };
+    return icons[type] || '🔔';
+  }
+
+  formatTime(dateStr: string): string {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffInHrs = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+
+    if (diffInHrs < 1) return 'Just now';
+    if (diffInHrs < 24) return `${diffInHrs} hours ago`;
+    return date.toLocaleDateString();
   }
 
   get filteredNotifications() {

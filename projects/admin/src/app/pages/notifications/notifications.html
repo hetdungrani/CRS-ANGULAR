@@ -1,0 +1,152 @@
+<div class="space-y-6">
+    <!-- Header -->
+    <div class="sm:flex sm:items-center sm:justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Announcements & Notifications</h1>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Send updates regarding job drives, exams, and
+                results to students.</p>
+        </div>
+        <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+            <button (click)="showForm = !showForm"
+                class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none transition-all">
+                <svg *ngIf="!showForm" class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <svg *ngIf="showForm" class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+                {{ showForm ? 'Cancel' : 'New Announcement' }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Announcement Form -->
+    <div *ngIf="showForm"
+        class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl border border-indigo-100 dark:border-gray-700 animate-in slide-in-from-top duration-300">
+        <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-6">Create New Announcement</h3>
+        <form (ngSubmit)="sendNotification()" #notifForm="ngForm" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title *</label>
+                    <input type="text" [(ngModel)]="newNotification.title" name="title" required
+                        placeholder="e.g. Infosys Drive Scheduled"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Notification
+                        Type</label>
+                    <select [(ngModel)]="newNotification.type" name="type"
+                        class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <option *ngFor="let t of types" [value]="t.id">{{ t.label }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message *</label>
+                <textarea [(ngModel)]="newNotification.message" name="message" rows="4" required
+                    placeholder="Provide detailed information here..."
+                    class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+            </div>
+
+            <div class="md:w-1/2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Target Group</label>
+                <select [(ngModel)]="newNotification.targetGroup" name="targetGroup"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <option *ngFor="let g of groups" [value]="g.id">{{ g.label }}</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end pt-4">
+                <button type="submit" [disabled]="!notifForm.valid"
+                    class="px-8 py-2.5 rounded-lg text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 shadow-lg shadow-indigo-200 dark:shadow-none transition-all disabled:opacity-50">
+                    Broadcast Announcement
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- History List -->
+    <div class="space-y-4">
+        <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest px-1">Broadcast History</h3>
+
+        <div *ngIf="loading" class="flex justify-center py-10">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
+
+        <div *ngIf="!loading && notifications.length === 0"
+            class="text-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+            <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <p class="mt-4 text-gray-500">No announcements sent yet.</p>
+        </div>
+
+        <div *ngFor="let n of notifications"
+            class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 group hover:shadow-md transition-all">
+            <div class="flex items-start justify-between">
+                <div class="flex items-start space-x-4">
+                    <!-- Icon based on type -->
+                    <div [ngClass]="{
+                        'bg-blue-100 text-blue-600': n.type === 'job',
+                        'bg-purple-100 text-purple-600': n.type === 'interview',
+                        'bg-orange-100 text-orange-600': n.type === 'exam',
+                        'bg-green-100 text-green-600': n.type === 'result',
+                        'bg-gray-100 text-gray-600': n.type === 'general'
+                    }" class="p-3 rounded-xl flex-shrink-0">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path *ngIf="n.type === 'job'" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                            <path *ngIf="n.type === 'interview'" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                            <path *ngIf="n.type === 'exam'" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                            <path *ngIf="n.type === 'result'" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <path *ngIf="n.type === 'general'" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-3">
+                            <h4 class="text-lg font-bold text-gray-900 dark:text-white">{{ n.title }}</h4>
+                            <span
+                                class="text-xs font-bold px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-500 uppercase">
+                                {{ n.targetGroup === 'all' ? 'Everyone' : n.targetGroup }}
+                            </span>
+                        </div>
+                        <p class="mt-2 text-gray-600 dark:text-gray-300 whitespace-pre-line">{{ n.message }}</p>
+                        <div class="mt-4 flex items-center space-x-4 text-xs font-medium text-gray-400">
+                            <span class="flex items-center">
+                                <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Sent on {{ n.createdAt | date:'medium' }}
+                            </span>
+                            <span class="flex items-center">
+                                <svg class="mr-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                </svg>
+                                By {{ n.sender }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <button (click)="deleteNotification(n._id)"
+                    class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -43,6 +43,13 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Please select gender'],
         enum: ['Male', 'Female', 'Other']
     },
+    passingYear: {
+        type: Number
+    },
+    skills: {
+        type: [String],
+        default: []
+    },
     role: {
         type: String,
         enum: ['student', 'admin'],

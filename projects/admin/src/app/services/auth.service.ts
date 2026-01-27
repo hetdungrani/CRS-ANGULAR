@@ -40,6 +40,11 @@ export class AuthService {
         localStorage.removeItem('admin_data');
     }
 
+    changePassword(data: any): Observable<any> {
+        const headers = { 'x-auth-token': this.getToken() || '' };
+        return this.http.put<any>(`${this.apiUrl}/change-password`, data, { headers });
+    }
+
     isLoggedIn(): boolean {
         return !!this.getToken();
     }

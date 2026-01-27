@@ -4,6 +4,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
+import { NotificationService } from '../../services/notification.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -14,56 +15,67 @@ import { Footer } from '../../components/footer/footer';
 })
 export class Dashboard implements OnInit {
   user: any;
+  notifications: any[] = [];
 
-  // Dashboard statistics
   dashboardStats = {
-    availableJobs: 25,
-    appliedJobs: 15,
-    shortlisted: 5,
-    unreadNotifications: 3
+    availableJobs: 0,
+    appliedJobs: 0,
+    shortlisted: 0,
+    unreadNotifications: 0
   };
 
-  // Recent activity
-  recentActivities = [
-    {
-      id: 1,
-      type: 'status',
-      message: 'Application for Software Engineer at Google moved to Shortlisted',
-      time: '2 hours ago',
-      icon: '🎯'
-    },
-    {
-      id: 2,
-      type: 'new_job',
-      message: 'New job posted: SDE-1 at Amazon',
-      time: '5 hours ago',
-      icon: '💼'
-    },
-    {
-      id: 3,
-      type: 'interview',
-      message: 'Interview scheduled for Microsoft on Feb 5, 2026',
-      time: '1 day ago',
-      icon: '📅'
-    },
-    {
-      id: 4,
-      type: 'applied',
-      message: 'Successfully applied for Data Analyst at Infosys',
-      time: '2 days ago',
-      icon: '✅'
-    }
-  ];
+  recentActivities: any[] = [];
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
+      this.loadDashboardData();
     } else {
       this.router.navigate(['/login']);
     }
+  }
+
+  loadDashboardData() {
+    this.notificationService.getMyNotifications().subscribe({
+      next: (data) => {
+        this.notifications = data;
+        this.dashboardStats.unreadNotifications = data.length; // Simplified for now
+        this.recentActivities = data.slice(0, 4).map(n => ({
+          id: n._id,
+          type: n.type,
+          message: n.title + ': ' + n.message.substring(0, 50) + '...',
+          time: this.formatTime(n.createdAt),
+          icon: this.getIconForType(n.type)
+        }));
+      }
+    });
+  }
+
+  getIconForType(type: string): string {
+    const icons: { [key: string]: string } = {
+      'job': '💼',
+      'interview': '🎯',
+      'exam': '📅',
+      'result': '🎉',
+      'general': '📢'
+    };
+    return icons[type] || '🔔';
+  }
+
+  formatTime(dateStr: string): string {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffInHrs = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    if (diffInHrs < 1) return 'Just now';
+    if (diffInHrs < 24) return `${diffInHrs} hours ago`;
+    return date.toLocaleDateString();
   }
 
   getGreeting(): string {
