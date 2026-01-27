@@ -8,6 +8,7 @@ import { Notifications } from './pages/notifications/notifications';
 import { Statistics } from './pages/statistics/statistics';
 import { Profile } from './pages/profile/profile';
 
+
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login },

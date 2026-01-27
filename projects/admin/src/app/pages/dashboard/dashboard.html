@@ -1,0 +1,106 @@
+<div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <nav class="bg-gray-800 border-b border-gray-700">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-white font-bold text-xl">CRS Admin</h1>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a routerLink="/dashboard"
+                                class="bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
+                            <a href="#"
+                                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Students</a>
+                            <a href="#"
+                                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Companies</a>
+                            <a href="#"
+                                class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Jobs</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-4 flex items-center md:ml-6">
+                        <span class="text-gray-300 mr-4">Welcome, {{ admin?.username }}</span>
+                        <button (click)="logout()"
+                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header class="bg-white dark:bg-gray-800 shadow">
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
+                Dashboard
+            </h1>
+        </div>
+    </header>
+
+    <main>
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <!-- Replace with your content -->
+            <div class="px-4 py-6 sm:px-0">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Card 1 -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-indigo-500 rounded-md p-3">
+                                    <span class="text-white text-2xl font-bold">250</span>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Total Students</dt>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">Active Learners
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-green-500 rounded-md p-3">
+                                    <span class="text-white text-2xl font-bold">12</span>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Partner Companies</dt>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">Active Recruiters
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow rounded-lg">
+                        <div class="p-5">
+                            <div class="flex items-center">
+                                <div class="flex-shrink-0 bg-yellow-500 rounded-md p-3">
+                                    <span class="text-white text-2xl font-bold">85</span>
+                                </div>
+                                <div class="ml-5 w-0 flex-1">
+                                    <dl>
+                                        <dt class="text-sm font-medium text-gray-500 truncate">Placed Students</dt>
+                                        <dd class="text-lg font-medium text-gray-900 dark:text-white">Success Stories
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /End replace -->
+        </div>
+    </main>
+</div>

@@ -4,6 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "start:client": "ng serve client --port 4200",
+    "start:admin": "ng serve admin --port 4201",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
