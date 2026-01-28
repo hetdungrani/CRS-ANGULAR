@@ -11,6 +11,15 @@ import { JobDetail } from './pages/jobs/job-detail/job-detail';
 import { Applications } from './pages/applications/applications';
 import { Notifications } from './pages/notifications/notifications';
 import { Settings } from './pages/settings/settings';
+import {
+    dashboardResolver,
+    jobListResolver,
+    jobDetailResolver,
+    studentListResolver,
+    studentDetailResolver,
+    applicationsResolver,
+    notificationsResolver
+} from './resolvers/admin.resolver';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
@@ -20,17 +29,54 @@ export const routes: Routes = [
         component: AdminLayout,
         canActivate: [AuthGuard],
         children: [
-            { path: 'dashboard', component: Dashboard },
-            { path: 'students', component: StudentList },
-            { path: 'students/:id', component: StudentDetail },
-            { path: 'jobs', component: JobList },
-            { path: 'jobs/add', component: JobForm },
-            { path: 'jobs/edit/:id', component: JobForm },
-            { path: 'jobs/:id', component: JobDetail },
-            { path: 'applications', component: Applications },
-            { path: 'notifications', component: Notifications },
-            { path: 'settings', component: Settings },
-
+            {
+                path: 'dashboard',
+                component: Dashboard,
+                resolve: { data: dashboardResolver }
+            },
+            {
+                path: 'students',
+                component: StudentList,
+                resolve: { students: studentListResolver }
+            },
+            {
+                path: 'students/:id',
+                component: StudentDetail,
+                resolve: { student: studentDetailResolver }
+            },
+            {
+                path: 'jobs',
+                component: JobList,
+                resolve: { jobs: jobListResolver }
+            },
+            {
+                path: 'jobs/add',
+                component: JobForm
+            },
+            {
+                path: 'jobs/edit/:id',
+                component: JobForm,
+                resolve: { job: jobDetailResolver }
+            },
+            {
+                path: 'jobs/:id',
+                component: JobDetail,
+                resolve: { job: jobDetailResolver }
+            },
+            {
+                path: 'applications',
+                component: Applications,
+                resolve: { applications: applicationsResolver }
+            },
+            {
+                path: 'notifications',
+                component: Notifications,
+                resolve: { notifications: notificationsResolver }
+            },
+            {
+                path: 'settings',
+                component: Settings
+            },
         ]
     }
 ];

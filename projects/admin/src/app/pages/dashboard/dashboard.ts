@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 @Component({
@@ -13,23 +13,61 @@ import { AuthService } from '../../services/auth.service';
 export class Dashboard implements OnInit {
     admin: any;
     stats = {
-        students: 250,
-        companies: 12,
-        drives: 5,
-        placed: 85
+        students: 0,
+        companies: 0,
+        drives: 0,
+        placed: 0
     };
 
-    activities = [
-        { title: 'New Student Registration', desc: 'Ravi Kumar (CS) registered', time: '10 mins ago', type: 'student' },
-        { title: 'New Job Drive', desc: 'Infosys announced a recruitment drive', time: '2 hours ago', type: 'job' },
-        { title: 'Company Added', desc: 'Wipro Technologies has been onboarded', time: '5 hours ago', type: 'company' },
-        { title: 'Student Placed', desc: 'Anjali Singh placed in TCS', time: '1 day ago', type: 'success' }
-    ];
+    activities: any[] = [];
+    jobs: any[] = [];
+    students: any[] = [];
+    notifications: any[] = [];
 
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(
+        private authService: AuthService,
+        private router: Router,
+        private route: ActivatedRoute
+    ) { }
 
     ngOnInit() {
         this.admin = this.authService.getAdmin();
+        this.loadDashboardData();
+    }
+
+    loadDashboardData(): void {
+        const data = this.route.snapshot.data['data'];
+        if (data) {
+            this.jobs = data.jobs || [];
+            this.students = data.students || [];
+            this.notifications = data.notifications || [];
+
+            // Calculate real stats
+            this.stats.students = this.students.length;
+            this.stats.drives = this.jobs.filter((j: any) => j.status === 'open').length;
+            this.stats.placed = this.students.filter((s: any) => s.placementStatus === 'placed').length;
+
+            // Convert notifications to activities
+            this.activities = this.notifications.slice(0, 5).map((n: any) => ({
+                title: n.title,
+                desc: n.message,
+                time: this.getTimeAgo(n.createdAt),
+                type: n.type || 'general'
+            }));
+        }
+    }
+
+    getTimeAgo(date: string): string {
+        const now = new Date();
+        const created = new Date(date);
+        const diffMs = now.getTime() - created.getTime();
+        const diffMins = Math.floor(diffMs / 60000);
+
+        if (diffMins < 60) return `${diffMins} mins ago`;
+        const diffHours = Math.floor(diffMins / 60);
+        if (diffHours < 24) return `${diffHours} hours ago`;
+        const diffDays = Math.floor(diffHours / 24);
+        return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
     }
 
     logout() {

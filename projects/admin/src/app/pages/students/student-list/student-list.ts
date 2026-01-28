@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { StudentService } from '../../../services/student.service';
 
 @Component({
@@ -11,6 +11,7 @@ import { StudentService } from '../../../services/student.service';
     templateUrl: './student-list.html',
 })
 export class StudentList implements OnInit {
+    allStudents: any[] = [];
     students: any[] = [];
     loading = false;
 
@@ -18,27 +19,36 @@ export class StudentList implements OnInit {
         search: ''
     };
 
-    constructor(private studentService: StudentService) { }
+    constructor(
+        private studentService: StudentService,
+        private route: ActivatedRoute
+    ) { }
 
     ngOnInit() {
         this.loadStudents();
     }
 
     loadStudents() {
-        this.loading = true;
-        this.studentService.getAllStudents(this.filters).subscribe({
-            next: (data) => {
-                this.students = data;
-                this.loading = false;
-            },
-            error: (err) => {
-                console.error('Error fetching students:', err);
-                this.loading = false;
-            }
-        });
+        const data = this.route.snapshot.data['students'];
+        if (data) {
+            this.allStudents = data;
+            this.applyFilters();
+        }
     }
 
     applyFilters() {
-        this.loadStudents();
+        let filtered = [...this.allStudents];
+
+        if (this.filters.search) {
+            const searchLower = this.filters.search.toLowerCase();
+            filtered = filtered.filter(student =>
+                student.fullName?.toLowerCase().includes(searchLower) ||
+                student.email?.toLowerCase().includes(searchLower) ||
+                student.department?.toLowerCase().includes(searchLower) ||
+                student.course?.toLowerCase().includes(searchLower)
+            );
+        }
+
+        this.students = filtered;
     }
 }
