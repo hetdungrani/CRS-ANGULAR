@@ -49,5 +49,10 @@ export class AuthService {
             headers: { 'x-auth-token': token || '' }
         });
     }
+
+    isLoggedIn(): boolean {
+        const token = this.getToken();
+        return !!token;
+    }
 }
 

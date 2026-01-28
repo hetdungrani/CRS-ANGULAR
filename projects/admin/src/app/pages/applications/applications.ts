@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { JobService } from '../../services/job.service';
 
 @Component({
@@ -30,7 +30,10 @@ export class Applications implements OnInit {
 
     departments = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Electrical', 'Civil'];
 
-    constructor(private jobService: JobService) { }
+    constructor(
+        private jobService: JobService,
+        private route: ActivatedRoute
+    ) { }
 
     ngOnInit() {
         this.loadApplications();
@@ -46,19 +49,13 @@ export class Applications implements OnInit {
     }
 
     loadApplications() {
-        this.loading = true;
-        this.jobService.getAllApplications().subscribe({
-            next: (data: any[]) => {
-                this.allApplications = data;
-                this.calculateCounts();
-                this.applyFilters();
-                this.loading = false;
-            },
-            error: (err: any) => {
-                console.error('Error fetching applications:', err);
-                this.loading = false;
-            }
-        });
+        // Use resolved data - no manual API call
+        const data = this.route.snapshot.data['applications'];
+        if (data) {
+            this.allApplications = data;
+            this.calculateCounts();
+            this.applyFilters();
+        }
     }
 
     applyFilters() {
@@ -81,6 +78,7 @@ export class Applications implements OnInit {
                 // Update local status
                 const app = this.allApplications.find(a => a._id === applicantId);
                 if (app) app.status = status;
+                this.calculateCounts();
                 this.applyFilters();
             },
             error: (err: any) => console.error('Error updating status:', err)
@@ -106,5 +104,10 @@ export class Applications implements OnInit {
         a.href = url;
         a.download = `applications_export_${new Date().getTime()}.csv`;
         a.click();
+    }
+
+    // TrackBy function for performance optimization
+    trackByApplicationId(index: number, app: any): any {
+        return app._id;
     }
 }

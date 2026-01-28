@@ -11,7 +11,7 @@ import { StudentService } from '../../../services/student.service';
 })
 export class StudentDetail implements OnInit {
     student: any;
-    loading = true;
+    loading = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -19,12 +19,18 @@ export class StudentDetail implements OnInit {
     ) { }
 
     ngOnInit() {
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id) {
-            this.loadStudent(id);
+        // Use resolved data - no manual API call
+        this.student = this.route.snapshot.data['student'];
+        if (!this.student) {
+            // Fallback: if resolver failed or data not available
+            const id = this.route.snapshot.paramMap.get('id');
+            if (id) {
+                this.loadStudent(id);
+            }
         }
     }
 
+    // Fallback method only used if resolver fails
     loadStudent(id: string) {
         this.loading = true;
         this.studentService.getStudentById(id).subscribe({

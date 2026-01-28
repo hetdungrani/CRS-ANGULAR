@@ -30,6 +30,7 @@ export class Jobs implements OnInit {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
+      // Use resolved data - no manual API call
       const data = this.route.snapshot.data['jobs'];
       if (data) {
         this.jobs = data.map((job: any) => ({
@@ -40,21 +41,6 @@ export class Jobs implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
-  }
-
-  fetchJobs(): void {
-    this.jobService.getJobs().subscribe({
-      next: (data) => {
-        this.jobs = data.map(job => ({
-          ...job,
-          hasApplied: this.checkIfApplied(job)
-        }));
-      },
-      error: (err) => {
-        console.error('Error fetching jobs:', err);
-        this.error = 'Failed to load jobs. Please try again later.';
-      }
-    });
   }
 
   checkIfApplied(job: any): boolean {
@@ -108,5 +94,10 @@ export class Jobs implements OnInit {
         }
       });
     }
+  }
+
+  // TrackBy function for performance optimization
+  trackByJobId(index: number, job: any): any {
+    return job._id;
   }
 }

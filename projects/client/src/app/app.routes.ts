@@ -8,6 +8,7 @@ import { Notifications } from './pages/notifications/notifications';
 import { Statistics } from './pages/statistics/statistics';
 import { Profile } from './pages/profile/profile';
 import { dashboardResolver, jobsResolver, appliedJobsResolver, notificationsResolver, statisticsResolver, profileResolver } from './resolvers/job.resolver';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -16,31 +17,38 @@ export const routes: Routes = [
     {
         path: 'dashboard',
         component: Dashboard,
+        canActivate: [authGuard],
         resolve: { data: dashboardResolver }
     },
     {
         path: 'jobs',
         component: Jobs,
+        canActivate: [authGuard],
         resolve: { jobs: jobsResolver }
     },
     {
         path: 'applied-jobs',
         component: AppliedJobs,
+        canActivate: [authGuard],
         resolve: { appliedJobs: appliedJobsResolver }
     },
     {
         path: 'notifications',
         component: Notifications,
+        canActivate: [authGuard],
         resolve: { notifications: notificationsResolver }
     },
     {
         path: 'statistics',
         component: Statistics,
+        canActivate: [authGuard],
         resolve: { stats: statisticsResolver }
     },
     {
         path: 'profile',
         component: Profile,
+        canActivate: [authGuard],
         resolve: { profile: profileResolver }
     }
 ];
+

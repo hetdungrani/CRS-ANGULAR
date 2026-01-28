@@ -73,4 +73,9 @@ export class JobList implements OnInit {
 
         this.jobs = filtered;
     }
+
+    // TrackBy function for performance optimization
+    trackByJobId(index: number, job: any): any {
+        return job._id;
+    }
 }

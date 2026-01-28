@@ -41,26 +41,38 @@ export class JobForm implements OnInit {
         const id = this.route.snapshot.paramMap.get('id');
         if (id) {
             this.isEdit = true;
-            this.loadJob(id);
+            // Use resolved data - no manual API call
+            const resolvedJob = this.route.snapshot.data['job'];
+            if (resolvedJob) {
+                this.loadJobData(resolvedJob);
+            } else {
+                // Fallback if resolver failed
+                this.loadJob(id);
+            }
         } else {
-            // Initialize checkboxes
+            // Initialize checkboxes for new job
             this.allBranches.forEach(b => this.selectedBranches[b] = false);
         }
     }
 
+    loadJobData(data: any) {
+        this.jobData = data;
+        // Convert date for input type="date"
+        if (this.jobData.lastDate) {
+            this.jobData.lastDate = new Date(this.jobData.lastDate).toISOString().split('T')[0];
+        }
+        // Update checkboxes
+        this.allBranches.forEach(b => {
+            this.selectedBranches[b] = this.jobData.eligibility.branches.includes(b);
+        });
+    }
+
+    // Fallback method only used if resolver fails
     loadJob(id: string) {
         this.loading = true;
         this.jobService.getJobById(id).subscribe({
             next: (data) => {
-                this.jobData = data;
-                // Convert date for input type="date"
-                if (this.jobData.lastDate) {
-                    this.jobData.lastDate = new Date(this.jobData.lastDate).toISOString().split('T')[0];
-                }
-                // Update checkboxes
-                this.allBranches.forEach(b => {
-                    this.selectedBranches[b] = this.jobData.eligibility.branches.includes(b);
-                });
+                this.loadJobData(data);
                 this.loading = false;
             },
             error: (err) => {

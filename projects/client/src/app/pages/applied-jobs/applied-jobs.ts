@@ -35,6 +35,7 @@ export class AppliedJobs implements OnInit {
     const userStr = localStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
+      // Use resolved data - no manual API call
       const data = this.route.snapshot.data['appliedJobs'];
       if (data) {
         this.appliedJobs = data;
@@ -42,18 +43,6 @@ export class AppliedJobs implements OnInit {
     } else {
       this.router.navigate(['/login']);
     }
-  }
-
-  fetchAppliedJobs(): void {
-    this.jobService.getAppliedJobs().subscribe({
-      next: (data) => {
-        this.appliedJobs = data;
-      },
-      error: (err) => {
-        console.error('Error fetching applied jobs:', err);
-        this.error = 'Failed to load applied jobs.';
-      }
-    });
   }
 
   getStatusClass(status: string): string {
@@ -92,5 +81,10 @@ export class AppliedJobs implements OnInit {
     setTimeout(() => {
       this.selectedJob = null;
     }, 300);
+  }
+
+  // TrackBy function for performance optimization
+  trackByJobId(index: number, job: any): any {
+    return job._id;
   }
 }

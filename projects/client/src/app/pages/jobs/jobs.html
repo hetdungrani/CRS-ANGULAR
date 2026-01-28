@@ -51,7 +51,7 @@
 
             <!-- Job Cards Section -->
             <div *ngIf="!loading && jobs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div *ngFor="let job of jobs"
+                <div *ngFor="let job of jobs; trackBy: trackByJobId"
                     class="group relative bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
 
                     <!-- Top Gradient Bar -->

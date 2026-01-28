@@ -20,12 +20,18 @@ export class JobDetail implements OnInit {
     ) { }
 
     ngOnInit() {
-        const id = this.route.snapshot.paramMap.get('id');
-        if (id) {
-            this.loadJob(id);
+        // Use resolved data - no manual API call
+        this.job = this.route.snapshot.data['job'];
+        if (!this.job) {
+            // Fallback: if resolver failed or data not available
+            const id = this.route.snapshot.paramMap.get('id');
+            if (id) {
+                this.loadJob(id);
+            }
         }
     }
 
+    // Fallback method only used if resolver fails
     loadJob(id: string) {
         this.loading = true;
         this.jobService.getJobById(id).subscribe({

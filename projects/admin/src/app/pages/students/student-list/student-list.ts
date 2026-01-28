@@ -51,4 +51,9 @@ export class StudentList implements OnInit {
 
         this.students = filtered;
     }
+
+    // TrackBy function for performance optimization
+    trackByStudentId(index: number, student: any): any {
+        return student._id;
+    }
 }
