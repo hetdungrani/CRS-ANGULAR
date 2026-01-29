@@ -10,27 +10,19 @@ export class JobService {
 
     constructor(private http: HttpClient) { }
 
-    private getHeaders() {
-        const token = localStorage.getItem('token');
-        return new HttpHeaders({
-            'Content-Type': 'application/json',
-            'x-auth-token': token || ''
-        });
-    }
-
     getJobs(): Observable<any[]> {
-        return this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders() });
+        return this.http.get<any[]>(this.apiUrl);
     }
 
     getAppliedJobs(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/applied`, { headers: this.getHeaders() });
+        return this.http.get<any[]>(`${this.apiUrl}/applied`);
     }
 
     getJobById(id: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+        return this.http.get<any>(`${this.apiUrl}/${id}`);
     }
 
     applyForJob(id: string): Observable<any> {
-        return this.http.post<any>(`${this.apiUrl}/${id}/apply`, {}, { headers: this.getHeaders() });
+        return this.http.post<any>(`${this.apiUrl}/${id}/apply`, {});
     }
 }

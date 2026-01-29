@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,12 @@ export class Login implements OnInit {
 
   errorMessage: string = '';
 
-  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) { }
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -31,12 +37,12 @@ export class Login implements OnInit {
         next: (res) => {
           this.authService.setToken(res.token);
           this.authService.setUser(res.user);
-          alert('Login Successful!');
+          this.toastService.success('Login Successful!');
           this.router.navigate(['/dashboard']); // Redirect to dashboard
         },
         error: (err) => {
           this.errorMessage = err.error.msg || 'Invalid Credentials';
-          alert(this.errorMessage);
+          this.toastService.error(this.errorMessage);
         }
       });
     } else {

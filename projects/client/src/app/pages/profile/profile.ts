@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 
@@ -34,7 +35,11 @@ export class Profile implements OnInit {
   // Temporary data for editing
   editData: any = {};
 
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private toastService: ToastService
+  ) { }
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
@@ -132,7 +137,7 @@ export class Profile implements OnInit {
     localStorage.setItem('userProfile', JSON.stringify(this.profileData));
 
     this.isEditMode = false;
-    alert('Profile updated successfully!');
+    this.toastService.success('Profile updated successfully!');
   }
 
   getInitials(): string {

@@ -8,21 +8,24 @@ exports.createNotification = async (req, res) => {
         const { title, message, type, targetGroup } = req.body;
         
         if (!title || !message) {
-            return res.status(400).json({ msg: 'Title and message are required' });
+            return res.status(400).json({ 
+                msg: 'Title and message are required',
+                received: { title: !!title, message: !!message } 
+            });
         }
 
         const notification = new Notification({
             title,
             message,
             type: type || 'general',
-            targetGroup: targetGroup || 'all'
+            targetGroup: targetGroup || 'all',
+            sender: req.admin?.username || 'Admin'
         });
 
         const savedNotification = await notification.save();
         res.status(201).json(savedNotification);
     } catch (err) {
-        console.error('Detailed Notification Error:', err);
-        res.status(500).json({ msg: 'Server Error', error: err.message, stack: err.stack });
+        res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 };
 
@@ -34,7 +37,6 @@ exports.getNotifications = async (req, res) => {
         const notifications = await Notification.find().sort({ createdAt: -1 });
         res.json(notifications);
     } catch (err) {
-        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -44,14 +46,14 @@ exports.getNotifications = async (req, res) => {
 // @access  Private/Admin
 exports.deleteNotification = async (req, res) => {
     try {
-        const notification = await Notification.findById(req.params.id);
+        const notification = await Notification.findByIdAndDelete(req.params.id);
+        
         if (!notification) {
             return res.status(404).json({ msg: 'Notification not found' });
         }
-        await notification.deleteOne();
+        
         res.json({ msg: 'Notification removed' });
     } catch (err) {
-        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -70,7 +72,6 @@ exports.getStudentNotifications = async (req, res) => {
         
         res.json(notifications);
     } catch (err) {
-        console.error(err.message);
         res.status(500).send('Server Error');
     }
 };

@@ -9,6 +9,7 @@ router.get('/me', adminAuth, adminController.getMe);
 
 router.get('/students', adminAuth, adminController.getAllStudents);
 router.get('/students/:id', adminAuth, adminController.getStudentById);
+router.delete('/students/:id', adminAuth, adminController.deleteStudent);
 router.put('/change-password', adminAuth, adminController.changePassword);
 
 module.exports = router;

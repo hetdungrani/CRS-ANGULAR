@@ -23,6 +23,8 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/admin/jobs', require('./routes/jobRoutes'));
 app.use('/api/jobs', require('./routes/studentJobRoutes'));
 app.use('/api/admin/notifications', require('./routes/notificationRoutes'));
+app.use('/api/admin/settings', require('./routes/settingsRoutes'));
+app.use('/api/settings', require('./routes/publicSettingsRoutes'));
 app.use('/api/notifications', require('./routes/studentNotificationRoutes'));
 
 // Global Error Handler

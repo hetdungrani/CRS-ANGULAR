@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
+import { take } from 'rxjs';
 
 @Component({
     selector: 'app-settings',
@@ -10,7 +12,7 @@ import { AuthService } from '../../services/auth.service';
     imports: [CommonModule, FormsModule],
     templateUrl: './settings.html',
 })
-export class Settings {
+export class Settings implements OnInit {
     passwordData = {
         currentPassword: '',
         newPassword: '',
@@ -18,50 +20,111 @@ export class Settings {
     };
 
     systemConfig = {
-        academicYear: '2025-26',
         allowRegistration: true,
-        maintenanceMode: false
+        theme: 'light'
     };
 
     loading = false;
-    message = '';
-    isError = false;
 
     constructor(
         private authService: AuthService,
-        private router: Router
+        private toastService: ToastService,
+        private router: Router,
+        private cdr: ChangeDetectorRef
     ) { }
+
+    ngOnInit() {
+        this.loadSettings();
+    }
+
+    applyTheme(theme: string) {
+        if (theme === 'dark') {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+
+    loadSettings() {
+        this.loading = true;
+        this.authService.getSettings().pipe(take(1)).subscribe({
+            next: (data) => {
+                this.systemConfig = data;
+                this.applyTheme(this.systemConfig.theme);
+                this.loading = false;
+                this.cdr.markForCheck();
+            },
+            error: (err) => {
+                console.error('Failed to load settings:', err);
+                this.loading = false;
+                this.cdr.markForCheck();
+            }
+        });
+    }
 
     updatePassword() {
         if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-            this.showMessage('New passwords do not match', true);
+            this.toastService.error('New passwords do not match');
+            return;
+        }
+
+        if (this.passwordData.newPassword.length < 6) {
+            this.toastService.error('New password must be at least 6 characters long');
             return;
         }
 
         this.loading = true;
+        this.cdr.markForCheck();
+
+        // Safety timeout
+        const safetyTimer = setTimeout(() => {
+            if (this.loading) {
+                this.loading = false;
+                this.toastService.error('Connection timed out. Please try again.');
+                this.cdr.markForCheck();
+            }
+        }, 10000);
+
         this.authService.changePassword({
             currentPassword: this.passwordData.currentPassword,
             newPassword: this.passwordData.newPassword
-        }).subscribe({
+        }).pipe(take(1)).subscribe({
             next: (res) => {
-                this.showMessage('Password updated successfully');
+                clearTimeout(safetyTimer);
+                this.toastService.success('Password updated successfully');
                 this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
                 this.loading = false;
+                this.cdr.markForCheck();
             },
             error: (err) => {
-                this.showMessage(err.error.msg || 'Failed to update password', true);
+                clearTimeout(safetyTimer);
+                const errorMsg = err.error?.msg || err.message || 'Failed to update password';
+                this.toastService.error(errorMsg);
                 this.loading = false;
+                this.cdr.markForCheck();
             }
         });
     }
 
     saveSystemConfig() {
         this.loading = true;
-        // Mock save
-        setTimeout(() => {
-            this.showMessage('System configuration updated');
-            this.loading = false;
-        }, 1000);
+        this.cdr.markForCheck();
+
+        this.authService.updateSettings(this.systemConfig).pipe(take(1)).subscribe({
+            next: (data) => {
+                this.toastService.success('System configuration updated');
+                this.systemConfig = data;
+                this.applyTheme(this.systemConfig.theme);
+                this.loading = false;
+                this.cdr.markForCheck();
+            },
+            error: (err) => {
+                const errorMsg = err.error?.msg || err.message || 'Failed to update configuration';
+                this.toastService.error(errorMsg);
+                this.loading = false;
+                this.cdr.markForCheck();
+            }
+        });
     }
 
     logout() {
@@ -69,11 +132,5 @@ export class Settings {
             this.authService.logout();
             this.router.navigate(['/login']);
         }
-    }
-
-    private showMessage(msg: string, isError = false) {
-        this.message = msg;
-        this.isError = isError;
-        setTimeout(() => this.message = '', 3000);
     }
 }

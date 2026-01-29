@@ -9,10 +9,8 @@ const adminAuth = require('../middleware/adminAuth');
 
 router.use(adminAuth);
 
-router.route('/')
-    .get(getNotifications)
-    .post(createNotification);
-
+router.get('/', getNotifications);
+router.post('/', createNotification);
 router.delete('/:id', deleteNotification);
 
 module.exports = router;

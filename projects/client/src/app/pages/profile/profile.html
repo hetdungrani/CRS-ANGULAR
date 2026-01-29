@@ -117,151 +117,206 @@
             </div>
 
             <!-- Personal Information Section -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">Personal Information</h3>
-                </div>
-                <div class="px-6 py-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Full Name -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
-                            <input *ngIf="isEditMode" [(ngModel)]="editData.fullName" type="text"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.fullName }}</p>
-                        </div>
-
-                        <!-- Email -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
-                            <input *ngIf="isEditMode" [(ngModel)]="editData.email" type="email"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.email }}</p>
-                        </div>
-
-                        <!-- Phone -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                            <input *ngIf="isEditMode" [(ngModel)]="editData.phone" type="tel"
-                                placeholder="Enter phone number"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <p *ngIf="!isEditMode && profileData.phone" class="text-sm text-gray-900 py-2">{{
-                                profileData.phone }}</p>
-                            <p *ngIf="!isEditMode && !profileData.phone" class="text-sm text-gray-400 italic py-2">Not
-                                provided</p>
-                        </div>
-
-                        <!-- Date of Birth -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                            <input *ngIf="isEditMode" [(ngModel)]="editData.dateOfBirth" type="date"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <p *ngIf="!isEditMode && profileData.dateOfBirth" class="text-sm text-gray-900 py-2">{{
-                                profileData.dateOfBirth }}</p>
-                            <p *ngIf="!isEditMode && !profileData.dateOfBirth"
-                                class="text-sm text-gray-400 italic py-2">Not provided</p>
-                        </div>
-
-                        <!-- Address -->
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                            <textarea *ngIf="isEditMode" [(ngModel)]="editData.address" rows="3"
-                                placeholder="Enter your complete address"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-                            <p *ngIf="!isEditMode && profileData.address" class="text-sm text-gray-900 py-2">{{
-                                profileData.address }}</p>
-                            <p *ngIf="!isEditMode && !profileData.address" class="text-sm text-gray-400 italic py-2">Not
-                                provided</p>
-                        </div>
+            <form #profileForm="ngForm" (ngSubmit)="updateProfile()">
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Personal Information</h3>
                     </div>
-                </div>
-            </div>
-
-            <!-- Academic Information Section -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">Academic Information</h3>
-                </div>
-                <div class="px-6 py-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Branch -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Branch / Department</label>
-                            <select *ngIf="isEditMode" [(ngModel)]="editData.branch"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Select Branch</option>
-                                <option value="Computer Science">Computer Science</option>
-                                <option value="Information Technology">Information Technology</option>
-                                <option value="Electronics">Electronics</option>
-                                <option value="Mechanical">Mechanical</option>
-                            </select>
-                            <p *ngIf="!isEditMode && profileData.branch" class="text-sm text-gray-900 py-2">{{
-                                profileData.branch }}</p>
-                            <p *ngIf="!isEditMode && !profileData.branch" class="text-sm text-gray-400 italic py-2">Not
-                                provided</p>
-                        </div>
-
-                        <!-- Year -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Current Year</label>
-                            <select *ngIf="isEditMode" [(ngModel)]="editData.year"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <option value="">Select Year</option>
-                                <option value="1st Year">1st Year</option>
-                                <option value="2nd Year">2nd Year</option>
-                                <option value="3rd Year">3rd Year</option>
-                                <option value="4th Year">4th Year</option>
-                            </select>
-                            <p *ngIf="!isEditMode && profileData.year" class="text-sm text-gray-900 py-2">{{
-                                profileData.year }}</p>
-                            <p *ngIf="!isEditMode && !profileData.year" class="text-sm text-gray-400 italic py-2">Not
-                                provided</p>
-                        </div>
-
-                        <!-- Enrollment Number -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Enrollment / Roll Number</label>
-                            <input *ngIf="isEditMode" [(ngModel)]="editData.enrollmentNumber" type="text"
-                                placeholder="Enter enrollment number"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <p *ngIf="!isEditMode && profileData.enrollmentNumber" class="text-sm text-gray-900 py-2">{{
-                                profileData.enrollmentNumber }}</p>
-                            <p *ngIf="!isEditMode && !profileData.enrollmentNumber"
-                                class="text-sm text-gray-400 italic py-2">Not provided</p>
-                        </div>
-
-                        <!-- CGPA -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">CGPA</label>
-                            <input *ngIf="isEditMode" [(ngModel)]="editData.cgpa" type="text" placeholder="e.g., 8.5"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <p *ngIf="!isEditMode && profileData.cgpa" class="text-sm text-gray-900 py-2">{{
-                                profileData.cgpa }}</p>
-                            <p *ngIf="!isEditMode && !profileData.cgpa" class="text-sm text-gray-400 italic py-2">Not
-                                provided</p>
-                        </div>
-
-                        <!-- Skills -->
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Skills</label>
-                            <div *ngIf="!isEditMode && profileData.skills && profileData.skills.length > 0"
-                                class="flex flex-wrap gap-2">
-                                <span *ngFor="let skill of profileData.skills"
-                                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                                    {{ skill }}
-                                </span>
+                    <div class="px-6 py-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Full Name -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                                <div *ngIf="isEditMode">
+                                    <input [(ngModel)]="editData.fullName" name="fullName" #fullName="ngModel"
+                                        type="text" required
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        [ngClass]="{'border-red-500': fullName.invalid && fullName.touched}">
+                                    <div *ngIf="fullName.invalid && fullName.touched" class="text-red-500 text-xs mt-1">
+                                        Full name is required</div>
+                                </div>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.fullName }}</p>
                             </div>
-                            <p *ngIf="!isEditMode && (!profileData.skills || profileData.skills.length === 0)"
-                                class="text-sm text-gray-400 italic py-2">No skills added yet</p>
-                            <input *ngIf="isEditMode" [(ngModel)]="editData.skills" type="text"
-                                placeholder="Enter skills separated by commas (e.g., Java, Python, React)"
-                                class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                            <p *ngIf="isEditMode" class="mt-1 text-xs text-gray-500">Separate skills with commas (e.g.,
-                                Java, Python, React)</p>
+
+                            <!-- Email -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                                <div *ngIf="isEditMode">
+                                    <input [(ngModel)]="editData.email" name="email" #email="ngModel" type="email"
+                                        required email
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        [ngClass]="{'border-red-500': email.invalid && email.touched}">
+                                    <div *ngIf="email.invalid && email.touched" class="text-red-500 text-xs mt-1">Valid
+                                        email is required</div>
+                                </div>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.email }}</p>
+                            </div>
+
+                            <!-- Phone -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                                <div *ngIf="isEditMode">
+                                    <input [(ngModel)]="editData.phone" name="phone" #phone="ngModel" type="tel"
+                                        pattern="[0-9]{10}" placeholder="10-digit number"
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        [ngClass]="{'border-red-500': phone.invalid && phone.touched}">
+                                    <div *ngIf="phone.invalid && phone.touched" class="text-red-500 text-xs mt-1">Valid
+                                        10-digit number is required</div>
+                                </div>
+                                <p *ngIf="!isEditMode && profileData.phone" class="text-sm text-gray-900 py-2">{{
+                                    profileData.phone }}</p>
+                                <p *ngIf="!isEditMode && !profileData.phone" class="text-sm text-gray-400 italic py-2">
+                                    Not provided</p>
+                            </div>
+
+                            <!-- Date of Birth -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
+                                <input *ngIf="isEditMode" [(ngModel)]="editData.dateOfBirth" name="dateOfBirth"
+                                    type="date"
+                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <p *ngIf="!isEditMode && profileData.dateOfBirth" class="text-sm text-gray-900 py-2">{{
+                                    profileData.dateOfBirth }}</p>
+                                <p *ngIf="!isEditMode && !profileData.dateOfBirth"
+                                    class="text-sm text-gray-400 italic py-2">Not provided</p>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
+                                <textarea *ngIf="isEditMode" [(ngModel)]="editData.address" name="address" rows="1"
+                                    placeholder="Enter your complete address"
+                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                <p *ngIf="!isEditMode && profileData.address" class="text-sm text-gray-900 py-2">{{
+                                    profileData.address }}</p>
+                                <p *ngIf="!isEditMode && !profileData.address"
+                                    class="text-sm text-gray-400 italic py-2">Not provided</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+
+                <!-- Academic Information Section -->
+                <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+                    <div class="px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900">Academic Information</h3>
+                    </div>
+                    <div class="px-6 py-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Branch -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Branch / Department</label>
+                                <div *ngIf="isEditMode">
+                                    <select [(ngModel)]="editData.branch" name="branch" #branch="ngModel" required
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        [ngClass]="{'border-red-500': branch.invalid && branch.touched}">
+                                        <option value="">Select Branch</option>
+                                        <option value="Computer Science">Computer Science</option>
+                                        <option value="Information Technology">Information Technology</option>
+                                        <option value="Electronics">Electronics</option>
+                                        <option value="Mechanical">Mechanical</option>
+                                    </select>
+                                    <div *ngIf="branch.invalid && branch.touched" class="text-red-500 text-xs mt-1">
+                                        Branch is required</div>
+                                </div>
+                                <p *ngIf="!isEditMode && profileData.branch" class="text-sm text-gray-900 py-2">{{
+                                    profileData.branch }}</p>
+                                <p *ngIf="!isEditMode && !profileData.branch" class="text-sm text-gray-400 italic py-2">
+                                    Not provided</p>
+                            </div>
+
+                            <!-- Year -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Current Year</label>
+                                <div *ngIf="isEditMode">
+                                    <select [(ngModel)]="editData.year" name="year" #year="ngModel" required
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        [ngClass]="{'border-red-500': year.invalid && year.touched}">
+                                        <option value="">Select Year</option>
+                                        <option value="1st Year">1st Year</option>
+                                        <option value="2nd Year">2nd Year</option>
+                                        <option value="3rd Year">3rd Year</option>
+                                        <option value="4th Year">4th Year</option>
+                                    </select>
+                                    <div *ngIf="year.invalid && year.touched" class="text-red-500 text-xs mt-1">Year is
+                                        required</div>
+                                </div>
+                                <p *ngIf="!isEditMode && profileData.year" class="text-sm text-gray-900 py-2">{{
+                                    profileData.year }}</p>
+                                <p *ngIf="!isEditMode && !profileData.year" class="text-sm text-gray-400 italic py-2">
+                                    Not provided</p>
+                            </div>
+
+                            <!-- Enrollment Number -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Enrollment / Roll
+                                    Number</label>
+                                <div *ngIf="isEditMode">
+                                    <input [(ngModel)]="editData.enrollmentNumber" name="enrollmentNumber"
+                                        #enrollmentNumber="ngModel" type="text" required
+                                        placeholder="Enter enrollment number"
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        [ngClass]="{'border-red-500': enrollmentNumber.invalid && enrollmentNumber.touched}">
+                                    <div *ngIf="enrollmentNumber.invalid && enrollmentNumber.touched"
+                                        class="text-red-500 text-xs mt-1">Enrollment number is required</div>
+                                </div>
+                                <p *ngIf="!isEditMode && profileData.enrollmentNumber"
+                                    class="text-sm text-gray-900 py-2">{{ profileData.enrollmentNumber }}</p>
+                                <p *ngIf="!isEditMode && !profileData.enrollmentNumber"
+                                    class="text-sm text-gray-400 italic py-2">Not provided</p>
+                            </div>
+
+                            <!-- CGPA -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">CGPA</label>
+                                <div *ngIf="isEditMode">
+                                    <input [(ngModel)]="editData.cgpa" name="cgpa" #cgpa="ngModel" type="number"
+                                        step="0.01" min="0" max="10" required placeholder="e.g., 8.5"
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                                        [ngClass]="{'border-red-500': cgpa.invalid && cgpa.touched}">
+                                    <div *ngIf="cgpa.invalid && cgpa.touched" class="text-red-500 text-xs mt-1">Valid
+                                        CGPA (0-10) is required</div>
+                                </div>
+                                <p *ngIf="!isEditMode && profileData.cgpa" class="text-sm text-gray-900 py-2">{{
+                                    profileData.cgpa }}</p>
+                                <p *ngIf="!isEditMode && !profileData.cgpa" class="text-sm text-gray-400 italic py-2">
+                                    Not provided</p>
+                            </div>
+
+                            <!-- Skills -->
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Skills</label>
+                                <div *ngIf="!isEditMode && profileData.skills && profileData.skills.length > 0"
+                                    class="flex flex-wrap gap-2">
+                                    <span *ngFor="let skill of profileData.skills"
+                                        class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                        {{ skill }}
+                                    </span>
+                                </div>
+                                <p *ngIf="!isEditMode && (!profileData.skills || profileData.skills.length === 0)"
+                                    class="text-sm text-gray-400 italic py-2">No skills added yet</p>
+                                <input *ngIf="isEditMode" [(ngModel)]="editData.skills" name="skills" type="text"
+                                    placeholder="Enter skills separated by commas (e.g., Java, Python, React)"
+                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                <p *ngIf="isEditMode" class="mt-1 text-xs text-gray-500">Separate skills with commas
+                                    (e.g., Java, Python, React)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Save Button in Edit Mode -->
+                <div *ngIf="isEditMode" class="fixed bottom-8 right-8 z-50">
+                    <button type="submit" [disabled]="!profileForm.valid"
+                        class="flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all transform hover:scale-105 disabled:opacity-50 disabled:scale-100">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg>
+                        Save Profile
+                    </button>
+                </div>
+            </form>
 
         </div>
     </main>

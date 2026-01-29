@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { JobService } from '../../../services/job.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
     selector: 'app-job-detail',
@@ -16,7 +17,8 @@ export class JobDetail implements OnInit {
 
     constructor(
         private jobService: JobService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private toastService: ToastService
     ) { }
 
     ngOnInit() {
@@ -40,8 +42,9 @@ export class JobDetail implements OnInit {
                 this.loading = false;
             },
             error: (err) => {
-                console.error('Error fetching job:', err);
                 this.loading = false;
+                const errorMsg = err.error?.msg || err.message || 'Failed to load job details';
+                this.toastService.error(`Error: ${errorMsg}`);
             }
         });
     }
@@ -54,8 +57,9 @@ export class JobDetail implements OnInit {
                 this.updatingStatus = null;
             },
             error: (err) => {
-                console.error('Error updating status:', err);
                 this.updatingStatus = null;
+                const errorMsg = err.error?.msg || err.message || 'Failed to update applicant status';
+                this.toastService.error(`Error: ${errorMsg}`);
             }
         });
     }

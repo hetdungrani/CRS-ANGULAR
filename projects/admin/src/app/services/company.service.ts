@@ -11,17 +11,8 @@ export class CompanyService {
 
     constructor(private http: HttpClient, private authService: AuthService) { }
 
-    private getHeaders() {
-        const token = this.authService.getToken();
-        return {
-            headers: {
-                'x-auth-token': token || ''
-            }
-        };
-    }
-
     createCompany(companyData: any): Observable<any> {
-        return this.http.post<any>(this.apiUrl, companyData, this.getHeaders());
+        return this.http.post<any>(this.apiUrl, companyData);
     }
 
     getAllCompanies(filters: any = {}): Observable<any[]> {
@@ -30,19 +21,18 @@ export class CompanyService {
         if (filters.industry) params = params.set('industry', filters.industry);
         if (filters.status) params = params.set('status', filters.status);
 
-        const options = { ...this.getHeaders(), params };
-        return this.http.get<any[]>(this.apiUrl, options);
+        return this.http.get<any[]>(this.apiUrl, { params });
     }
 
     getCompanyById(id: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}`, this.getHeaders());
+        return this.http.get<any>(`${this.apiUrl}/${id}`);
     }
 
     updateCompany(id: string, companyData: any): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/${id}`, companyData, this.getHeaders());
+        return this.http.put<any>(`${this.apiUrl}/${id}`, companyData);
     }
 
     deleteCompany(id: string): Observable<any> {
-        return this.http.delete<any>(`${this.apiUrl}/${id}`, this.getHeaders());
+        return this.http.delete<any>(`${this.apiUrl}/${id}`);
     }
 }

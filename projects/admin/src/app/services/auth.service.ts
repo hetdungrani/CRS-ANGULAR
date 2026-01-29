@@ -41,8 +41,15 @@ export class AuthService {
     }
 
     changePassword(data: any): Observable<any> {
-        const headers = { 'x-auth-token': this.getToken() || '' };
-        return this.http.put<any>(`${this.apiUrl}/change-password`, data, { headers });
+        return this.http.put<any>(`${this.apiUrl}/change-password`, data);
+    }
+
+    getSettings(): Observable<any> {
+        return this.http.get<any>(`${this.apiUrl}/settings`);
+    }
+
+    updateSettings(data: any): Observable<any> {
+        return this.http.put<any>(`${this.apiUrl}/settings`, data);
     }
 
     isLoggedIn(): boolean {

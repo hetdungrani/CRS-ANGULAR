@@ -10,11 +10,6 @@ export class JobService {
 
     constructor(private http: HttpClient) { }
 
-    private getHeaders() {
-        const token = localStorage.getItem('admin_token');
-        return new HttpHeaders().set('x-auth-token', token || '');
-    }
-
     getJobs(filters?: any): Observable<any[]> {
         let url = this.apiUrl;
         if (filters) {
@@ -29,30 +24,30 @@ export class JobService {
                 url += `?${queryString}`;
             }
         }
-        return this.http.get<any[]>(url, { headers: this.getHeaders() });
+        return this.http.get<any[]>(url);
     }
 
     getJobById(id: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+        return this.http.get<any>(`${this.apiUrl}/${id}`);
     }
 
     createJob(jobData: any): Observable<any> {
-        return this.http.post<any>(this.apiUrl, jobData, { headers: this.getHeaders() });
+        return this.http.post<any>(this.apiUrl, jobData);
     }
 
     updateJob(id: string, jobData: any): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/${id}`, jobData, { headers: this.getHeaders() });
+        return this.http.put<any>(`${this.apiUrl}/${id}`, jobData);
     }
 
     deleteJob(id: string): Observable<any> {
-        return this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+        return this.http.delete<any>(`${this.apiUrl}/${id}`);
     }
 
     updateApplicantStatus(jobId: string, applicantId: string, status: string): Observable<any> {
-        return this.http.put<any>(`${this.apiUrl}/${jobId}/applicants/${applicantId}`, { status }, { headers: this.getHeaders() });
+        return this.http.put<any>(`${this.apiUrl}/${jobId}/applicants/${applicantId}`, { status });
     }
 
     getAllApplications(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/applications/all`, { headers: this.getHeaders() });
+        return this.http.get<any[]>(`${this.apiUrl}/applications/all`);
     }
 }

@@ -1,7 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
+import { ToastService } from '../../services/toast.service';
+import { take } from 'rxjs';
 
 @Component({
     selector: 'app-notifications',
@@ -13,6 +16,7 @@ export class Notifications implements OnInit {
     notifications: any[] = [];
     loading = false;
     showForm = false;
+    submitting = false;
 
     newNotification = {
         title: '',
@@ -39,45 +43,103 @@ export class Notifications implements OnInit {
         { id: 'Civil', label: 'Civil' }
     ];
 
-    constructor(private notificationService: NotificationService) { }
+    constructor(
+        private route: ActivatedRoute,
+        private notificationService: NotificationService,
+        private toastService: ToastService,
+        private cdr: ChangeDetectorRef
+    ) { }
 
     ngOnInit() {
-        this.loadNotifications();
+        // Use resolved data from route to prevent infinite loading
+        const resolvedData = this.route.snapshot.data['notifications'];
+        if (resolvedData) {
+            this.notifications = resolvedData;
+            this.loading = false;
+        } else {
+            this.loadNotifications();
+        }
     }
 
     loadNotifications() {
         this.loading = true;
-        this.notificationService.getNotifications().subscribe({
+        this.cdr.markForCheck();
+        this.notificationService.getNotifications().pipe(take(1)).subscribe({
             next: (data) => {
                 this.notifications = data;
                 this.loading = false;
+                this.cdr.markForCheck();
             },
             error: (err) => {
-                console.error(err);
                 this.loading = false;
+                const errorMsg = err.error?.msg || err.message || 'Failed to load notifications';
+                this.toastService.error(`Error: ${errorMsg}`);
+                this.cdr.markForCheck();
             }
         });
     }
 
     sendNotification() {
-        this.notificationService.sendNotification(this.newNotification).subscribe({
+        if (this.submitting) return;
+
+        const title = this.newNotification.title?.trim();
+        const message = this.newNotification.message?.trim();
+
+        if (!title || !message) {
+            this.toastService.error('Please provide both a title and a message.');
+            return;
+        }
+
+        this.submitting = true;
+        this.cdr.markForCheck();
+
+        // Safety timeout: If request takes more than 10 seconds, reset the state
+        const safetyTimer = setTimeout(() => {
+            if (this.submitting) {
+                this.submitting = false;
+                this.toastService.error('Connection timed out. Please try again.');
+                this.cdr.markForCheck();
+            }
+        }, 10000);
+
+        this.notificationService.sendNotification(this.newNotification).pipe(take(1)).subscribe({
             next: (data) => {
+                clearTimeout(safetyTimer);
                 this.notifications.unshift(data);
                 this.showForm = false;
                 this.newNotification = { title: '', message: '', type: 'general', targetGroup: 'all' };
+                this.toastService.success('Announcement broadcasted successfully!');
+                this.submitting = false;
+                this.cdr.markForCheck();
             },
-            error: (err) => console.error(err)
+            error: (err) => {
+                clearTimeout(safetyTimer);
+                this.submitting = false;
+                const errorMsg = err.error?.msg || err.message || 'Failed to send notification';
+                this.toastService.error(`Error: ${errorMsg}`);
+                this.cdr.markForCheck();
+            }
         });
     }
 
     deleteNotification(id: string) {
         if (confirm('Are you sure you want to delete this announcement?')) {
-            this.notificationService.deleteNotification(id).subscribe({
+            this.notificationService.deleteNotification(id).pipe(take(1)).subscribe({
                 next: () => {
                     this.notifications = this.notifications.filter(n => n._id !== id);
+                    this.toastService.success('Announcement deleted successfully!');
+                    this.cdr.markForCheck();
                 },
-                error: (err) => console.error(err)
+                error: (err) => {
+                    const errorMsg = err.error?.msg || err.message || 'Failed to delete notification';
+                    this.toastService.error(`Error: ${errorMsg}`);
+                    this.cdr.markForCheck();
+                }
             });
         }
+    }
+
+    trackByNotificationId(index: number, notification: any): any {
+        return notification._id;
     }
 }

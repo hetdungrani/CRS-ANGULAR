@@ -124,4 +124,8 @@ export class Notifications implements OnInit {
     };
     return labels[type] || 'Notification';
   }
+
+  trackByNotificationId(index: number, notification: any): any {
+    return notification._id || notification.id;
+  }
 }

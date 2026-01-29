@@ -47,6 +47,10 @@ export class Dashboard implements OnInit {
             this.stats.drives = this.jobs.filter((j: any) => j.status === 'open').length;
             this.stats.placed = this.students.filter((s: any) => s.placementStatus === 'placed').length;
 
+            // Calculate total unique applications across all jobs
+            const totalApps = this.jobs.reduce((sum, job) => sum + (job.applications?.length || 0), 0);
+            this.stats.companies = totalApps; // Reusing companies field for Total Applications
+
             // Convert notifications to activities
             this.activities = this.notifications.slice(0, 5).map((n: any) => ({
                 title: n.title,

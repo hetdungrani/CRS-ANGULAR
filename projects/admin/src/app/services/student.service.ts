@@ -12,15 +12,6 @@ export class StudentService {
 
     constructor(private http: HttpClient, private authService: AuthService) { }
 
-    private getHeaders() {
-        const token = this.authService.getToken();
-        return {
-            headers: {
-                'x-auth-token': token || ''
-            }
-        };
-    }
-
     getAllStudents(filters: any = {}): Observable<any[]> {
         let params = new HttpParams();
         if (filters.branch) params = params.set('branch', filters.branch);
@@ -29,13 +20,14 @@ export class StudentService {
         if (filters.skills) params = params.set('skills', filters.skills);
         if (filters.search) params = params.set('search', filters.search);
 
-        const options = { ...this.getHeaders(), params };
-        return this.http.get<any[]>(this.apiUrl, options);
+        return this.http.get<any[]>(this.apiUrl, { params });
     }
 
     getStudentById(id: string): Observable<any> {
-        return this.http.get<any>(`${this.apiUrl}/${id}`, this.getHeaders());
+        return this.http.get<any>(`${this.apiUrl}/${id}`);
     }
 
-
+    deleteStudent(id: string): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${id}`);
+    }
 }

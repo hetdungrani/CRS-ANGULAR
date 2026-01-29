@@ -31,8 +31,18 @@ exports.getJobs = async (req, res) => {
             ];
         }
 
-        const jobs = await Job.find(query).sort({ createdAt: -1 });
-        res.json(jobs);
+        const jobs = await Job.find(query)
+            .populate('applications.student', '_id')
+            .sort({ createdAt: -1 });
+
+        // Filter out applications with deleted students for each job before sending
+        const sanitizedJobs = jobs.map(job => {
+            const jobObj = job.toObject();
+            jobObj.applications = jobObj.applications.filter(app => app.student !== null);
+            return jobObj;
+        });
+
+        res.json(sanitizedJobs);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -50,6 +60,10 @@ exports.getJobById = async (req, res) => {
         if (!job) {
             return res.status(404).json({ msg: 'Job not found' });
         }
+
+        // Filter out applications where the student record has been deleted
+        job.applications = job.applications.filter(app => app.student !== null);
+
         res.json(job);
     } catch (err) {
         console.error(err.message);
@@ -141,15 +155,17 @@ exports.getAllApplications = async (req, res) => {
         let allApplications = [];
         jobs.forEach(job => {
             job.applications.forEach(app => {
-                allApplications.push({
-                    _id: app._id,
-                    jobId: job._id,
-                    companyName: job.companyName,
-                    role: job.role,
-                    student: app.student,
-                    status: app.status,
-                    appliedAt: app.appliedAt
-                });
+                if (app.student) {
+                    allApplications.push({
+                        _id: app._id,
+                        jobId: job._id,
+                        companyName: job.companyName,
+                        role: job.role,
+                        student: app.student,
+                        status: app.status,
+                        appliedAt: app.appliedAt
+                    });
+                }
             });
         });
 

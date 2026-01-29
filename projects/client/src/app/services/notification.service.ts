@@ -10,12 +10,7 @@ export class NotificationService {
 
     constructor(private http: HttpClient) { }
 
-    private getHeaders() {
-        const token = localStorage.getItem('token');
-        return new HttpHeaders().set('x-auth-token', token || '');
-    }
-
     getMyNotifications(): Observable<any[]> {
-        return this.http.get<any[]>(`${this.apiUrl}/my`, { headers: this.getHeaders() });
+        return this.http.get<any[]>(`${this.apiUrl}/my`);
     }
 }

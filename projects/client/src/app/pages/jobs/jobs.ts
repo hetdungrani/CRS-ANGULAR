@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { JobService } from '../../services/job.service';
+import { ToastService } from '../../services/toast.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 
@@ -23,7 +24,8 @@ export class Jobs implements OnInit {
     private authService: AuthService,
     private jobService: JobService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -51,49 +53,36 @@ export class Jobs implements OnInit {
   }
 
   applyForJob(jobId: string): void {
-    if (confirm('Are you sure you want to apply for this job?')) {
-      console.log('Applying for job ID:', jobId);
-      console.log('Current user:', this.user);
-      this.jobService.applyForJob(jobId).subscribe({
-        next: (res) => {
-          console.log('Application successful:', res);
-          alert('Applied successfully!');
+    this.jobService.applyForJob(jobId).subscribe({
+      next: (res) => {
+        this.toastService.success('Applied successfully!');
 
-          // Find and update the specific job
-          const jobIndex = this.jobs.findIndex(j => j._id === jobId);
-          console.log('Job index found:', jobIndex);
-          console.log('Job before update:', jobIndex !== -1 ? this.jobs[jobIndex] : 'NOT FOUND');
-          if (jobIndex !== -1) {
-            // Create a new job object with updated hasApplied flag
-            this.jobs[jobIndex] = {
-              ...this.jobs[jobIndex],
-              hasApplied: true,
-              applications: [
-                ...(this.jobs[jobIndex].applications || []),
-                {
-                  student: this.user._id,
-                  appliedAt: new Date(),
-                  status: 'applied'
-                }
-              ]
-            };
+        // Find and update the specific job
+        const jobIndex = this.jobs.findIndex(j => j._id === jobId);
+        if (jobIndex !== -1) {
+          // Create a new job object with updated hasApplied flag
+          this.jobs[jobIndex] = {
+            ...this.jobs[jobIndex],
+            hasApplied: true,
+            applications: [
+              ...(this.jobs[jobIndex].applications || []),
+              {
+                student: this.user._id,
+                appliedAt: new Date(),
+                status: 'applied'
+              }
+            ]
+          };
 
-            // Create a new array reference to trigger change detection
-            this.jobs = [...this.jobs];
-            console.log('Job after update:', this.jobs[jobIndex]);
-            console.log('hasApplied flag:', this.jobs[jobIndex].hasApplied);
-          }
-        },
-        error: (err) => {
-          console.error('Error applying for job:', err);
-          console.error('Error status:', err.status);
-          console.error('Error message:', err.error?.msg);
-
-          const errorMessage = err.error?.msg || err.message || 'Failed to apply for job.';
-          alert(`Application failed: ${errorMessage}`);
+          // Create a new array reference to trigger change detection
+          this.jobs = [...this.jobs];
         }
-      });
-    }
+      },
+      error: (err) => {
+        const errorMessage = err.error?.msg || err.message || 'Failed to apply for job.';
+        this.toastService.error(`Application failed: ${errorMessage}`);
+      }
+    });
   }
 
   // TrackBy function for performance optimization

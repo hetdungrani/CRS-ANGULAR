@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JobService } from '../../../services/job.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
     selector: 'app-job-form',
@@ -34,7 +35,8 @@ export class JobForm implements OnInit {
     constructor(
         private jobService: JobService,
         private router: Router,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private toastService: ToastService
     ) { }
 
     ngOnInit() {
@@ -76,8 +78,9 @@ export class JobForm implements OnInit {
                 this.loading = false;
             },
             error: (err) => {
-                console.error('Error fetching job:', err);
                 this.loading = false;
+                const errorMsg = err.error?.msg || err.message || 'Failed to load job details';
+                this.toastService.error(`Error: ${errorMsg}`);
             }
         });
     }
@@ -88,13 +91,25 @@ export class JobForm implements OnInit {
 
         if (this.isEdit) {
             this.jobService.updateJob(this.jobData._id, this.jobData).subscribe({
-                next: () => this.router.navigate(['/jobs']),
-                error: (err) => console.error('Error updating job:', err)
+                next: () => {
+                    this.toastService.success('Job updated successfully!');
+                    this.router.navigate(['/jobs']);
+                },
+                error: (err) => {
+                    const errorMsg = err.error?.msg || err.message || 'Failed to update job';
+                    this.toastService.error(`Error: ${errorMsg}`);
+                }
             });
         } else {
             this.jobService.createJob(this.jobData).subscribe({
-                next: () => this.router.navigate(['/jobs']),
-                error: (err) => console.error('Error creating job:', err)
+                next: () => {
+                    this.toastService.success('Job created successfully!');
+                    this.router.navigate(['/jobs']);
+                },
+                error: (err) => {
+                    const errorMsg = err.error?.msg || err.message || 'Failed to create job';
+                    this.toastService.error(`Error: ${errorMsg}`);
+                }
             });
         }
     }

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { JobService } from '../../services/job.service';
+import { ToastService } from '../../services/toast.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 
@@ -28,7 +29,8 @@ export class AppliedJobs implements OnInit {
     private authService: AuthService,
     private jobService: JobService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -58,7 +60,6 @@ export class AppliedJobs implements OnInit {
   }
 
   viewDetails(jobId: string): void {
-    console.log('Fetching details for job ID:', jobId);
     this.showModal = true;
     this.detailsLoading = true;
 
@@ -68,8 +69,7 @@ export class AppliedJobs implements OnInit {
         this.detailsLoading = false;
       },
       error: (err) => {
-        console.error('Error fetching job details:', err);
-        alert('Failed to load job details.');
+        this.toastService.error('Failed to load job details.');
         this.showModal = false;
         this.detailsLoading = false;
       }

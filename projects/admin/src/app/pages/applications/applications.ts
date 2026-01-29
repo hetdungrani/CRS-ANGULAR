@@ -1,19 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { JobService } from '../../services/job.service';
+import { ToastService } from '../../services/toast.service';
+import { Subject, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-applications',
     standalone: true,
     imports: [CommonModule, FormsModule, RouterModule],
     templateUrl: './applications.html',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Applications implements OnInit {
+export class Applications implements OnInit, OnDestroy {
     allApplications: any[] = [];
     filteredApplications: any[] = [];
     loading = false;
+    private destroy$ = new Subject<void>();
+    private searchSubject = new Subject<string>();
 
     statusCounts = {
         applied: 0,
@@ -30,13 +36,41 @@ export class Applications implements OnInit {
 
     departments = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Electrical', 'Civil'];
 
+    // Pagination
+    Math = Math;
+    currentPage = 1;
+    pageSize = 10;
+    totalItems = 0;
+    paginatedApplications: any[] = [];
+    totalPages = 0;
+
     constructor(
         private jobService: JobService,
-        private route: ActivatedRoute
+        private route: ActivatedRoute,
+        private toastService: ToastService,
+        private cdr: ChangeDetectorRef
     ) { }
 
     ngOnInit() {
         this.loadApplications();
+
+        this.searchSubject.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            takeUntil(this.destroy$)
+        ).subscribe(() => {
+            this.currentPage = 1; // Reset to first page
+            this.applyFilters();
+        });
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
+
+    onSearchChange() {
+        this.searchSubject.next(this.filters.search);
     }
 
     calculateCounts() {
@@ -70,6 +104,38 @@ export class Applications implements OnInit {
 
             return matchesSearch && matchesStatus && matchesDept;
         });
+
+        this.totalItems = this.filteredApplications.length;
+        this.totalPages = Math.ceil(this.totalItems / this.pageSize);
+        this.paginate();
+    }
+
+    paginate() {
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        this.paginatedApplications = this.filteredApplications.slice(startIndex, endIndex);
+        this.cdr.markForCheck();
+    }
+
+    goToPage(page: number) {
+        if (page >= 1 && page <= this.totalPages) {
+            this.currentPage = page;
+            this.paginate();
+        }
+    }
+
+    nextPage() {
+        if (this.currentPage < this.totalPages) {
+            this.currentPage++;
+            this.paginate();
+        }
+    }
+
+    prevPage() {
+        if (this.currentPage > 1) {
+            this.currentPage--;
+            this.paginate();
+        }
     }
 
     updateStatus(jobId: string, applicantId: string, status: string) {
@@ -80,12 +146,16 @@ export class Applications implements OnInit {
                 if (app) app.status = status;
                 this.calculateCounts();
                 this.applyFilters();
+                this.toastService.success(`Status updated to ${status}`);
             },
-            error: (err: any) => console.error('Error updating status:', err)
+            error: (err: any) => {
+                const errorMsg = err.error?.msg || err.message || 'Failed to update application status';
+                this.toastService.error(`Error: ${errorMsg}`);
+            }
         });
     }
 
-    exportToCSV() {
+    /* exportToCSV() {
         const headers = ['Student Name', 'Department', 'Email', 'CGPA', 'Company', 'Role', 'Status', 'Applied At'];
         const csvContent = this.filteredApplications.map(app => [
             app.student?.fullName,
@@ -104,7 +174,7 @@ export class Applications implements OnInit {
         a.href = url;
         a.download = `applications_export_${new Date().getTime()}.csv`;
         a.click();
-    }
+    } */
 
     // TrackBy function for performance optimization
     trackByApplicationId(index: number, app: any): any {

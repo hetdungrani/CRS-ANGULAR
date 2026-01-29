@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ToastService } from '../../services/toast.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -13,12 +15,20 @@ import { AuthService } from '../../services/auth.service';
 })
 export class Register implements OnInit {
   registerForm!: FormGroup;
-
+  isRegistrationDisabled: boolean = false;
+  loading: boolean = true;
   errorMessage: string = '';
 
-  constructor(private fb: FormBuilder, private router: Router, private authService: AuthService) { }
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService,
+    private toastService: ToastService,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
+    this.checkRegistrationStatus();
     this.registerForm = this.fb.group({
       fullName: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
@@ -32,6 +42,23 @@ export class Register implements OnInit {
     }, { validators: this.passwordMatchValidator });
   }
 
+  checkRegistrationStatus(): void {
+    this.loading = true;
+    this.authService.getSettings().pipe(take(1)).subscribe({
+      next: (settings) => {
+        if (settings && !settings.allowRegistration) {
+          this.isRegistrationDisabled = true;
+        }
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
   passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
@@ -43,12 +70,18 @@ export class Register implements OnInit {
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe({
         next: (res) => {
-          alert('Registration Successful! Please login.');
+          this.toastService.success('Registration Successful! Please login.');
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          this.errorMessage = err.error.msg || 'Registration failed. Please try again.';
-          alert(this.errorMessage);
+          if (err.status === 403) {
+            // Highly specific unique message for the forbidden state
+            this.toastService.warning('🚨 Access Closed: Registration is not allowed at this time.');
+            this.errorMessage = 'Registration is not allowed';
+          } else {
+            this.errorMessage = err.error?.msg || 'Registration failed. Please try again.';
+            this.toastService.error(this.errorMessage);
+          }
         }
       });
     } else {

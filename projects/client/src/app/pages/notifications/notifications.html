@@ -68,7 +68,7 @@
 
             <!-- Notifications List -->
             <div class="space-y-3">
-                <div *ngFor="let notification of filteredNotifications"
+                <div *ngFor="let notification of filteredNotifications; trackBy: trackByNotificationId"
                     [class]="getNotificationColor(notification.type)"
                     class="bg-white rounded-lg shadow-sm border-l-4 hover:shadow-md transition-shadow duration-200"
                     [class.opacity-75]="notification.isRead">

@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const SystemSetting = require('../models/SystemSetting');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
@@ -7,6 +8,12 @@ const jwt = require('jsonwebtoken');
 // @access  Public
 exports.register = async (req, res) => {
     try {
+        // Check if registration is allowed
+        const settings = await SystemSetting.findOne();
+        if (settings && !settings.allowRegistration) {
+            return res.status(403).json({ msg: 'Registration is not allowed' });
+        }
+
         const { fullName, email, password, mobile, department, course, cgpa, gender } = req.body;
 
         // Check if user exists

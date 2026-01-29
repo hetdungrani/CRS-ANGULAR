@@ -8,7 +8,26 @@
             <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Student Information</h3>
             <p class="mt-1 max-w-2xl text-sm text-gray-500 dark:text-gray-400">Personal details and application.</p>
         </div>
-
+        <div class="flex space-x-3">
+            <button (click)="goBack()"
+                class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                <svg class="-ml-1 mr-2 h-5 w-5 text-gray-500 dark:text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
+                Back
+            </button>
+            <button (click)="deleteStudent()"
+                class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+                Delete Student
+            </button>
+        </div>
     </div>
     <div class="border-t border-gray-200 dark:border-gray-700">
         <dl>
@@ -40,6 +59,29 @@
                     'N/A' }}</dd>
             </div>
             <div class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Gender</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ student.gender || 'N/A'
+                    }}</dd>
+            </div>
+            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Placement Status</dt>
+                <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
+                    <span [ngClass]="{
+                        'bg-green-100 text-green-800': student.placementStatus === 'placed',
+                        'bg-yellow-100 text-yellow-800': student.placementStatus === 'offered',
+                        'bg-red-100 text-red-800': student.placementStatus === 'unplaced' || !student.placementStatus
+                    }" class="px-2 py-1 rounded-full text-xs font-bold uppercase">
+                        {{ student.placementStatus || 'unplaced' }}
+                    </span>
+                </dd>
+            </div>
+            <div *ngIf="student.placementStatus === 'placed'"
+                class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Placed Company</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ student.placedCompany ||
+                    'N/A' }}</dd>
+            </div>
+            <div class="bg-white dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Skills</dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
                     <span *ngFor="let skill of student.skills"
@@ -48,6 +90,11 @@
                     </span>
                     <span *ngIf="!student.skills || student.skills.length === 0">No skills listed</span>
                 </dd>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Joined Date</dt>
+                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ student.createdAt |
+                    date:'longDate' }}</dd>
             </div>
 
         </dl>

@@ -37,17 +37,15 @@ export class AuthService {
     }
 
     getMe(): Observable<any> {
-        const token = this.getToken();
-        return this.http.get<any>(`${this.apiUrl}/me`, {
-            headers: { 'x-auth-token': token || '' }
-        });
+        return this.http.get<any>(`${this.apiUrl}/me`);
     }
 
     updateProfile(data: any): Observable<any> {
-        const token = this.getToken();
-        return this.http.put<any>(`${this.apiUrl}/profile`, data, {
-            headers: { 'x-auth-token': token || '' }
-        });
+        return this.http.put<any>(`${this.apiUrl}/profile`, data);
+    }
+
+    getSettings(): Observable<any> {
+        return this.http.get<any>(`http://localhost:5000/api/settings`);
     }
 
     isLoggedIn(): boolean {

@@ -55,6 +55,15 @@ const userSchema = new mongoose.Schema({
         enum: ['student', 'admin'],
         default: 'student'
     },
+    placementStatus: {
+        type: String,
+        enum: ['unplaced', 'placed', 'offered'],
+        default: 'unplaced'
+    },
+    placedCompany: {
+        type: String,
+        default: ''
+    },
     createdAt: {
         type: Date,
         default: Date.now
