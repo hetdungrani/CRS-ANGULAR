@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { filter } from 'rxjs/operators';
+import { ThemeService } from '../../services/theme.service';
+import { filter, take } from 'rxjs/operators';
 
 @Component({
     selector: 'app-admin-layout',
@@ -14,16 +15,32 @@ export class AdminLayout implements OnInit {
     admin: any;
     currentTitle = 'Dashboard';
 
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(
+        private authService: AuthService,
+        private themeService: ThemeService,
+        private router: Router
+    ) { }
 
     ngOnInit() {
         this.admin = this.authService.getAdmin();
         this.updateTitle(this.router.url);
+        this.loadSystemTheme();
 
         this.router.events.pipe(
             filter(event => event instanceof NavigationEnd)
         ).subscribe((event: any) => {
             this.updateTitle(event.urlAfterRedirects);
+        });
+    }
+
+    private loadSystemTheme() {
+        this.authService.getSettings().pipe(take(1)).subscribe({
+            next: (settings) => {
+                if (settings && settings.theme) {
+                    this.themeService.setTheme(settings.theme);
+                }
+            },
+            error: (err) => console.error('Failed to load system theme', err)
         });
     }
 
@@ -42,6 +59,7 @@ export class AdminLayout implements OnInit {
 
     logout() {
         this.authService.logout();
+        this.themeService.setTheme('light');
         this.router.navigate(['/login']);
     }
 }

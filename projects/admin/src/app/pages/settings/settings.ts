@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
+import { ThemeService } from '../../services/theme.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -21,7 +22,7 @@ export class Settings implements OnInit {
 
     systemConfig = {
         allowRegistration: true,
-        theme: 'light'
+        theme: 'light' as 'light' | 'dark'
     };
 
     loading = false;
@@ -29,6 +30,7 @@ export class Settings implements OnInit {
     constructor(
         private authService: AuthService,
         private toastService: ToastService,
+        private themeService: ThemeService,
         private router: Router,
         private cdr: ChangeDetectorRef
     ) { }
@@ -37,20 +39,12 @@ export class Settings implements OnInit {
         this.loadSettings();
     }
 
-    applyTheme(theme: string) {
-        if (theme === 'dark') {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
-    }
-
     loadSettings() {
         this.loading = true;
         this.authService.getSettings().pipe(take(1)).subscribe({
             next: (data) => {
                 this.systemConfig = data;
-                this.applyTheme(this.systemConfig.theme);
+                this.themeService.setTheme(this.systemConfig.theme);
                 this.loading = false;
                 this.cdr.markForCheck();
             },
@@ -114,7 +108,7 @@ export class Settings implements OnInit {
             next: (data) => {
                 this.toastService.success('System configuration updated');
                 this.systemConfig = data;
-                this.applyTheme(this.systemConfig.theme);
+                this.themeService.setTheme(this.systemConfig.theme);
                 this.loading = false;
                 this.cdr.markForCheck();
             },
@@ -130,6 +124,7 @@ export class Settings implements OnInit {
     logout() {
         if (confirm('Are you sure you want to logout?')) {
             this.authService.logout();
+            this.themeService.setTheme('light');
             this.router.navigate(['/login']);
         }
     }

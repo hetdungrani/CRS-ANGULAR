@@ -105,11 +105,11 @@
                 <div class="flex items-start space-x-4">
                     <!-- Icon based on type -->
                     <div [ngClass]="{
-                        'bg-blue-100 text-blue-600': n.type === 'job',
-                        'bg-purple-100 text-purple-600': n.type === 'interview',
-                        'bg-orange-100 text-orange-600': n.type === 'exam',
-                        'bg-green-100 text-green-600': n.type === 'result',
-                        'bg-gray-100 text-gray-600': n.type === 'general'
+                        'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400': n.type === 'job',
+                        'bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400': n.type === 'interview',
+                        'bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400': n.type === 'exam',
+                        'bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400': n.type === 'result',
+                        'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300': n.type === 'general'
                     }" class="p-3 rounded-xl flex-shrink-0">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path *ngIf="n.type === 'job'" stroke-linecap="round" stroke-linejoin="round"

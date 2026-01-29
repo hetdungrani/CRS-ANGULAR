@@ -5,6 +5,9 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 
+import { take } from 'rxjs';
+import { ThemeService } from '../../services/theme.service';
+
 @Component({
   selector: 'app-login',
   standalone: true,

@@ -48,6 +48,10 @@ export class AuthService {
         return this.http.get<any>(`${this.apiUrl}/settings`);
     }
 
+    getPublicSettings(): Observable<any> {
+        return this.http.get<any>('http://localhost:5000/api/settings');
+    }
+
     updateSettings(data: any): Observable<any> {
         return this.http.put<any>(`${this.apiUrl}/settings`, data);
     }

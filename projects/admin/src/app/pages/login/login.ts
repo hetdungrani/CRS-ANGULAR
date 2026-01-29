@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { ThemeService } from '../../services/theme.service';
+import { take } from 'rxjs';
 
 @Component({
     selector: 'app-login',
@@ -11,7 +13,7 @@ import { AuthService } from '../../services/auth.service';
     templateUrl: './login.html',
     styleUrls: ['./login.css']
 })
-export class Login {
+export class Login implements OnInit {
     credentials = {
         email: '',
         password: ''
@@ -19,7 +21,25 @@ export class Login {
     errorMessage = '';
     isLoading = false;
 
-    constructor(private authService: AuthService, private router: Router) { }
+    constructor(
+        private authService: AuthService,
+        private themeService: ThemeService,
+        private router: Router
+    ) { }
+
+    ngOnInit() {
+        this.loadTheme();
+    }
+
+    loadTheme() {
+        this.authService.getPublicSettings().pipe(take(1)).subscribe({
+            next: (settings) => {
+                if (settings && settings.theme) {
+                    this.themeService.setTheme(settings.theme);
+                }
+            }
+        });
+    }
 
     login() {
         this.isLoading = true;
