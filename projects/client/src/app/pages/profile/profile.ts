@@ -29,6 +29,8 @@ export class Profile implements OnInit {
     dateOfBirth: '',
     address: '',
     cgpa: '',
+    course: '',
+    gender: '',
     skills: [] as string[]
   };
 
@@ -53,17 +55,23 @@ export class Profile implements OnInit {
   }
 
   loadUserProfile(): void {
-    // Fetch data from logged-in user (from localStorage or API)
-    this.profileData.fullName = this.user.fullName || '';
-    this.profileData.email = this.user.email || '';
+    if (!this.user) return;
 
-    // These fields would typically come from a backend API
-    // For now, we'll check if they exist in localStorage or set as empty
-    const storedProfile = localStorage.getItem('userProfile');
-    if (storedProfile) {
-      const profile = JSON.parse(storedProfile);
-      this.profileData = { ...this.profileData, ...profile };
-    }
+    // Populate profile data directly from the user data stored during login/registration
+    this.profileData = {
+      fullName: this.user.fullName || '',
+      email: this.user.email || '',
+      phone: this.user.mobile || '',
+      branch: this.user.department || '',
+      year: this.user.year || (this.user.passingYear ? `${this.user.passingYear}` : ''),
+      cgpa: this.user.cgpa !== undefined ? `${this.user.cgpa}` : '',
+      enrollmentNumber: this.user.enrollmentNumber || '',
+      dateOfBirth: this.user.dateOfBirth || '',
+      address: this.user.address || '',
+      course: this.user.course || '',
+      gender: this.user.gender || '',
+      skills: this.user.skills || []
+    };
   }
 
   get profileCompletionPercentage(): number {
@@ -123,21 +131,49 @@ export class Profile implements OnInit {
 
   updateProfile(): void {
     // Process skills if it's a string
-    if (typeof this.editData.skills === 'string') {
-      this.editData.skills = this.editData.skills
+    let processedSkills = this.editData.skills;
+    if (typeof processedSkills === 'string') {
+      processedSkills = processedSkills
         .split(',')
         .map((s: string) => s.trim())
         .filter((s: string) => s !== '');
     }
 
-    // Update profile data
-    this.profileData = { ...this.editData };
+    // Map frontend fields to backend fields
+    const updateData = {
+      fullName: this.editData.fullName,
+      email: this.editData.email,
+      mobile: this.editData.phone,
+      department: this.editData.branch,
+      year: this.editData.year,
+      cgpa: parseFloat(this.editData.cgpa),
+      course: this.editData.course,
+      gender: this.editData.gender,
+      enrollmentNumber: this.editData.enrollmentNumber,
+      dateOfBirth: this.editData.dateOfBirth,
+      address: this.editData.address,
+      skills: processedSkills
+    };
 
-    // Save to localStorage (in real app, send to backend)
-    localStorage.setItem('userProfile', JSON.stringify(this.profileData));
+    this.authService.updateProfile(updateData).subscribe({
+      next: (updatedUser) => {
+        // Update profile data in view
+        this.profileData = { ...this.editData, skills: processedSkills };
 
-    this.isEditMode = false;
-    this.toastService.success('Profile updated successfully!');
+        // Update user in localStorage
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const newUser = { ...user, ...updatedUser };
+        this.authService.setUser(newUser);
+        this.user = newUser;
+
+        this.isEditMode = false;
+        this.toastService.success('Profile updated in database successfully!');
+      },
+      error: (err) => {
+        console.error('Update failed:', err);
+        this.toastService.error(err.error?.msg || 'Failed to update profile');
+      }
+    });
   }
 
   getInitials(): string {

@@ -1,7 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { NotificationService } from '../../services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -10,111 +12,48 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './header.html',
   styleUrl: './header.css'
 })
-export class Header implements OnInit {
-  @Input() activeRoute: string = 'dashboard';
+export class Header implements OnInit, OnDestroy {
+  @Input() activeRoute: string = '';
 
   user: any;
-  isProfileDropdownOpen = false;
+  unreadCount: number = 0;
+  isProfileOpen = false;
   isMobileMenuOpen = false;
-  isNotificationDropdownOpen = false;
+  private sub: Subscription | null = null;
 
-  // Dummy notifications
-  notifications = [
-    {
-      id: 1,
-      type: 'status_update',
-      title: 'Application Status Updated',
-      message: 'Your application for Software Engineer at Google has been Shortlisted',
-      isRead: false,
-      icon: '🎯'
-    },
-    {
-      id: 2,
-      type: 'new_job',
-      title: 'New Job Posted',
-      message: 'Amazon is hiring for SDE-1 role matching your profile',
-      isRead: false,
-      icon: '💼'
-    },
-    {
-      id: 3,
-      type: 'interview',
-      title: 'Interview Scheduled',
-      message: 'Interview scheduled for Software Engineer Intern at Microsoft',
-      isRead: false,
-      icon: '📅'
-    },
-    {
-      id: 4,
-      type: 'action',
-      title: 'Application Submitted',
-      message: 'You have successfully applied for Data Analyst at Infosys',
-      isRead: true,
-      icon: '✅'
-    },
-    {
-      id: 5,
-      type: 'status_update',
-      title: 'Application Rejected',
-      message: 'Your application for Backend Developer at TCS was not selected',
-      isRead: true,
-      icon: '❌'
-    }
-  ];
-
-  constructor(private authService: AuthService, private router: Router) { }
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit(): void {
     const userStr = localStorage.getItem('user');
-    if (userStr) {
-      this.user = JSON.parse(userStr);
-    }
+    if (userStr) this.user = JSON.parse(userStr);
+
+    // Subscribe to shared notifications state to keep the counter updated instantly
+    this.sub = this.notificationService.notifications$.subscribe(data => {
+      const readIds = JSON.parse(localStorage.getItem('readNotifications') || '[]');
+      this.unreadCount = data.filter(n => !readIds.includes(n._id)).length;
+    });
+
+    // Ensure we have data on load
+    this.notificationService.refreshState();
   }
 
-  get unreadCount(): number {
-    return this.notifications.filter(n => !n.isRead).length;
+  ngOnDestroy(): void {
+    if (this.sub) this.sub.unsubscribe();
   }
 
-  toggleProfileDropdown(): void {
-    this.isProfileDropdownOpen = !this.isProfileDropdownOpen;
-    if (this.isProfileDropdownOpen) {
-      this.isNotificationDropdownOpen = false;
-    }
+  toggleProfile() {
+    this.isProfileOpen = !this.isProfileOpen;
   }
 
-  toggleNotificationDropdown(): void {
-    this.isNotificationDropdownOpen = !this.isNotificationDropdownOpen;
-    if (this.isNotificationDropdownOpen) {
-      this.isProfileDropdownOpen = false;
-    }
-  }
-
-  toggleMobileMenu(): void {
+  toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
-  markAsRead(notificationId: number): void {
-    const notification = this.notifications.find(n => n.id === notificationId);
-    if (notification) {
-      notification.isRead = true;
-    }
-  }
-
-  markAllAsRead(): void {
-    this.notifications.forEach(n => n.isRead = true);
-  }
-
-  getNotificationColor(type: string): string {
-    const colors: { [key: string]: string } = {
-      'status_update': 'bg-blue-50 border-blue-200',
-      'new_job': 'bg-green-50 border-green-200',
-      'interview': 'bg-purple-50 border-purple-200',
-      'action': 'bg-gray-50 border-gray-200'
-    };
-    return colors[type] || 'bg-gray-50 border-gray-200';
-  }
-
-  logout(): void {
+  logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
   }

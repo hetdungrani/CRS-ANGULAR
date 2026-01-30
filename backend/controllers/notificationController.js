@@ -1,77 +1,84 @@
 const Notification = require('../models/Notification');
+const User = require('../models/User');
 
-// @desc    Create/Send notification
-// @route   POST /api/admin/notifications
-// @access  Private/Admin
+/**
+ * @desc    Create a new notification (Admin only)
+ * @route   POST /api/notifications
+ */
 exports.createNotification = async (req, res) => {
     try {
         const { title, message, type, targetGroup } = req.body;
         
-        if (!title || !message) {
-            return res.status(400).json({ 
-                msg: 'Title and message are required',
-                received: { title: !!title, message: !!message } 
-            });
-        }
-
         const notification = new Notification({
             title,
             message,
             type: type || 'general',
-            targetGroup: targetGroup || 'all',
-            sender: req.admin?.username || 'Admin'
+            targetGroup: targetGroup || 'all'
         });
 
-        const savedNotification = await notification.save();
-        res.status(201).json(savedNotification);
+        await notification.save();
+        res.status(201).json(notification);
     } catch (err) {
-        res.status(500).json({ msg: 'Server Error', error: err.message });
+        res.status(500).json({ msg: 'Failed to create notification' });
     }
 };
 
-// @desc    Get all notifications (Admin view)
-// @route   GET /api/admin/notifications
-// @access  Private/Admin
+/**
+ * @desc    Get all notifications (Admin view)
+ * @route   GET /api/notifications/all
+ */
 exports.getNotifications = async (req, res) => {
     try {
         const notifications = await Notification.find().sort({ createdAt: -1 });
         res.json(notifications);
     } catch (err) {
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Failed to fetch notifications' });
     }
 };
 
-// @desc    Delete notification
-// @route   DELETE /api/admin/notifications/:id
-// @access  Private/Admin
-exports.deleteNotification = async (req, res) => {
-    try {
-        const notification = await Notification.findByIdAndDelete(req.params.id);
-        
-        if (!notification) {
-            return res.status(404).json({ msg: 'Notification not found' });
-        }
-        
-        res.json({ msg: 'Notification removed' });
-    } catch (err) {
-        res.status(500).send('Server Error');
-    }
-};
-
-// @desc    Get notifications for a specific student (Student view)
-// @route   GET /api/notifications/my
-// @access  Private
+/**
+ * @desc    Get notifications for the logged-in student
+ * @route   GET /api/notifications/my
+ */
 exports.getStudentNotifications = async (req, res) => {
     try {
-        // This would be called from the student/client app
-        // We'll search for 'all' or their specific department
-        const { department } = req.user; // Assuming auth middleware attaches user to req
+        const user = await User.findById(req.user.id);
+        if (!user) {
+            return res.status(404).json({ msg: 'User not found' });
+        }
+
+        // Mapping student department codes to full names used in notifications
+        const deptMap = {
+            'CS': 'Computer Science',
+            'IT': 'Information Technology',
+            'ECE': 'Electronics',
+            'ME': 'Mechanical',
+            'EE': 'Electrical',
+            'CE': 'Civil'
+        };
+
+        const fullDeptName = deptMap[user.department] || user.department;
+
+        // Fetch notifications targeted at 'all' or the student's department
         const notifications = await Notification.find({
-            targetGroup: { $in: ['all', department] }
+            targetGroup: { $in: ['all', user.department, fullDeptName] }
         }).sort({ createdAt: -1 });
         
         res.json(notifications);
     } catch (err) {
-        res.status(500).send('Server Error');
+        res.status(500).json({ msg: 'Server Error' });
+    }
+};
+
+/**
+ * @desc    Delete a notification
+ * @route   DELETE /api/notifications/:id
+ */
+exports.deleteNotification = async (req, res) => {
+    try {
+        await Notification.findByIdAndDelete(req.params.id);
+        res.json({ msg: 'Notification deleted' });
+    } catch (err) {
+        res.status(500).json({ msg: 'Failed to delete' });
     }
 };

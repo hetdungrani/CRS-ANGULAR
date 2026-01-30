@@ -1,5 +1,4 @@
 <div class="min-h-screen flex flex-col bg-gray-50 font-sans">
-
     <app-header [activeRoute]="'profile'"></app-header>
 
     <!-- Main Content Area -->
@@ -27,14 +26,6 @@
                     <button (click)="cancelEdit()"
                         class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Cancel
-                    </button>
-                    <button (click)="updateProfile()"
-                        class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
-                            </path>
-                        </svg>
-                        Update Profile
                     </button>
                 </div>
             </div>
@@ -116,8 +107,9 @@
                 </div>
             </div>
 
-            <!-- Personal Information Section -->
+            <!-- Profile Forms -->
             <form #profileForm="ngForm" (ngSubmit)="updateProfile()">
+                <!-- Personal Information Section -->
                 <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
                     <div class="px-6 py-4 border-b border-gray-200">
                         <h3 class="text-lg font-semibold text-gray-900">Personal Information</h3>
@@ -163,34 +155,46 @@
                                     <div *ngIf="phone.invalid && phone.touched" class="text-red-500 text-xs mt-1">Valid
                                         10-digit number is required</div>
                                 </div>
-                                <p *ngIf="!isEditMode && profileData.phone" class="text-sm text-gray-900 py-2">{{
-                                    profileData.phone }}</p>
-                                <p *ngIf="!isEditMode && !profileData.phone" class="text-sm text-gray-400 italic py-2">
-                                    Not provided</p>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.phone || 'Not
+                                    provided' }}</p>
                             </div>
 
                             <!-- Date of Birth -->
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Date of Birth</label>
-                                <input *ngIf="isEditMode" [(ngModel)]="editData.dateOfBirth" name="dateOfBirth"
-                                    type="date"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                <p *ngIf="!isEditMode && profileData.dateOfBirth" class="text-sm text-gray-900 py-2">{{
-                                    profileData.dateOfBirth }}</p>
-                                <p *ngIf="!isEditMode && !profileData.dateOfBirth"
-                                    class="text-sm text-gray-400 italic py-2">Not provided</p>
+                                <div *ngIf="isEditMode">
+                                    <input [(ngModel)]="editData.dateOfBirth" name="dateOfBirth" type="date"
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                </div>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.dateOfBirth ||
+                                    'Not provided' }}</p>
+                            </div>
+
+                            <!-- Gender -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Gender</label>
+                                <div *ngIf="isEditMode">
+                                    <select [(ngModel)]="editData.gender" name="gender"
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.gender || 'Not
+                                    provided' }}</p>
                             </div>
 
                             <!-- Address -->
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Address</label>
-                                <textarea *ngIf="isEditMode" [(ngModel)]="editData.address" name="address" rows="1"
-                                    placeholder="Enter your complete address"
-                                    class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
-                                <p *ngIf="!isEditMode && profileData.address" class="text-sm text-gray-900 py-2">{{
-                                    profileData.address }}</p>
-                                <p *ngIf="!isEditMode && !profileData.address"
-                                    class="text-sm text-gray-400 italic py-2">Not provided</p>
+                                <div *ngIf="isEditMode">
+                                    <textarea [(ngModel)]="editData.address" name="address" rows="1"
+                                        placeholder="Enter your complete address"
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                                </div>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.address || 'Not
+                                    provided' }}</p>
                             </div>
                         </div>
                     </div>
@@ -219,10 +223,23 @@
                                     <div *ngIf="branch.invalid && branch.touched" class="text-red-500 text-xs mt-1">
                                         Branch is required</div>
                                 </div>
-                                <p *ngIf="!isEditMode && profileData.branch" class="text-sm text-gray-900 py-2">{{
-                                    profileData.branch }}</p>
-                                <p *ngIf="!isEditMode && !profileData.branch" class="text-sm text-gray-400 italic py-2">
-                                    Not provided</p>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.branch || 'Not
+                                    provided' }}</p>
+                            </div>
+
+                            <!-- Course -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Course</label>
+                                <div *ngIf="isEditMode">
+                                    <select [(ngModel)]="editData.course" name="course"
+                                        class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                                        <option value="BTech">B.Tech</option>
+                                        <option value="MTech">M.Tech</option>
+                                        <option value="Bsc">B.Sc</option>
+                                    </select>
+                                </div>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.course || 'Not
+                                    provided' }}</p>
                             </div>
 
                             <!-- Year -->
@@ -241,10 +258,8 @@
                                     <div *ngIf="year.invalid && year.touched" class="text-red-500 text-xs mt-1">Year is
                                         required</div>
                                 </div>
-                                <p *ngIf="!isEditMode && profileData.year" class="text-sm text-gray-900 py-2">{{
-                                    profileData.year }}</p>
-                                <p *ngIf="!isEditMode && !profileData.year" class="text-sm text-gray-400 italic py-2">
-                                    Not provided</p>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.year || 'Not
+                                    provided' }}</p>
                             </div>
 
                             <!-- Enrollment Number -->
@@ -260,10 +275,8 @@
                                     <div *ngIf="enrollmentNumber.invalid && enrollmentNumber.touched"
                                         class="text-red-500 text-xs mt-1">Enrollment number is required</div>
                                 </div>
-                                <p *ngIf="!isEditMode && profileData.enrollmentNumber"
-                                    class="text-sm text-gray-900 py-2">{{ profileData.enrollmentNumber }}</p>
-                                <p *ngIf="!isEditMode && !profileData.enrollmentNumber"
-                                    class="text-sm text-gray-400 italic py-2">Not provided</p>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{
+                                    profileData.enrollmentNumber || 'Not provided' }}</p>
                             </div>
 
                             <!-- CGPA -->
@@ -277,10 +290,8 @@
                                     <div *ngIf="cgpa.invalid && cgpa.touched" class="text-red-500 text-xs mt-1">Valid
                                         CGPA (0-10) is required</div>
                                 </div>
-                                <p *ngIf="!isEditMode && profileData.cgpa" class="text-sm text-gray-900 py-2">{{
-                                    profileData.cgpa }}</p>
-                                <p *ngIf="!isEditMode && !profileData.cgpa" class="text-sm text-gray-400 italic py-2">
-                                    Not provided</p>
+                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 py-2">{{ profileData.cgpa || 'Not
+                                    provided' }}</p>
                             </div>
 
                             <!-- Skills -->
@@ -320,7 +331,5 @@
 
         </div>
     </main>
-
     <app-footer></app-footer>
-
 </div>

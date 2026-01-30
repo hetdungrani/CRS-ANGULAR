@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { RouterModule, ActivatedRoute } from '@angular/router';
+import { NotificationService } from '../../services/notification.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
-import { NotificationService } from '../../services/notification.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-notifications',
@@ -13,119 +13,95 @@ import { NotificationService } from '../../services/notification.service';
   templateUrl: './notifications.html',
   styleUrl: './notifications.css'
 })
-export class Notifications implements OnInit {
-  user: any;
-  selectedFilter: string = 'all';
-  allNotifications: any[] = [];
+export class Notifications implements OnInit, OnDestroy {
+  notifications: any[] = [];
   loading = false;
+  selectedFilter = 'all';
+  private sub: Subscription | null = null;
 
   constructor(
-    private authService: AuthService,
-    private router: Router,
-    private route: ActivatedRoute,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    const userStr = localStorage.getItem('user');
-    if (userStr) {
-      this.user = JSON.parse(userStr);
-      this.loadNotifications();
-    } else {
-      this.router.navigate(['/login']);
+    // 1. Process data from the route resolver if available
+    const resolverData = this.route.snapshot.data['notifications'];
+    if (resolverData) {
+      this.processRawData(resolverData);
     }
+
+    // 2. Subscribe to the service state for instant updates
+    this.sub = this.notificationService.notifications$.subscribe(data => {
+      this.processRawData(data);
+    });
+
+    // 3. Force a refresh to ensure absolute latest data on page open
+    this.notificationService.refreshState();
   }
 
-  loadNotifications(): void {
-    const data = this.route.snapshot.data['notifications'];
-    if (data) {
-      this.allNotifications = data.map((n: any) => ({
-        ...n,
-        isRead: false,
-        icon: this.getIconForType(n.type),
-        timestamp: this.formatTime(n.createdAt)
-      }));
-    }
+  ngOnDestroy(): void {
+    if (this.sub) this.sub.unsubscribe();
   }
 
-  getIconForType(type: string): string {
-    const icons: { [key: string]: string } = {
-      'job': '💼',
-      'interview': '🎯',
-      'exam': '📅',
-      'result': '🎉',
-      'general': '📢'
-    };
-    return icons[type] || '🔔';
-  }
-
-  formatTime(dateStr: string): string {
-    const date = new Date(dateStr);
-    const now = new Date();
-    const diffInHrs = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-
-    if (diffInHrs < 1) return 'Just now';
-    if (diffInHrs < 24) return `${diffInHrs} hours ago`;
-    return date.toLocaleDateString();
+  private processRawData(data: any[]): void {
+    this.notifications = data.map(n => ({
+      ...n,
+      isRead: this.getReadStatus(n._id),
+      icon: this.getIcon(n.type),
+      time: this.formatDate(n.createdAt)
+    }));
   }
 
   get filteredNotifications() {
-    if (this.selectedFilter === 'all') {
-      return this.allNotifications;
-    } else if (this.selectedFilter === 'unread') {
-      return this.allNotifications.filter(n => !n.isRead);
-    } else {
-      return this.allNotifications.filter(n => n.type === this.selectedFilter);
-    }
+    if (this.selectedFilter === 'all') return this.notifications;
+    if (this.selectedFilter === 'unread') return this.notifications.filter(n => !n.isRead);
+    return this.notifications.filter(n => n.type === this.selectedFilter);
   }
 
-  get unreadCount(): number {
-    return this.allNotifications.filter(n => !n.isRead).length;
+  get unreadCount() {
+    return this.notifications.filter(n => !n.isRead).length;
   }
 
-  setFilter(filter: string): void {
+  setFilter(filter: string) {
     this.selectedFilter = filter;
   }
 
-  markAsRead(notificationId: number): void {
-    const notification = this.allNotifications.find(n => n.id === notificationId);
-    if (notification) {
-      notification.isRead = true;
+  markAsRead(id: string) {
+    const readIds = JSON.parse(localStorage.getItem('readNotifications') || '[]');
+    if (!readIds.includes(id)) {
+      readIds.push(id);
+      localStorage.setItem('readNotifications', JSON.stringify(readIds));
+      // Trigger a re-process of local state
+      this.processRawData(this.notifications);
     }
   }
 
-  markAllAsRead(): void {
-    this.allNotifications.forEach(n => n.isRead = true);
+  markAllAsRead() {
+    const readIds = JSON.parse(localStorage.getItem('readNotifications') || '[]');
+    this.notifications.forEach(n => {
+      if (!readIds.includes(n._id)) readIds.push(n._id);
+    });
+    localStorage.setItem('readNotifications', JSON.stringify(readIds));
+    this.processRawData(this.notifications);
   }
 
-  deleteNotification(notificationId: number): void {
-    const index = this.allNotifications.findIndex(n => n.id === notificationId);
-    if (index > -1) {
-      this.allNotifications.splice(index, 1);
-    }
+  private getReadStatus(id: string): boolean {
+    const readIds = JSON.parse(localStorage.getItem('readNotifications') || '[]');
+    return readIds.includes(id);
   }
 
-  getNotificationColor(type: string): string {
-    const colors: { [key: string]: string } = {
-      'status_update': 'bg-blue-50 border-blue-200',
-      'new_job': 'bg-green-50 border-green-200',
-      'interview': 'bg-purple-50 border-purple-200',
-      'action': 'bg-gray-50 border-gray-200'
-    };
-    return colors[type] || 'bg-gray-50 border-gray-200';
+  private getIcon(type: string): string {
+    const icons: any = { job: '💼', interview: '🎯', exam: '📅', result: '🎉' };
+    return icons[type] || '🔔';
   }
 
-  getTypeLabel(type: string): string {
-    const labels: { [key: string]: string } = {
-      'status_update': 'Status Update',
-      'new_job': 'New Job',
-      'interview': 'Interview',
-      'action': 'Action'
-    };
-    return labels[type] || 'Notification';
+  private formatDate(dateStr: string): string {
+    const date = new Date(dateStr);
+    return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 
-  trackByNotificationId(index: number, notification: any): any {
-    return notification._id || notification.id;
+  trackById(index: number, item: any) {
+    return item._id;
   }
 }

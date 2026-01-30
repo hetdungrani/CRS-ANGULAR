@@ -93,7 +93,20 @@ exports.login = async (req, res) => {
             { expiresIn: 360000 },
             (err, token) => {
                 if (err) throw err;
-                res.json({ token, user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role } });
+                res.json({
+                    token,
+                    user: {
+                        id: user.id,
+                        fullName: user.fullName,
+                        email: user.email,
+                        role: user.role,
+                        mobile: user.mobile,
+                        department: user.department,
+                        course: user.course,
+                        cgpa: user.cgpa,
+                        gender: user.gender
+                    }
+                });
             }
         );
     } catch (err) {
@@ -120,7 +133,7 @@ exports.getMe = async (req, res) => {
 // @access  Private
 exports.updateProfile = async (req, res) => {
     try {
-        const { fullName, mobile, department, course, cgpa, gender } = req.body;
+    const { fullName, email, mobile, department, course, cgpa, gender, enrollmentNumber, dateOfBirth, address, year, skills } = req.body;
 
         // Build user object
         const profileFields = {};
@@ -128,8 +141,22 @@ exports.updateProfile = async (req, res) => {
         if (mobile) profileFields.mobile = mobile;
         if (department) profileFields.department = department;
         if (course) profileFields.course = course;
-        if (cgpa) profileFields.cgpa = cgpa;
+        if (cgpa !== undefined) profileFields.cgpa = cgpa;
         if (gender) profileFields.gender = gender;
+        if (enrollmentNumber) profileFields.enrollmentNumber = enrollmentNumber;
+        if (dateOfBirth) profileFields.dateOfBirth = dateOfBirth;
+        if (address) profileFields.address = address;
+        if (year) profileFields.year = year;
+        if (skills) profileFields.skills = skills;
+
+        // Handle email update separately due to uniqueness
+        if (email) {
+            const existingUser = await User.findOne({ email });
+            if (existingUser && existingUser.id !== req.user.id) {
+                return res.status(400).json({ msg: 'Email already in use' });
+            }
+            profileFields.email = email;
+        }
 
         let user = await User.findById(req.user.id);
         if (!user) return res.status(404).json({ msg: 'User not found' });

@@ -1,149 +1,76 @@
-<div class="min-h-screen flex flex-col bg-gray-50 font-sans">
+<div class="min-h-screen flex flex-col bg-slate-50 font-sans">
+    <app-header activeRoute="notifications"></app-header>
 
-    <app-header [activeRoute]="'notifications'"></app-header>
+    <main class="flex-grow pt-24 pb-12">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Main Content Area -->
-    <main class="flex-grow pt-16">
-        <div class="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-
-            <!-- Page Header -->
-            <div class="mb-8">
-                <h1 class="text-3xl font-bold text-gray-900">Notifications</h1>
-                <p class="mt-2 text-sm text-gray-600">Stay updated with your job applications and new opportunities</p>
-            </div>
-
-            <!-- Filter Tabs and Actions -->
-            <div class="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                        <!-- Filter Tabs -->
-                        <div class="flex flex-wrap gap-2">
-                            <button (click)="setFilter('all')" [class.bg-indigo-600]="selectedFilter === 'all'"
-                                [class.text-white]="selectedFilter === 'all'"
-                                [class.bg-gray-100]="selectedFilter !== 'all'"
-                                [class.text-gray-700]="selectedFilter !== 'all'"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150">
-                                All ({{ allNotifications.length }})
-                            </button>
-                            <button (click)="setFilter('unread')" [class.bg-indigo-600]="selectedFilter === 'unread'"
-                                [class.text-white]="selectedFilter === 'unread'"
-                                [class.bg-gray-100]="selectedFilter !== 'unread'"
-                                [class.text-gray-700]="selectedFilter !== 'unread'"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150">
-                                Unread ({{ unreadCount }})
-                            </button>
-                            <button (click)="setFilter('status_update')"
-                                [class.bg-indigo-600]="selectedFilter === 'status_update'"
-                                [class.text-white]="selectedFilter === 'status_update'"
-                                [class.bg-gray-100]="selectedFilter !== 'status_update'"
-                                [class.text-gray-700]="selectedFilter !== 'status_update'"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150">
-                                Status Updates
-                            </button>
-                            <button (click)="setFilter('new_job')" [class.bg-indigo-600]="selectedFilter === 'new_job'"
-                                [class.text-white]="selectedFilter === 'new_job'"
-                                [class.bg-gray-100]="selectedFilter !== 'new_job'"
-                                [class.text-gray-700]="selectedFilter !== 'new_job'"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150">
-                                New Jobs
-                            </button>
-                            <button (click)="setFilter('interview')"
-                                [class.bg-indigo-600]="selectedFilter === 'interview'"
-                                [class.text-white]="selectedFilter === 'interview'"
-                                [class.bg-gray-100]="selectedFilter !== 'interview'"
-                                [class.text-gray-700]="selectedFilter !== 'interview'"
-                                class="px-4 py-2 rounded-md text-sm font-medium transition-colors duration-150">
-                                Interviews
-                            </button>
-                        </div>
-
-                        <!-- Mark All as Read -->
-                        <button (click)="markAllAsRead()" *ngIf="unreadCount > 0"
-                            class="px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-800 transition-colors duration-150">
-                            Mark all as read
-                        </button>
-                    </div>
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-extrabold text-slate-900">Notifications</h1>
+                    <p class="text-slate-500 mt-1">Updates on your recruitment process</p>
                 </div>
+                <button *ngIf="unreadCount > 0" (click)="markAllAsRead()"
+                    class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors">
+                    Mark all as read
+                </button>
             </div>
 
-            <!-- Notifications List -->
-            <div class="space-y-3">
-                <div *ngFor="let notification of filteredNotifications; trackBy: trackByNotificationId"
-                    [class]="getNotificationColor(notification.type)"
-                    class="bg-white rounded-lg shadow-sm border-l-4 hover:shadow-md transition-shadow duration-200"
-                    [class.opacity-75]="notification.isRead">
-                    <div class="p-6">
-                        <div class="flex items-start justify-between">
-                            <!-- Notification Content -->
-                            <div class="flex items-start space-x-4 flex-1">
-                                <!-- Icon -->
-                                <div class="flex-shrink-0">
-                                    <span class="text-3xl">{{ notification.icon }}</span>
-                                </div>
+            <!-- Filter Navbar -->
+            <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-none">
+                <button (click)="setFilter('all')"
+                    [class]="selectedFilter === 'all' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border-slate-200'"
+                    class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
+                    All
+                </button>
+                <button (click)="setFilter('unread')"
+                    [class]="selectedFilter === 'unread' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border-slate-200'"
+                    class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
+                    Unread ({{unreadCount}})
+                </button>
+                <button (click)="setFilter('job')"
+                    [class]="selectedFilter === 'job' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border-slate-200'"
+                    class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
+                    Jobs
+                </button>
+            </div>
 
-                                <!-- Details -->
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center space-x-2 mb-1">
-                                        <h3 class="text-base font-semibold text-gray-900">{{ notification.title }}</h3>
-                                        <span *ngIf="!notification.isRead"
-                                            class="h-2 w-2 rounded-full bg-indigo-600"></span>
-                                    </div>
-                                    <p class="text-sm text-gray-600 mb-2">{{ notification.message }}</p>
-                                    <div class="flex items-center space-x-4 text-xs text-gray-500">
-                                        <span class="flex items-center">
-                                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                            </svg>
-                                            {{ notification.timestamp }}
-                                        </span>
-                                        <span class="px-2 py-1 rounded-full bg-gray-100 text-gray-700">{{
-                                            getTypeLabel(notification.type) }}</span>
-                                    </div>
-                                </div>
-                            </div>
+            <!-- Notification List -->
+            <div class="space-y-4">
+                <div *ngFor="let n of filteredNotifications; trackBy: trackById" (click)="markAsRead(n._id)"
+                    [class.opacity-60]="n.isRead"
+                    class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer relative group">
 
-                            <!-- Actions -->
-                            <div class="flex items-center space-x-2 ml-4">
-                                <button *ngIf="!notification.isRead" (click)="markAsRead(notification.id)"
-                                    class="p-2 text-gray-400 hover:text-indigo-600 transition-colors duration-150"
-                                    title="Mark as read">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M5 13l4 4L19 7"></path>
-                                    </svg>
-                                </button>
-                                <button (click)="deleteNotification(notification.id)"
-                                    class="p-2 text-gray-400 hover:text-red-600 transition-colors duration-150"
-                                    title="Delete">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                        </path>
-                                    </svg>
-                                </button>
+                    <div class="flex gap-4">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-2xl flex-shrink-0">
+                            {{ n.icon }}
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex items-center justify-between mb-1">
+                                <h3 class="font-bold text-slate-900">{{ n.title }}</h3>
+                                <span class="text-xs font-medium text-slate-400">{{ n.time }}</span>
                             </div>
+                            <p class="text-slate-600 text-sm leading-relaxed">{{ n.message }}</p>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- Empty State -->
-            <div *ngIf="filteredNotifications.length === 0"
-                class="text-center py-12 bg-white rounded-lg shadow-sm border border-gray-200">
-                <svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-                    </path>
-                </svg>
-                <h3 class="mt-4 text-lg font-medium text-gray-900">No notifications</h3>
-                <p class="mt-2 text-sm text-gray-500">You're all caught up! Check back later for updates.</p>
+                    <!-- Unread Indicator -->
+                    <div *ngIf="!n.isRead"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-indigo-600 shadow-lg shadow-indigo-200">
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div *ngIf="filteredNotifications.length === 0"
+                    class="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
+                    <div class="text-4xl mb-4 text-slate-300">📭</div>
+                    <h3 class="font-bold text-slate-900">No notifications found</h3>
+                    <p class="text-slate-500 text-sm">You are all caught up!</p>
+                </div>
             </div>
 
         </div>
     </main>
 
     <app-footer></app-footer>
-
 </div>

@@ -1,202 +1,77 @@
-<header class="bg-white shadow-md fixed w-full z-10">
+<header class="bg-white/80 backdrop-blur-md border-b border-slate-200 fixed w-full z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-            <div class="flex">
-                <div class="flex-shrink-0 flex items-center cursor-pointer" routerLink="/dashboard">
-                    <span class="text-2xl font-bold text-indigo-600 tracking-tight">CRS</span>
-                </div>
-                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-                    <a routerLink="/dashboard" [class.border-indigo-500]="activeRoute === 'dashboard'"
-                        [class.text-gray-900]="activeRoute === 'dashboard'"
-                        [class.border-transparent]="activeRoute !== 'dashboard'"
-                        [class.text-gray-500]="activeRoute !== 'dashboard'"
-                        class="hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Dashboard</a>
-                    <a routerLink="/jobs" [class.border-indigo-500]="activeRoute === 'jobs'"
-                        [class.text-gray-900]="activeRoute === 'jobs'"
-                        [class.border-transparent]="activeRoute !== 'jobs'"
-                        [class.text-gray-500]="activeRoute !== 'jobs'"
-                        class="hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Jobs</a>
-                    <a routerLink="/applied-jobs" [class.border-indigo-500]="activeRoute === 'applied-jobs'"
-                        [class.text-gray-900]="activeRoute === 'applied-jobs'"
-                        [class.border-transparent]="activeRoute !== 'applied-jobs'"
-                        [class.text-gray-500]="activeRoute !== 'applied-jobs'"
-                        class="hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Applied
-                        Jobs</a>
-                    <a routerLink="/notifications" [class.border-indigo-500]="activeRoute === 'notifications'"
-                        [class.text-gray-900]="activeRoute === 'notifications'"
-                        [class.border-transparent]="activeRoute !== 'notifications'"
-                        [class.text-gray-500]="activeRoute !== 'notifications'"
-                        class="hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Notifications</a>
-                    <a routerLink="/statistics" [class.border-indigo-500]="activeRoute === 'statistics'"
-                        [class.text-gray-900]="activeRoute === 'statistics'"
-                        [class.border-transparent]="activeRoute !== 'statistics'"
-                        [class.text-gray-500]="activeRoute !== 'statistics'"
-                        class="hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">Statistics</a>
-                </div>
+        <div class="flex justify-between h-16 items-center">
+
+            <!-- Logo -->
+            <div class="flex items-center cursor-pointer" routerLink="/dashboard">
+                <span class="text-2xl font-black text-indigo-600 tracking-tighter">CRS</span>
             </div>
 
-            <!-- Right Side: Notifications & User Menu -->
-            <div class="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex items-center space-x-1">
+                <a routerLink="/dashboard"
+                    [class]="activeRoute === 'dashboard' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:bg-slate-50'"
+                    class="px-4 py-2 rounded-xl text-sm font-bold transition-all">Dashboard</a>
 
-                <!-- Notification Bell -->
+                <a routerLink="/jobs"
+                    [class]="activeRoute === 'jobs' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:bg-slate-50'"
+                    class="px-4 py-2 rounded-xl text-sm font-bold transition-all">Jobs</a>
+
+                <a routerLink="/applied-jobs"
+                    [class]="activeRoute === 'applied-jobs' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:bg-slate-50'"
+                    class="px-4 py-2 rounded-xl text-sm font-bold transition-all">Applied</a>
+
+                <a routerLink="/notifications"
+                    [class]="activeRoute === 'notifications' ? 'text-indigo-600 bg-indigo-50' : 'text-slate-600 hover:bg-slate-50'"
+                    class="px-4 py-2 rounded-xl text-sm font-bold transition-all relative">
+                    Notifications{{ unreadCount > 0 ? unreadCount : '' }}
+                </a>
+            </nav>
+
+            <!-- User Menu -->
+            <div class="flex items-center space-x-4">
                 <div class="relative">
-                    <button (click)="toggleNotificationDropdown()" type="button"
-                        class="relative p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        <span class="sr-only">View notifications</span>
-                        <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-                            </path>
-                        </svg>
-                        <!-- Unread Count Badge -->
-                        <span *ngIf="unreadCount > 0"
-                            class="absolute top-0 right-0 block h-4 w-4 rounded-full bg-red-500 text-white text-xs font-bold flex items-center justify-center">
-                            {{ unreadCount }}
-                        </span>
+                    <button (click)="toggleProfile()"
+                        class="flex items-center space-x-2 p-1.5 rounded-2xl hover:bg-slate-100 transition-all border border-transparent hover:border-slate-200">
+                        <div
+                            class="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center text-white font-bold text-xs">
+                            {{ user?.fullName?.charAt(0) || 'U' }}
+                        </div>
+                        <span class="hidden sm:block text-sm font-bold text-slate-700">{{ user?.fullName || 'User'
+                            }}</span>
                     </button>
 
-                    <!-- Notification Dropdown -->
-                    <div *ngIf="isNotificationDropdownOpen"
-                        class="origin-top-right absolute right-0 mt-2 w-96 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                        <div class="py-1">
-                            <!-- Header -->
-                            <div class="px-4 py-3 border-b border-gray-200 flex items-center justify-between">
-                                <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
-                                <button (click)="markAllAsRead()" *ngIf="unreadCount > 0"
-                                    class="text-xs text-indigo-600 hover:text-indigo-800 font-medium">
-                                    Mark all as read
-                                </button>
-                            </div>
-
-                            <!-- Notification List -->
-                            <div class="max-h-96 overflow-y-auto">
-                                <div *ngFor="let notification of notifications" (click)="markAsRead(notification.id)"
-                                    [class]="getNotificationColor(notification.type)"
-                                    class="px-4 py-3 hover:bg-gray-50 cursor-pointer border-l-4 transition-colors duration-150"
-                                    [class.opacity-60]="notification.isRead">
-                                    <div class="flex items-start space-x-3">
-                                        <span class="text-2xl flex-shrink-0">{{ notification.icon }}</span>
-                                        <div class="flex-1 min-w-0">
-                                            <p class="text-sm font-medium text-gray-900 flex items-center">
-                                                {{ notification.title }}
-                                                <span *ngIf="!notification.isRead"
-                                                    class="ml-2 h-2 w-2 rounded-full bg-indigo-600"></span>
-                                            </p>
-                                            <p class="text-sm text-gray-600 mt-1">{{ notification.message }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Empty State -->
-                                <div *ngIf="notifications.length === 0" class="px-4 py-8 text-center">
-                                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
-                                        </path>
-                                    </svg>
-                                    <p class="mt-2 text-sm text-gray-500">No notifications yet</p>
-                                </div>
-                            </div>
-
-                            <!-- Footer -->
-                            <div class="px-4 py-2 border-t border-gray-200 bg-gray-50">
-                                <a routerLink="/notifications"
-                                    class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View all
-                                    notifications</a>
-                            </div>
-                        </div>
+                    <!-- Profile Dropdown -->
+                    <div *ngIf="isProfileOpen"
+                        class="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-200 py-2 animate-in slide-in-from-top-2 duration-200">
+                        <a routerLink="/profile"
+                            class="block px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50">My Profile</a>
+                        <button (click)="logout()"
+                            class="w-full text-left px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50">Logout</button>
                     </div>
                 </div>
 
-                <!-- User Menu -->
-                <div class="ml-3 relative">
-                    <div>
-                        <button (click)="toggleProfileDropdown()" type="button"
-                            class="bg-white flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 items-center space-x-2">
-                            <span class="sr-only">Open user menu</span>
-                            <span class="font-medium text-gray-700">{{ user?.fullName || 'Student' }}</span>
-                            <div
-                                class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold">
-                                {{ user?.fullName?.charAt(0) || 'S' }}
-                            </div>
-                        </button>
-                    </div>
-                    <div *ngIf="isProfileDropdownOpen"
-                        class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <a routerLink="/profile" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">View
-                            Profile</a>
-                        <a (click)="logout()"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 cursor-pointer">Logout</a>
-                    </div>
-                </div>
-            </div>
-            <div class="-mr-2 flex items-center sm:hidden">
-                <button (click)="toggleMobileMenu()" type="button"
-                    class="bg-white inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    <span class="sr-only">Open main menu</span>
-                    <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
+                <!-- Mobile Menu Toggle -->
+                <button (click)="toggleMobileMenu()" class="md:hidden p-2 text-slate-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
+                            d="M4 6h16M4 12h16m-7 6h7"></path>
                     </svg>
                 </button>
             </div>
         </div>
     </div>
+
     <!-- Mobile Menu -->
-    <div *ngIf="isMobileMenuOpen" class="sm:hidden">
-        <div class="pt-2 pb-3 space-y-1">
-            <a routerLink="/dashboard" [class.bg-indigo-50]="activeRoute === 'dashboard'"
-                [class.border-indigo-500]="activeRoute === 'dashboard'"
-                [class.text-indigo-700]="activeRoute === 'dashboard'"
-                [class.border-transparent]="activeRoute !== 'dashboard'"
-                [class.text-gray-500]="activeRoute !== 'dashboard'"
-                class="hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Dashboard</a>
-            <a routerLink="/jobs" [class.bg-indigo-50]="activeRoute === 'jobs'"
-                [class.border-indigo-500]="activeRoute === 'jobs'" [class.text-indigo-700]="activeRoute === 'jobs'"
-                [class.border-transparent]="activeRoute !== 'jobs'" [class.text-gray-500]="activeRoute !== 'jobs'"
-                class="hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Jobs</a>
-            <a routerLink="/applied-jobs" [class.bg-indigo-50]="activeRoute === 'applied-jobs'"
-                [class.border-indigo-500]="activeRoute === 'applied-jobs'"
-                [class.text-indigo-700]="activeRoute === 'applied-jobs'"
-                [class.border-transparent]="activeRoute !== 'applied-jobs'"
-                [class.text-gray-500]="activeRoute !== 'applied-jobs'"
-                class="hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Applied
-                Jobs</a>
-            <a routerLink="/notifications" [class.bg-indigo-50]="activeRoute === 'notifications'"
-                [class.border-indigo-500]="activeRoute === 'notifications'"
-                [class.text-indigo-700]="activeRoute === 'notifications'"
-                [class.border-transparent]="activeRoute !== 'notifications'"
-                [class.text-gray-500]="activeRoute !== 'notifications'"
-                class="hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Notifications</a>
-            <a routerLink="/statistics" [class.bg-indigo-50]="activeRoute === 'statistics'"
-                [class.border-indigo-500]="activeRoute === 'statistics'"
-                [class.text-indigo-700]="activeRoute === 'statistics'"
-                [class.border-transparent]="activeRoute !== 'statistics'"
-                [class.text-gray-500]="activeRoute !== 'statistics'"
-                class="hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">Statistics</a>
-        </div>
-        <div class="pt-4 pb-4 border-t border-gray-200">
-            <div class="flex items-center px-4">
-                <div class="flex-shrink-0">
-                    <div
-                        class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-lg">
-                        {{ user?.fullName?.charAt(0) || 'S' }}
-                    </div>
-                </div>
-                <div class="ml-3">
-                    <div class="text-base font-medium text-gray-800">{{ user?.fullName || 'Student' }}</div>
-                    <div class="text-sm font-medium text-gray-500">{{ user?.email || 'student@example.com' }}</div>
-                </div>
-            </div>
-            <div class="mt-3 space-y-1">
-                <a routerLink="/profile"
-                    class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">View
-                    Profile</a>
-                <a (click)="logout()"
-                    class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100 cursor-pointer">Logout</a>
-            </div>
-        </div>
+    <div *ngIf="isMobileMenuOpen"
+        class="md:hidden border-t border-slate-100 bg-white p-4 space-y-2 animate-in fade-in duration-200">
+        <a routerLink="/dashboard" class="block px-4 py-3 rounded-xl font-bold text-slate-600">Dashboard</a>
+        <a routerLink="/jobs" class="block px-4 py-3 rounded-xl font-bold text-slate-600">Jobs</a>
+        <a routerLink="/notifications" class="block px-4 py-3 rounded-xl font-bold text-slate-600 flex justify-between">
+            Notifications
+            <span *ngIf="unreadCount > 0"
+                class="bg-indigo-600 text-white px-2 py-0.5 rounded-full text-xs animate-pulse">{{unreadCount}}</span>
+        </a>
+        <button (click)="logout()" class="w-full text-left px-4 py-3 font-bold text-red-600">Logout</button>
     </div>
 </header>
