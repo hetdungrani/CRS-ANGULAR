@@ -4,10 +4,11 @@ import { Register } from './pages/register/register';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { Jobs } from './pages/jobs/jobs';
 import { AppliedJobs } from './pages/applied-jobs/applied-jobs';
+import { JobDetails } from './pages/job-details/job-details';
 import { Notifications } from './pages/notifications/notifications';
 import { Statistics } from './pages/statistics/statistics';
 import { Profile } from './pages/profile/profile';
-import { dashboardResolver, jobsResolver, appliedJobsResolver, notificationsResolver, statisticsResolver, profileResolver } from './resolvers/job.resolver';
+import { dashboardResolver, jobsResolver, appliedJobsResolver, notificationsResolver, statisticsResolver, profileResolver, jobDetailResolver } from './resolvers/job.resolver';
 import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
@@ -24,13 +25,21 @@ export const routes: Routes = [
         path: 'jobs',
         component: Jobs,
         canActivate: [authGuard],
-        resolve: { jobs: jobsResolver }
+        resolve: { jobs: jobsResolver },
+        runGuardsAndResolvers: 'always'
+    },
+    {
+        path: 'jobs/:id',
+        component: JobDetails,
+        canActivate: [authGuard],
+        resolve: { job: jobDetailResolver }
     },
     {
         path: 'applied-jobs',
         component: AppliedJobs,
         canActivate: [authGuard],
-        resolve: { appliedJobs: appliedJobsResolver }
+        resolve: { appliedJobs: appliedJobsResolver },
+        runGuardsAndResolvers: 'always'
     },
     {
         path: 'notifications',

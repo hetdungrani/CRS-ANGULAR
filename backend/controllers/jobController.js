@@ -181,22 +181,12 @@ exports.getAllApplications = async (req, res) => {
 // @access  Private/Student
 exports.applyForJob = async (req, res) => {
     try {
-        console.log('Apply for job request:', {
-            jobId: req.params.id,
-            userId: req.user?.id,
-            userDept: req.user?.department
-        });
-
         const job = await Job.findById(req.params.id);
         if (!job) {
-            console.log('Job not found:', req.params.id);
             return res.status(404).json({ msg: 'Job not found' });
         }
 
-        console.log('Job found:', { id: job._id, status: job.status, applicationsCount: job.applications.length });
-
         if (job.status !== 'open') {
-            console.log('Job is not open:', job.status);
             return res.status(400).json({ msg: 'Job is no longer open for applications' });
         }
 
@@ -206,7 +196,6 @@ exports.applyForJob = async (req, res) => {
         );
 
         if (alreadyApplied) {
-            console.log('Student already applied:', req.user.id);
             return res.status(400).json({ msg: 'You have already applied for this job' });
         }
 
@@ -216,7 +205,6 @@ exports.applyForJob = async (req, res) => {
         });
 
         await job.save();
-        console.log('Application successful for user:', req.user.id);
         res.json({ msg: 'Applied successfully', job });
     } catch (err) {
         console.error('Error in applyForJob:', err.message);
@@ -224,9 +212,36 @@ exports.applyForJob = async (req, res) => {
     }
 };
 
-// @desc    Get jobs current student applied for
-// @route   GET /api/jobs/applied
+// @desc    Withdraw application
+// @route   DELETE /api/jobs/:id/withdraw
 // @access  Private/Student
+exports.withdrawApplication = async (req, res) => {
+    try {
+        const job = await Job.findById(req.params.id);
+        if (!job) {
+            return res.status(404).json({ msg: 'Job not found' });
+        }
+
+        // Check if student has applied
+        const applicationIndex = job.applications.findIndex(
+            app => app.student.toString() === req.user.id
+        );
+
+        if (applicationIndex === -1) {
+            return res.status(400).json({ msg: 'Application not found' });
+        }
+
+        // Remove application
+        job.applications.splice(applicationIndex, 1);
+        await job.save();
+
+        res.json({ msg: 'Application withdrawn successfully' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
 exports.getAppliedJobs = async (req, res) => {
     try {
         const jobs = await Job.find({
@@ -244,13 +259,35 @@ exports.getAppliedJobs = async (req, res) => {
                 role: job.role,
                 location: job.location,
                 status: application.status,
-                appliedAt: application.appliedAt
+                appliedAt: application.appliedAt,
+                // Add status for open/closed to allow decision making if needed
+                jobStatus: job.status
             };
         });
 
         res.json(applications);
     } catch (err) {
         console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+};
+
+// @desc    Get job by ID (Public/Student - No sensitive applicant data)
+// @route   GET /api/jobs/:id
+// @access  Private/Student
+exports.getJobByIdPublic = async (req, res) => {
+    try {
+        const job = await Job.findById(req.params.id);
+        
+        if (!job) {
+            return res.status(404).json({ msg: 'Job not found' });
+        }
+        res.json(job);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ msg: 'Job not found' });
+        }
         res.status(500).send('Server Error');
     }
 };

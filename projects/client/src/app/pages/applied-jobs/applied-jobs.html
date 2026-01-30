@@ -1,229 +1,92 @@
 <div class="min-h-screen flex flex-col bg-slate-50 font-sans">
     <app-header [activeRoute]="'applied-jobs'"></app-header>
 
-    <!-- Main Content Area -->
     <main class="flex-grow pt-24 pb-12">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <!-- Page Header -->
-            <div class="mb-10 flex flex-col md:flex-row md:items-end md:justify-between">
-                <div>
-                    <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Application Tracker</h1>
-                    <p class="mt-2 text-lg text-slate-600">Monitor the progress of your professional journey.</p>
-                </div>
-                <div class="mt-4 md:mt-0 px-4 py-2 bg-indigo-50 rounded-2xl border border-indigo-100">
-                    <span class="text-sm font-bold text-indigo-700">{{ appliedJobs.length }} Total Applications</span>
-                </div>
+            <div class="mb-10 text-center md:text-left">
+                <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Your Applications</h1>
+                <p class="mt-3 text-lg text-slate-600 max-w-2xl">Track the status of your job applications.</p>
             </div>
 
-            <!-- Loading State -->
-            <div *ngIf="loading" class="flex flex-col items-center justify-center py-20">
-                <div class="animate-spin rounded-full h-12 w-12 border-4 border-indigo-200 border-t-indigo-600"></div>
-                <p class="mt-4 text-slate-500 font-medium">Loading your journey...</p>
+            <!-- Loading & Error -->
+            <div *ngIf="loading" class="flex justify-center py-20">
+                <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
             </div>
 
-            <!-- Applied Jobs Cards -->
-            <div *ngIf="!loading && !error && appliedJobs.length > 0" class="space-y-6">
-                <div *ngFor="let application of appliedJobs; trackBy: trackByJobId"
-                    class="group bg-white rounded-3xl shadow-sm border border-slate-200 hover:shadow-xl transition-all duration-300">
-                    <div class="p-8">
-                        <div class="flex flex-col md:flex-row md:items-center">
-
-                            <!-- Company Logo/Initial -->
-                            <div class="mb-6 md:mb-0 md:mr-8 flex-shrink-0">
-                                <div
-                                    class="h-16 w-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-100 group-hover:scale-110 transition-transform duration-300">
-                                    <span class="text-2xl font-black text-white italic">{{
-                                        application.companyName.charAt(0) }}</span>
-                                </div>
-                            </div>
-
-                            <!-- Job Info -->
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center space-x-3 mb-2">
-                                    <h3
-                                        class="text-2xl font-extrabold text-slate-900 group-hover:text-indigo-600 transition-colors">
-                                        {{ application.role }}</h3>
-                                </div>
-                                <p class="text-lg font-bold text-slate-500 mb-4">{{ application.companyName }}</p>
-
-                                <div class="flex flex-wrap items-center gap-6">
-                                    <div class="flex items-center text-slate-400 text-sm font-medium">
-                                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        </svg>
-                                        {{ application.location }}
-                                    </div>
-                                    <div class="flex items-center text-slate-400 text-sm font-medium">
-                                        <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                        </svg>
-                                        Applied: {{ application.appliedAt | date:'mediumDate' }}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Status and Action -->
-                            <div class="mt-8 md:mt-0 md:ml-8 flex flex-col items-start md:items-end space-y-4">
-                                <span [class]="getStatusClass(application.status)"
-                                    class="px-5 py-2 rounded-2xl text-xs uppercase tracking-widest shadow-sm">
-                                    {{ application.status }}
-                                </span>
-                                <button (click)="viewDetails(application._id)"
-                                    class="w-full md:w-auto px-6 py-3 bg-slate-900 text-white rounded-2xl hover:bg-indigo-600 font-bold text-sm transition-all duration-300 shadow-md transform active:scale-95">
-                                    Full Details
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div *ngIf="!loading && error" class="bg-red-50 text-red-700 p-4 rounded-lg mb-8 border border-red-200">
+                {{ error }}
             </div>
 
             <!-- Empty State -->
             <div *ngIf="!loading && !error && appliedJobs.length === 0"
-                class="text-center py-24 bg-white rounded-3xl border border-dashed border-slate-300">
-                <div class="mx-auto h-24 w-24 bg-slate-50 rounded-full flex items-center justify-center mb-6">
-                    <svg class="h-10 w-10 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                class="text-center py-24 bg-white rounded-3xl border border-slate-200 shadow-sm">
+                <div class="mb-4">
+                    <svg class="h-16 w-16 mx-auto text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                 </div>
-                <h3 class="text-2xl font-bold text-slate-900">No applications yet</h3>
-                <p class="mt-2 text-slate-500 max-w-sm mx-auto">Your dream job is just one apply button away. Start your
-                    career now!</p>
-                <div class="mt-8">
-                    <a routerLink="/jobs"
-                        class="inline-flex py-4 px-8 bg-indigo-600 text-white rounded-2xl font-extrabold hover:bg-black transition-all shadow-lg shadow-indigo-100">
-                        Explore Opportunities
-                    </a>
+                <h3 class="text-xl font-bold text-slate-900 mb-2">No Applications Yet</h3>
+                <p class="text-slate-500 mb-6">You haven't applied to any companies yet.</p>
+                <a routerLink="/jobs"
+                    class="inline-block px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-md">
+                    Explore Jobs
+                </a>
+            </div>
+
+            <!-- Applications List -->
+            <div *ngIf="!loading && appliedJobs.length > 0" class="space-y-6">
+                <div *ngFor="let app of appliedJobs; trackBy: trackByJobId"
+                    class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 transition-all hover:shadow-md">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+
+                        <!-- Info -->
+                        <div class="flex-grow">
+                            <div class="flex items-center mb-2">
+                                <h3 class="text-xl font-bold text-slate-900 mr-3">{{ app.companyName }}</h3>
+                                <span [class]="getStatusClass(app.status)"
+                                    class="px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wide">
+                                    {{ app.status }}
+                                </span>
+                            </div>
+                            <h4 class="text-lg font-medium text-slate-600 mb-2">{{ app.role }}</h4>
+                            <div class="flex flex-wrap gap-4 text-sm text-slate-500">
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    {{ app.location }}
+                                </span>
+                                <span class="flex items-center">
+                                    <svg class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    </svg>
+                                    Applied: {{ app.appliedAt | date:'mediumDate' }}
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex flex-col sm:flex-row gap-3 min-w-[250px]">
+                            <a [routerLink]="['/jobs', app._id]"
+                                class="text-center px-4 py-2.5 bg-indigo-50 text-indigo-700 font-bold rounded-xl hover:bg-indigo-100 transition-colors border border-indigo-100">
+                                View Details
+                            </a>
+                            <button (click)="withdrawApplication(app._id)"
+                                class="px-4 py-2.5 bg-white text-red-600 font-bold rounded-xl hover:bg-red-50 transition-colors border border-red-100">
+                                Withdraw
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
+
         </div>
     </main>
-
-    <!-- Modal Backdrop -->
-    <div *ngIf="showModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 overflow-hidden">
-
-        <!-- Blur Background -->
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity duration-300"
-            (click)="closeDetails()" [class.opacity-0]="!showModal" [class.opacity-100]="showModal"></div>
-
-        <!-- Modal Content -->
-        <div class="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-300 max-h-[90vh] flex flex-col"
-            [class.translate-y-8]="!showModal" [class.opacity-0]="!showModal" [class.scale-95]="!showModal"
-            [class.translate-y-0]="showModal" [class.opacity-100]="showModal" [class.scale-100]="showModal">
-
-            <!-- Modal Header -->
-            <div
-                class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50 sticky top-0 z-10 backdrop-blur-sm">
-                <div>
-                    <h2 class="text-2xl font-black text-slate-900 tracking-tight">Recruitment Details</h2>
-                    <p class="text-sm font-bold text-indigo-600 uppercase tracking-widest mt-1">{{
-                        selectedJob?.companyName }}</p>
-                </div>
-                <button (click)="closeDetails()"
-                    class="p-2 hover:bg-red-50 hover:text-red-500 rounded-full transition-colors">
-                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            <!-- Modal Body (Scrollable) -->
-            <div class="flex-grow overflow-y-auto p-8 space-y-8 scrollbar-hide">
-
-                <!-- Loading State inside modal -->
-                <div *ngIf="detailsLoading" class="flex flex-col items-center justify-center py-20">
-                    <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-100 border-t-indigo-600">
-                    </div>
-                </div>
-
-                <div *ngIf="!detailsLoading && selectedJob">
-
-                    <!-- Role Banner -->
-                    <div
-                        class="p-6 bg-gradient-to-r from-slate-900 to-indigo-900 rounded-3xl text-white mb-8 shadow-xl shadow-indigo-100">
-                        <h4 class="text-3xl font-black mb-2">{{ selectedJob.role }}</h4>
-                        <div class="flex flex-wrap gap-4 text-indigo-200 font-bold text-sm">
-                            <span class="flex items-center">
-                                <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                {{ selectedJob.package }}
-                            </span>
-                            <span class="flex items-center">
-                                <svg class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                </svg>
-                                {{ selectedJob.location }}
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Details Sections -->
-                    <div class="space-y-8">
-                        <div>
-                            <h5
-                                class="flex items-center text-sm font-black text-slate-400 uppercase tracking-widest mb-4">
-                                <span class="w-8 h-px bg-slate-200 mr-3"></span>
-                                Job Description
-                            </h5>
-                            <p
-                                class="text-slate-700 leading-relaxed font-medium bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                                {{ selectedJob.description }}
-                            </p>
-                        </div>
-
-                        <div>
-                            <h5
-                                class="flex items-center text-sm font-black text-slate-400 uppercase tracking-widest mb-4">
-                                <span class="w-8 h-px bg-slate-200 mr-3"></span>
-                                Core Requirements
-                            </h5>
-                            <p
-                                class="text-slate-700 leading-relaxed font-medium bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                                {{ selectedJob.requirements }}
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="p-6 bg-indigo-50 border border-indigo-100 rounded-3xl">
-                                <h5 class="text-indigo-900 font-extrabold text-sm uppercase tracking-wider mb-2">Cut-off
-                                    CGPA</h5>
-                                <p class="text-3xl font-black text-indigo-600">{{ selectedJob.eligibility?.minCGPA }}+
-                                </p>
-                            </div>
-                            <div class="p-6 bg-purple-50 border border-purple-100 rounded-3xl">
-                                <h5 class="text-purple-900 font-extrabold text-sm uppercase tracking-wider mb-2">
-                                    Branches</h5>
-                                <div class="flex flex-wrap gap-2">
-                                    <span *ngFor="let branch of selectedJob.eligibility?.branches"
-                                        class="px-2 py-0.5 bg-white text-purple-700 rounded-lg text-xs font-black shadow-sm border border-purple-100">
-                                        {{ branch }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="p-8 border-t border-slate-100 flex justify-end bg-slate-50/50">
-                <button (click)="closeDetails()"
-                    class="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black hover:bg-black transition-all active:scale-95 shadow-lg shadow-slate-200">
-                    Close Details
-                </button>
-            </div>
-        </div>
-    </div>
-
     <app-footer></app-footer>
 </div>

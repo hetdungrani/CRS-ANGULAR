@@ -3,10 +3,19 @@ import { ResolveFn } from '@angular/router';
 import { JobService } from '../services/job.service';
 import { NotificationService } from '../services/notification.service';
 import { AuthService } from '../services/auth.service';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, of } from 'rxjs';
 
 export const jobsResolver: ResolveFn<any> = (route, state) => {
     return inject(JobService).getJobs();
+};
+
+
+
+export const jobDetailResolver: ResolveFn<any> = (route, state) => {
+    const id = route.paramMap.get('id');
+    return inject(JobService).getJobById(id!).pipe(
+        catchError(() => of(null))
+    );
 };
 
 export const appliedJobsResolver: ResolveFn<any> = (route, state) => {
@@ -38,3 +47,5 @@ export const statisticsResolver: ResolveFn<any> = (route, state) => {
         appliedJobs: jobService.getAppliedJobs()
     });
 };
+
+
