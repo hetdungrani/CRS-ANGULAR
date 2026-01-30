@@ -133,7 +133,7 @@ exports.getMe = async (req, res) => {
 // @access  Private
 exports.updateProfile = async (req, res) => {
     try {
-    const { fullName, email, mobile, department, course, cgpa, gender, enrollmentNumber, dateOfBirth, address, year, skills } = req.body;
+    const { fullName, email, mobile, department, course, cgpa, gender, dateOfBirth, address, skills } = req.body;
 
         // Build user object
         const profileFields = {};
@@ -143,10 +143,8 @@ exports.updateProfile = async (req, res) => {
         if (course) profileFields.course = course;
         if (cgpa !== undefined) profileFields.cgpa = cgpa;
         if (gender) profileFields.gender = gender;
-        if (enrollmentNumber) profileFields.enrollmentNumber = enrollmentNumber;
         if (dateOfBirth) profileFields.dateOfBirth = dateOfBirth;
         if (address) profileFields.address = address;
-        if (year) profileFields.year = year;
         if (skills) profileFields.skills = skills;
 
         // Handle email update separately due to uniqueness

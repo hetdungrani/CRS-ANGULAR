@@ -21,13 +21,15 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
     return next(authReq).pipe(
         retry(req.method === 'GET' ? 1 : 0),
         catchError((error: HttpErrorResponse) => {
-            if (error.status === 401) {
-                // Auto logout if 401 response returned from api
+            if (error.status === 401 || (error.status === 404 && error.error?.msg === 'User not found')) {
+                // Auto logout if 401 response or 404 User Not Found returned from api
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
                 localStorage.removeItem('userProfile');
-                router.navigate(['/login']);
-                toastService.error('Session expired. Please login again.');
+                router.navigate(['/login'], { queryParams: { deleted: 'true' } });
+
+                const msg = error.error?.msg || 'Session expired. Please login again.';
+                toastService.error(msg);
             }
 
             const errorMsg = error.error?.msg || error.message || 'An unexpected error occurred';

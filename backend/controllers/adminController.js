@@ -60,12 +60,11 @@ exports.getMe = async (req, res) => {
 // @access  Private
 exports.getAllStudents = async (req, res) => {
     try {
-        const { branch, cgpa, passingYear, skills } = req.query;
+        const { branch, cgpa, skills } = req.query;
         let query = { role: 'student' };
 
         if (branch) query.department = branch;
         if (cgpa) query.cgpa = { $gte: parseFloat(cgpa) };
-        if (passingYear) query.passingYear = passingYear;
         
         // Search by name or department (or skills)
         if (skills) { // keeping this if specific skills filter is used

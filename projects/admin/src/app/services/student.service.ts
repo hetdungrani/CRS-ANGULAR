@@ -16,7 +16,6 @@ export class StudentService {
         let params = new HttpParams();
         if (filters.branch) params = params.set('branch', filters.branch);
         if (filters.cgpa) params = params.set('cgpa', filters.cgpa);
-        if (filters.passingYear) params = params.set('passingYear', filters.passingYear);
         if (filters.skills) params = params.set('skills', filters.skills);
         if (filters.search) params = params.set('search', filters.search);
 

@@ -43,10 +43,6 @@ const userSchema = new mongoose.Schema({
         required: [true, 'Please select gender'],
         enum: ['Male', 'Female', 'Other']
     },
-    enrollmentNumber: {
-        type: String,
-        default: ''
-    },
     dateOfBirth: {
         type: String,
         default: ''
@@ -54,13 +50,6 @@ const userSchema = new mongoose.Schema({
     address: {
         type: String,
         default: ''
-    },
-    year: {
-        type: String,
-        default: ''
-    },
-    passingYear: {
-        type: Number
     },
     skills: {
         type: [String],

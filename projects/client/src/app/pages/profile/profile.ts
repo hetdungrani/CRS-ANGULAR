@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { ToastService } from '../../services/toast.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-profile',
@@ -21,9 +22,7 @@ export class Profile implements OnInit {
   // Profile data - will be populated from logged-in user
   profileData = {
     fullName: '',
-    enrollmentNumber: '',
     branch: '',
-    year: '',
     email: '',
     phone: '',
     dateOfBirth: '',
@@ -40,18 +39,27 @@ export class Profile implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
+    private route: ActivatedRoute,
     private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
+    // Check if user is logged in
     const userStr = localStorage.getItem('user');
-    if (userStr) {
-      this.user = JSON.parse(userStr);
-      // Populate profile data from logged-in user
-      this.loadUserProfile();
-    } else {
+    if (!userStr) {
       this.router.navigate(['/login']);
+      return;
     }
+    this.user = JSON.parse(userStr);
+
+    // Use data from resolver if available - take(1) for auto-cleanup
+    this.route.data.pipe(take(1)).subscribe(data => {
+      if (data['profile']) {
+        this.user = { ...this.user, ...data['profile'] };
+        this.authService.setUser(this.user);
+      }
+      this.loadUserProfile();
+    });
   }
 
   loadUserProfile(): void {
@@ -63,9 +71,7 @@ export class Profile implements OnInit {
       email: this.user.email || '',
       phone: this.user.mobile || '',
       branch: this.user.department || '',
-      year: this.user.year || (this.user.passingYear ? `${this.user.passingYear}` : ''),
-      cgpa: this.user.cgpa !== undefined ? `${this.user.cgpa}` : '',
-      enrollmentNumber: this.user.enrollmentNumber || '',
+      cgpa: this.user.cgpa !== undefined && this.user.cgpa !== null ? `${this.user.cgpa}` : '',
       dateOfBirth: this.user.dateOfBirth || '',
       address: this.user.address || '',
       course: this.user.course || '',
@@ -92,9 +98,7 @@ export class Profile implements OnInit {
   get missingFields(): string[] {
     const missing: string[] = [];
     const fieldLabels: { [key: string]: string } = {
-      enrollmentNumber: 'Enrollment Number',
       branch: 'Branch',
-      year: 'Year',
       phone: 'Phone Number',
       dateOfBirth: 'Date of Birth',
       address: 'Address',
@@ -139,41 +143,58 @@ export class Profile implements OnInit {
         .filter((s: string) => s !== '');
     }
 
+    // Save old state for potential revert
+    const oldProfileData = { ...this.profileData };
+    const oldUser = { ...this.user };
+
+    // INSTANT UI UPDATE (Optimistic)
+    this.profileData = { ...this.editData, skills: processedSkills };
+    this.user = {
+      ...this.user,
+      ...this.editData,
+      mobile: this.editData.phone,
+      department: this.editData.branch,
+      skills: processedSkills
+    };
+    this.authService.setUser(this.user);
+    this.isEditMode = false;
+
     // Map frontend fields to backend fields
     const updateData = {
       fullName: this.editData.fullName,
       email: this.editData.email,
       mobile: this.editData.phone,
       department: this.editData.branch,
-      year: this.editData.year,
-      cgpa: parseFloat(this.editData.cgpa),
+      cgpa: this.editData.cgpa ? parseFloat(this.editData.cgpa) : 0,
       course: this.editData.course,
       gender: this.editData.gender,
-      enrollmentNumber: this.editData.enrollmentNumber,
       dateOfBirth: this.editData.dateOfBirth,
       address: this.editData.address,
       skills: processedSkills
     };
 
-    this.authService.updateProfile(updateData).subscribe({
+    // Async background update
+    this.authService.updateProfile(updateData).pipe(take(1)).subscribe({
       next: (updatedUser) => {
-        // Update profile data in view
-        this.profileData = { ...this.editData, skills: processedSkills };
-
-        // Update user in localStorage
         const user = JSON.parse(localStorage.getItem('user') || '{}');
         const newUser = { ...user, ...updatedUser };
         this.authService.setUser(newUser);
         this.user = newUser;
-
-        this.isEditMode = false;
-        this.toastService.success('Profile updated in database successfully!');
+        this.toastService.success('Profile saved!');
       },
       error: (err) => {
+        // Revert on error
+        this.profileData = oldProfileData;
+        this.user = oldUser;
+        this.authService.setUser(oldUser);
         console.error('Update failed:', err);
-        this.toastService.error(err.error?.msg || 'Failed to update profile');
+        this.toastService.error(err.error?.msg || 'Failed to save to server');
       }
     });
+  }
+
+  trackByFn(index: number, item: any): any {
+    return item || index;
   }
 
   getInitials(): string {
