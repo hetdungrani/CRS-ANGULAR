@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
+import { ThemeService } from '../../services/theme.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -19,12 +20,15 @@ export class Header implements OnInit, OnDestroy {
   unreadCount: number = 0;
   isProfileOpen = false;
   isMobileMenuOpen = false;
+  currentTheme: 'light' | 'dark' = 'light';
   private sub: Subscription | null = null;
+  private themeSub: Subscription | null = null;
 
   constructor(
     private authService: AuthService,
     private router: Router,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    public themeService: ThemeService
   ) { }
 
   ngOnInit(): void {
@@ -37,12 +41,23 @@ export class Header implements OnInit, OnDestroy {
       this.unreadCount = data.filter(n => !readIds.includes(n._id)).length;
     });
 
+    // Subscribe to theme changes
+    this.themeSub = this.themeService.theme$.subscribe(theme => {
+      this.currentTheme = theme;
+    });
+
     // Ensure we have data on load
     this.notificationService.refreshState();
   }
 
   ngOnDestroy(): void {
     if (this.sub) this.sub.unsubscribe();
+    if (this.themeSub) this.themeSub.unsubscribe();
+  }
+
+  toggleTheme() {
+    const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+    this.themeService.setTheme(newTheme);
   }
 
   toggleProfile() {

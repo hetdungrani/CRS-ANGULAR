@@ -1,4 +1,4 @@
-<div class="min-h-screen flex flex-col bg-slate-50 font-sans">
+<div class="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 font-sans transition-colors duration-300">
     <app-header activeRoute="notifications"></app-header>
 
     <main class="flex-grow pt-24 pb-12">
@@ -6,11 +6,11 @@
 
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-3xl font-extrabold text-slate-900">Notifications</h1>
-                    <p class="text-slate-500 mt-1">Updates on your recruitment process</p>
+                    <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">Notifications</h1>
+                    <p class="text-slate-500 dark:text-slate-400 mt-1">Updates on your recruitment process</p>
                 </div>
                 <button *ngIf="unreadCount > 0" (click)="markAllAsRead()"
-                    class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition-colors">
+                    class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
                     Mark all as read
                 </button>
             </div>
@@ -18,17 +18,17 @@
             <!-- Filter Navbar -->
             <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-none">
                 <button (click)="setFilter('all')"
-                    [class]="selectedFilter === 'all' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border-slate-200'"
+                    [class]="selectedFilter === 'all' ? 'bg-indigo-600 text-white shadow-indigo-200 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'"
                     class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
                     All
                 </button>
                 <button (click)="setFilter('unread')"
-                    [class]="selectedFilter === 'unread' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border-slate-200'"
+                    [class]="selectedFilter === 'unread' ? 'bg-indigo-600 text-white shadow-indigo-200 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'"
                     class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
                     Unread ({{unreadCount}})
                 </button>
                 <button (click)="setFilter('job')"
-                    [class]="selectedFilter === 'job' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border-slate-200'"
+                    [class]="selectedFilter === 'job' ? 'bg-indigo-600 text-white shadow-indigo-200 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'"
                     class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
                     Jobs
                 </button>
@@ -38,34 +38,34 @@
             <div class="space-y-4">
                 <div *ngFor="let n of filteredNotifications; trackBy: trackById" (click)="markAsRead(n._id)"
                     [class.opacity-60]="n.isRead"
-                    class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all cursor-pointer relative group">
+                    class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md dark:hover:shadow-indigo-900/10 transition-all cursor-pointer relative group">
 
                     <div class="flex gap-4">
                         <div
-                            class="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center text-2xl flex-shrink-0">
+                            class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-2xl flex-shrink-0">
                             {{ n.icon }}
                         </div>
                         <div class="flex-grow">
                             <div class="flex items-center justify-between mb-1">
-                                <h3 class="font-bold text-slate-900">{{ n.title }}</h3>
-                                <span class="text-xs font-medium text-slate-400">{{ n.time }}</span>
+                                <h3 class="font-bold text-slate-900 dark:text-white">{{ n.title }}</h3>
+                                <span class="text-xs font-medium text-slate-400 dark:text-slate-500">{{ n.time }}</span>
                             </div>
-                            <p class="text-slate-600 text-sm leading-relaxed">{{ n.message }}</p>
+                            <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{{ n.message }}</p>
                         </div>
                     </div>
 
                     <!-- Unread Indicator -->
                     <div *ngIf="!n.isRead"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-indigo-600 shadow-lg shadow-indigo-200">
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-indigo-600 shadow-lg shadow-indigo-200 dark:shadow-indigo-900/40">
                     </div>
                 </div>
 
                 <!-- Empty State -->
                 <div *ngIf="filteredNotifications.length === 0"
-                    class="text-center py-20 bg-white rounded-3xl border border-dashed border-slate-300">
-                    <div class="text-4xl mb-4 text-slate-300">📭</div>
-                    <h3 class="font-bold text-slate-900">No notifications found</h3>
-                    <p class="text-slate-500 text-sm">You are all caught up!</p>
+                    class="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
+                    <div class="text-4xl mb-4 text-slate-300 dark:text-slate-700">📭</div>
+                    <h3 class="font-bold text-slate-900 dark:text-white">No notifications found</h3>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm">You are all caught up!</p>
                 </div>
             </div>
 

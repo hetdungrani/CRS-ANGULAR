@@ -1,4 +1,4 @@
-<div class="min-h-screen flex flex-col bg-slate-50 font-sans">
+<div class="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 font-sans transition-colors duration-300">
     <app-header [activeRoute]="'applied-jobs'"></app-header>
 
     <main class="flex-grow pt-24 pb-12">
@@ -6,7 +6,7 @@
 
             <!-- Back Button -->
             <button (click)="goBack()"
-                class="mb-6 flex items-center text-slate-600 hover:text-indigo-600 transition-colors bg-white rounded-full px-4 py-2 shadow-sm hover:shadow-md">
+                class="mb-6 flex items-center text-slate-600 dark:text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors bg-white dark:bg-slate-900 rounded-full px-4 py-2 shadow-sm hover:shadow-md border border-transparent dark:border-slate-800">
                 <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -15,13 +15,15 @@
             </button>
 
             <!-- Loading State -->
-            <div *ngIf="loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-3xl shadow-sm">
+            <div *ngIf="loading"
+                class="flex flex-col items-center justify-center py-20 bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-transparent dark:border-slate-800">
                 <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600 mb-4"></div>
-                <p class="text-slate-500 animate-pulse">Fetching complete job details...</p>
+                <p class="text-slate-500 dark:text-slate-400 animate-pulse">Fetching complete job details...</p>
             </div>
 
             <!-- Error State -->
-            <div *ngIf="!loading && error" class="bg-red-50 border-l-4 border-red-500 p-6 rounded-r-lg shadow-sm">
+            <div *ngIf="!loading && error"
+                class="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-6 rounded-r-lg shadow-sm">
                 <div class="flex">
                     <div class="flex-shrink-0">
                         <svg class="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
@@ -31,7 +33,7 @@
                         </svg>
                     </div>
                     <div class="ml-3">
-                        <p class="text-red-700 font-bold">{{ error }}</p>
+                        <p class="text-red-700 dark:text-red-400 font-bold">{{ error }}</p>
                     </div>
                 </div>
             </div>
@@ -40,27 +42,31 @@
             <div *ngIf="!loading && !error && job" class="job-details-container space-y-8">
 
                 <!-- Header Card -->
-                <div class="glass-card bg-white rounded-3xl shadow-lg border border-slate-100 overflow-hidden relative">
+                <div
+                    class="glass-card bg-white dark:bg-slate-900 rounded-3xl shadow-lg border border-slate-100 dark:border-slate-800 overflow-hidden relative">
                     <div
                         class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
                     </div>
-                    <div class="p-8 md:p-10">
+                    <div class="p-8 md:p-10 dark:bg-slate-900">
                         <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
                             <div>
                                 <div
-                                    class="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-100">
+                                    class="inline-flex items-center px-3 py-1 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400 rounded-full text-xs font-bold uppercase tracking-wider mb-4 border border-indigo-100 dark:border-indigo-900/30">
                                     {{ job.status }}
                                 </div>
-                                <h1 class="text-4xl font-extrabold text-slate-900 mb-2">{{ job.role }}</h1>
-                                <div class="flex items-center text-xl font-bold text-slate-600 mb-6">
+                                <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white mb-2">{{ job.role }}
+                                </h1>
+                                <div
+                                    class="flex items-center text-xl font-bold text-slate-600 dark:text-slate-400 mb-6">
                                     <span
-                                        class="bg-slate-100 text-slate-700 w-10 h-10 flex items-center justify-center rounded-xl mr-3 font-black text-lg">
+                                        class="bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 w-10 h-10 flex items-center justify-center rounded-xl mr-3 font-black text-lg">
                                         {{ job.companyName.charAt(0) }}
                                     </span>
                                     {{ job.companyName }}
                                 </div>
-                                <div class="flex flex-wrap gap-4 text-slate-500 text-sm font-medium">
-                                    <div class="flex items-center px-4 py-2 bg-slate-50 rounded-lg">
+                                <div
+                                    class="flex flex-wrap gap-4 text-slate-500 dark:text-slate-400 text-sm font-medium">
+                                    <div class="flex items-center px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-lg">
                                         <svg class="w-5 h-5 mr-2 text-slate-400" fill="none" viewBox="0 0 24 24"
                                             stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -71,7 +77,7 @@
                                         {{ job.location }}
                                     </div>
                                     <div
-                                        class="flex items-center px-4 py-2 bg-green-50 text-green-700 rounded-lg border border-green-100">
+                                        class="flex items-center px-4 py-2 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-lg border border-green-100 dark:border-green-900/30">
                                         <svg class="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -88,9 +94,11 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <!-- Left Column -->
                     <div class="lg:col-span-2 space-y-8">
-                        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
-                            <h2 class="text-2xl font-bold text-slate-900 mb-6 flex items-center">
-                                <span class="bg-indigo-100 text-indigo-600 rounded-lg p-2 mr-3">
+                        <div
+                            class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 p-8">
+                            <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center">
+                                <span
+                                    class="bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-lg p-2 mr-3">
                                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -98,16 +106,18 @@
                                 </span>
                                 Job Description
                             </h2>
-                            <div class="prose prose-slate max-w-none text-slate-600 leading-relaxed">
+                            <div
+                                class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-400 leading-relaxed">
                                 <p>{{ job.description || 'No detailed description available.' }}</p>
                             </div>
                         </div>
 
                         <!-- Requirements -->
                         <div *ngIf="job.requirements"
-                            class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
-                            <h2 class="text-xl font-bold text-slate-900 mb-4">Requirements</h2>
-                            <div class="prose prose-slate max-w-none text-slate-600">
+                            class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 p-8">
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Requirements</h2>
+                            <div
+                                class="prose prose-slate dark:prose-invert max-w-none text-slate-600 dark:text-slate-400">
                                 <p>{{ job.requirements }}</p>
                             </div>
                         </div>
@@ -115,25 +125,30 @@
 
                     <!-- Right Sidebar -->
                     <div class="space-y-6">
-                        <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8">
-                            <h3 class="text-lg font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4">Eligibility
+                        <div
+                            class="bg-white dark:bg-slate-900 rounded-3xl shadow-sm border border-slate-200 dark:border-slate-800 p-8">
+                            <h3
+                                class="text-lg font-bold text-slate-900 dark:text-white mb-6 border-b border-slate-100 dark:border-slate-800 pb-4">
+                                Eligibility
                                 Criteria</h3>
                             <ul class="space-y-4">
                                 <li class="flex items-start">
                                     <div
-                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mr-3 mt-0.5">
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center mr-3 mt-0.5">
                                         <span class="font-bold text-xs">%</span>
                                     </div>
                                     <div>
-                                        <span class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Min
+                                        <span
+                                            class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Min
                                             CGPA</span>
-                                        <span class="text-slate-800 font-bold">{{ job.eligibility?.minCGPA || 'N/A'
+                                        <span class="text-slate-800 dark:text-slate-200 font-bold">{{
+                                            job.eligibility?.minCGPA || 'N/A'
                                             }}+</span>
                                     </div>
                                 </li>
                                 <li class="flex items-start">
                                     <div
-                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center mr-3 mt-0.5">
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 flex items-center justify-center mr-3 mt-0.5">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
@@ -141,20 +156,20 @@
                                     </div>
                                     <div>
                                         <span
-                                            class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Eligible
+                                            class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Eligible
                                             Branches</span>
-                                        <div class="text-slate-800 font-medium text-sm mt-1">
+                                        <div class="text-slate-800 dark:text-slate-200 font-medium text-sm mt-1">
                                             <p *ngIf="!job.eligibility?.branches?.length">All Branches</p>
                                             <div *ngIf="job.eligibility?.branches?.length" class="flex flex-wrap gap-1">
                                                 <span *ngFor="let branch of job.eligibility.branches"
-                                                    class="px-2 py-0.5 bg-purple-50 text-purple-700 rounded text-xs border border-purple-100">{{branch}}</span>
+                                                    class="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 rounded text-xs border border-purple-100 dark:border-purple-900/30">{{branch}}</span>
                                             </div>
                                         </div>
                                     </div>
                                 </li>
                                 <li class="flex items-start">
                                     <div
-                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-orange-50 text-orange-600 flex items-center justify-center mr-3 mt-0.5">
+                                        class="flex-shrink-0 w-8 h-8 rounded-full bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 flex items-center justify-center mr-3 mt-0.5">
                                         <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -162,9 +177,10 @@
                                     </div>
                                     <div>
                                         <span
-                                            class="block text-xs font-bold text-slate-400 uppercase tracking-wide">Application
+                                            class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide">Application
                                             Deadline</span>
-                                        <span class="text-slate-800 font-bold">{{ job.lastDate ? (job.lastDate |
+                                        <span class="text-slate-800 dark:text-slate-200 font-bold">{{ job.lastDate ?
+                                            (job.lastDate |
                                             date:'mediumDate') : 'Not specified' }}</span>
                                     </div>
                                 </li>
