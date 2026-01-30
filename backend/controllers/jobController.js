@@ -84,6 +84,11 @@ exports.updateJob = async (req, res) => {
             return res.status(404).json({ msg: 'Job not found' });
         }
 
+        // If status is being updated to closed, clear applications
+        if (req.body.status && req.body.status === 'closed') {
+            req.body.applications = [];
+        }
+
         job = await Job.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
             runValidators: true
@@ -137,7 +142,11 @@ exports.updateApplicantStatus = async (req, res) => {
         applicant.status = status;
         await job.save();
 
-        res.json(job);
+        // Populate student data before returning
+        const populatedJob = await Job.findById(req.params.id)
+            .populate('applications.student', 'fullName email mobile department cgpa skills');
+
+        res.json(populatedJob);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

@@ -22,8 +22,9 @@ export class Statistics implements OnInit {
     selected: 0,
     rejected: 0,
     pending: 0,
-    internships: 0,
-    fullTime: 0
+    openJobs: 0,
+    closedJobs: 0,
+    totalJobs: 0
   };
 
   constructor(
@@ -52,10 +53,10 @@ export class Statistics implements OnInit {
       this.stats.rejected = appliedJobs.filter((a: any) => a.status === 'rejected').length;
       this.stats.pending = appliedJobs.filter((a: any) => a.status === 'applied').length;
 
-      // Calculate based on job types if available (assuming role or package implies type for now)
-      // In a real app, 'type' field would be in Job model
-      this.stats.fullTime = allJobs.length;
-      this.stats.internships = Math.floor(allJobs.length / 3); // Sample logic
+      // Calculate Job Status
+      this.stats.totalJobs = allJobs.length;
+      this.stats.openJobs = allJobs.filter((j: any) => j.status === 'open').length;
+      this.stats.closedJobs = allJobs.length - this.stats.openJobs;
     }
   }
 

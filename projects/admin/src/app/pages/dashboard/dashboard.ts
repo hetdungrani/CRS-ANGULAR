@@ -16,7 +16,8 @@ export class Dashboard implements OnInit {
         students: 0,
         companies: 0,
         drives: 0,
-        placed: 0
+        placed: 0,
+        closedJobs: 0
     };
 
     activities: any[] = [];
@@ -46,6 +47,7 @@ export class Dashboard implements OnInit {
             this.stats.students = this.students.length;
             this.stats.drives = this.jobs.filter((j: any) => j.status === 'open').length;
             this.stats.placed = this.students.filter((s: any) => s.placementStatus === 'placed').length;
+            this.stats.closedJobs = this.jobs.filter((j: any) => j.status === 'closed').length;
 
             // Calculate total unique applications across all jobs
             const totalApps = this.jobs.reduce((sum, job) => sum + (job.applications?.length || 0), 0);

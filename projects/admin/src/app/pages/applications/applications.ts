@@ -4,8 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { JobService } from '../../services/job.service';
 import { ToastService } from '../../services/toast.service';
-import { Subject, takeUntil } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, takeUntil, take } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 
 @Component({
     selector: 'app-applications',
@@ -139,18 +139,34 @@ export class Applications implements OnInit, OnDestroy {
     }
 
     updateStatus(jobId: string, applicantId: string, status: string) {
-        this.jobService.updateApplicantStatus(jobId, applicantId, status).subscribe({
+        // Find local application
+        const app = this.allApplications.find(a => a._id === applicantId);
+        if (!app) return;
+
+        // Store old status for rollback
+        const oldStatus = app.status;
+
+        // Prevent redundant updates
+        if (oldStatus === status) return;
+
+        // INSTANT UI UPDATE (Optimistic)
+        app.status = status;
+        this.calculateCounts();
+        this.applyFilters();
+        this.cdr.markForCheck();
+
+        this.jobService.updateApplicantStatus(jobId, applicantId, status).pipe(take(1)).subscribe({
             next: () => {
-                // Update local status
-                const app = this.allApplications.find(a => a._id === applicantId);
-                if (app) app.status = status;
-                this.calculateCounts();
-                this.applyFilters();
-                this.toastService.success(`Status updated to ${status}`);
+                // Success - UI already updated optimistically
             },
             error: (err: any) => {
+                // Revert on error
+                app.status = oldStatus;
+                this.calculateCounts();
+                this.applyFilters();
                 const errorMsg = err.error?.msg || err.message || 'Failed to update application status';
                 this.toastService.error(`Error: ${errorMsg}`);
+                this.cdr.markForCheck();
             }
         });
     }
