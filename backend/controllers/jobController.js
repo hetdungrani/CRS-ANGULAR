@@ -9,7 +9,7 @@ exports.createJob = async (req, res) => {
         const job = await Job.create(req.body);
         res.status(201).json(job);
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -44,7 +44,7 @@ exports.getJobs = async (req, res) => {
 
         res.json(sanitizedJobs);
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -66,7 +66,7 @@ exports.getJobById = async (req, res) => {
 
         res.json(job);
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         if (err.kind === 'ObjectId') {
             return res.status(404).json({ msg: 'Job not found' });
         }
@@ -216,7 +216,7 @@ exports.applyForJob = async (req, res) => {
         await job.save();
         res.json({ msg: 'Applied successfully', job });
     } catch (err) {
-        console.error('Error in applyForJob:', err.message);
+        // console.error('Error in applyForJob:', err.message);
         res.status(500).send('Server Error');
     }
 };

@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-
 import { ThemeService } from '../../services/theme.service';
+import { ToastService } from '../../components/shared/toast/toast.service';
+import { ModalService } from '../../components/shared/modal/modal.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -29,10 +30,11 @@ export class Settings implements OnInit {
 
     constructor(
         private authService: AuthService,
-
         private themeService: ThemeService,
         private router: Router,
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private toastService: ToastService,
+        private modalService: ModalService
     ) { }
 
     ngOnInit() {
@@ -49,7 +51,7 @@ export class Settings implements OnInit {
                 this.cdr.markForCheck();
             },
             error: (err) => {
-                console.error('Failed to load settings:', err);
+                // console.error('Failed to load settings:', err);
                 this.loading = false;
                 this.cdr.markForCheck();
             }
@@ -58,12 +60,12 @@ export class Settings implements OnInit {
 
     updatePassword() {
         if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-
+            this.toastService.error('Passwords do not match');
             return;
         }
 
         if (this.passwordData.newPassword.length < 6) {
-
+            this.toastService.error('Password must be at least 6 characters');
             return;
         }
 
@@ -74,7 +76,7 @@ export class Settings implements OnInit {
         const safetyTimer = setTimeout(() => {
             if (this.loading) {
                 this.loading = false;
-
+                this.toastService.error('Request timed out');
                 this.cdr.markForCheck();
             }
         }, 10000);
@@ -85,7 +87,7 @@ export class Settings implements OnInit {
         }).pipe(take(1)).subscribe({
             next: (res) => {
                 clearTimeout(safetyTimer);
-
+                this.toastService.success('Password updated successfully');
                 this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
                 this.loading = false;
                 this.cdr.markForCheck();
@@ -93,7 +95,7 @@ export class Settings implements OnInit {
             error: (err) => {
                 clearTimeout(safetyTimer);
                 const errorMsg = err.error?.msg || err.message || 'Failed to update password';
-
+                this.toastService.error(errorMsg);
                 this.loading = false;
                 this.cdr.markForCheck();
             }
@@ -106,7 +108,7 @@ export class Settings implements OnInit {
 
         this.authService.updateSettings(this.systemConfig).pipe(take(1)).subscribe({
             next: (data) => {
-
+                this.toastService.success('System configuration updated');
                 this.systemConfig = data;
                 this.themeService.setTheme(this.systemConfig.theme);
                 this.loading = false;
@@ -114,18 +116,27 @@ export class Settings implements OnInit {
             },
             error: (err) => {
                 const errorMsg = err.error?.msg || err.message || 'Failed to update configuration';
-
+                this.toastService.error(errorMsg);
                 this.loading = false;
                 this.cdr.markForCheck();
             }
         });
     }
 
-    logout() {
-        if (confirm('Are you sure you want to logout?')) {
+    async logout() {
+        const confirmed = await this.modalService.confirm(
+            'Logout',
+            'Are you sure you want to logout?',
+            'Logout',
+            'Cancel',
+            'info'
+        );
+
+        if (confirmed) {
             this.authService.logout();
             this.themeService.setTheme('light');
             this.router.navigate(['/login']);
+            this.toastService.success('Logged out successfully');
         }
     }
 }

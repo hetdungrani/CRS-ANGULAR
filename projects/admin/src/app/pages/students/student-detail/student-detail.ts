@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudentService } from '../../../services/student.service';
-
-import { Location } from '@angular/common';
+import { ToastService } from '../../../components/shared/toast/toast.service';
+import { ModalService } from '../../../components/shared/modal/modal.service';
 
 @Component({
     selector: 'app-student-detail',
@@ -19,8 +19,9 @@ export class StudentDetail implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private studentService: StudentService,
-
-        private location: Location
+        private location: Location,
+        private toastService: ToastService,
+        private modalService: ModalService
     ) { }
 
     ngOnInit() {
@@ -45,7 +46,7 @@ export class StudentDetail implements OnInit {
             error: (err) => {
                 this.loading = false;
                 const errorMsg = err.error?.msg || err.message || 'Failed to load student details';
-
+                this.toastService.error(errorMsg);
             }
         });
     }
@@ -54,24 +55,29 @@ export class StudentDetail implements OnInit {
         this.location.back();
     }
 
-    deleteStudent() {
-        if (!this.student || !this.student._id) {
+    async deleteStudent() {
+        if (!this.student || !this.student._id) return;
 
-            return;
-        }
+        const confirmed = await this.modalService.confirm(
+            'Delete Student',
+            'Are you sure you want to delete this student? This action cannot be undone.',
+            'Delete',
+            'Cancel',
+            'danger'
+        );
 
-        if (confirm('Are you sure you want to delete this student?')) {
+        if (confirmed) {
             this.loading = true;
             this.studentService.deleteStudent(this.student._id).subscribe({
                 next: () => {
                     this.loading = false;
-
+                    this.toastService.success('Student deleted successfully');
                     this.router.navigate(['/students']);
                 },
                 error: (err) => {
                     this.loading = false;
                     const errorMsg = err.error?.msg || err.message || 'Failed to delete student';
-
+                    this.toastService.error(errorMsg);
                 }
             });
         }

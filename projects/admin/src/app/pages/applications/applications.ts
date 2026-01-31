@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { JobService } from '../../services/job.service';
-
+import { ToastService } from '../../components/shared/toast/toast.service';
 import { Subject, takeUntil, take } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -47,8 +47,8 @@ export class Applications implements OnInit, OnDestroy {
     constructor(
         private jobService: JobService,
         private route: ActivatedRoute,
-
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private toastService: ToastService
     ) { }
 
     ngOnInit() {
@@ -158,6 +158,7 @@ export class Applications implements OnInit, OnDestroy {
         this.jobService.updateApplicantStatus(jobId, applicantId, status).pipe(take(1)).subscribe({
             next: () => {
                 // Success - UI already updated optimistically
+                this.toastService.success(`Status updated to ${status}`);
             },
             error: (err: any) => {
                 // Revert on error
@@ -165,32 +166,11 @@ export class Applications implements OnInit, OnDestroy {
                 this.calculateCounts();
                 this.applyFilters();
                 const errorMsg = err.error?.msg || err.message || 'Failed to update application status';
-
+                this.toastService.error(errorMsg);
                 this.cdr.markForCheck();
             }
         });
     }
-
-    /* exportToCSV() {
-        const headers = ['Student Name', 'Department', 'Email', 'CGPA', 'Company', 'Role', 'Status', 'Applied At'];
-        const csvContent = this.filteredApplications.map(app => [
-            app.student?.fullName,
-            app.student?.department,
-            app.student?.email,
-            app.student?.cgpa,
-            app.companyName,
-            app.role,
-            app.status,
-            new Date(app.appliedAt).toLocaleDateString()
-        ].join(','));
-
-        const blob = new Blob([[headers.join(','), ...csvContent].join('\n')], { type: 'text/csv' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `applications_export_${new Date().getTime()}.csv`;
-        a.click();
-    } */
 
     // TrackBy function for performance optimization
     trackByApplicationId(index: number, app: any): any {

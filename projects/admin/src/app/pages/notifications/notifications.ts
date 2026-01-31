@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
-
+import { ToastService } from '../../components/shared/toast/toast.service';
+import { ModalService } from '../../components/shared/modal/modal.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -46,8 +47,9 @@ export class Notifications implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private notificationService: NotificationService,
-
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private toastService: ToastService,
+        private modalService: ModalService
     ) { }
 
     ngOnInit() {
@@ -73,7 +75,7 @@ export class Notifications implements OnInit {
             error: (err) => {
                 this.loading = false;
                 const errorMsg = err.error?.msg || err.message || 'Failed to load notifications';
-
+                this.toastService.error(errorMsg);
                 this.cdr.markForCheck();
             }
         });
@@ -86,7 +88,7 @@ export class Notifications implements OnInit {
         const message = this.newNotification.message?.trim();
 
         if (!title || !message) {
-
+            this.toastService.warning('Title and message are required');
             return;
         }
 
@@ -97,7 +99,7 @@ export class Notifications implements OnInit {
         const safetyTimer = setTimeout(() => {
             if (this.submitting) {
                 this.submitting = false;
-
+                this.toastService.error('Request timed out');
                 this.cdr.markForCheck();
             }
         }, 10000);
@@ -108,7 +110,7 @@ export class Notifications implements OnInit {
                 this.notifications.unshift(data);
                 this.showForm = false;
                 this.newNotification = { title: '', message: '', type: 'general', targetGroup: 'all' };
-
+                this.toastService.success('Notification sent successfully');
                 this.submitting = false;
                 this.cdr.markForCheck();
             },
@@ -116,23 +118,31 @@ export class Notifications implements OnInit {
                 clearTimeout(safetyTimer);
                 this.submitting = false;
                 const errorMsg = err.error?.msg || err.message || 'Failed to send notification';
-
+                this.toastService.error(errorMsg);
                 this.cdr.markForCheck();
             }
         });
     }
 
-    deleteNotification(id: string) {
-        if (confirm('Are you sure you want to delete this announcement?')) {
+    async deleteNotification(id: string) {
+        const confirmed = await this.modalService.confirm(
+            'Delete Announcement',
+            'Are you sure you want to delete this announcement?',
+            'Delete',
+            'Cancel',
+            'danger'
+        );
+
+        if (confirmed) {
             this.notificationService.deleteNotification(id).pipe(take(1)).subscribe({
                 next: () => {
                     this.notifications = this.notifications.filter(n => n._id !== id);
-
+                    this.toastService.success('Notification deleted successfully');
                     this.cdr.markForCheck();
                 },
                 error: (err) => {
                     const errorMsg = err.error?.msg || err.message || 'Failed to delete notification';
-
+                    this.toastService.error(errorMsg);
                     this.cdr.markForCheck();
                 }
             });

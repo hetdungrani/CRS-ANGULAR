@@ -5,6 +5,8 @@ import { AuthService } from '../../services/auth.service';
 import { NotificationService } from '../../services/notification.service';
 import { ThemeService } from '../../services/theme.service';
 import { Subscription } from 'rxjs';
+import { ModalService } from '../../components/shared/modal/modal.service';
+import { ToastService } from '../../components/shared/toast/toast.service';
 
 @Component({
   selector: 'app-header',
@@ -28,7 +30,9 @@ export class Header implements OnInit, OnDestroy {
     private authService: AuthService,
     private router: Router,
     private notificationService: NotificationService,
-    public themeService: ThemeService
+    public themeService: ThemeService,
+    private modalService: ModalService,
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -68,8 +72,19 @@ export class Header implements OnInit, OnDestroy {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+  async logout() {
+    const confirmed = await this.modalService.confirm(
+      'Logout',
+      'Are you sure you want to logout?',
+      'Logout',
+      'Cancel',
+      'info'
+    );
+
+    if (confirmed) {
+      this.authService.logout();
+      this.router.navigate(['/login']);
+      this.toastService.success('Logged out successfully');
+    }
   }
 }

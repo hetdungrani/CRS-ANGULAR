@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 
 import { ThemeService } from '../../services/theme.service';
+import { ToastService } from '../../components/shared/toast/toast.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -24,7 +25,7 @@ export class Register implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-
+    private toastService: ToastService,
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -71,18 +72,16 @@ export class Register implements OnInit {
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe({
         next: (res) => {
-
+          this.toastService.success('Registration successful! Please login.');
           this.router.navigate(['/login']);
         },
         error: (err) => {
           if (err.status === 403) {
-            // Highly specific unique message for the forbidden state
-
             this.errorMessage = 'Registration is not allowed';
           } else {
             this.errorMessage = err.error?.msg || 'Registration failed. Please try again.';
-
           }
+          this.toastService.error(this.errorMessage);
         }
       });
     } else {

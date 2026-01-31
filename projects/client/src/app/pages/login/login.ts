@@ -3,9 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-
-
-import { take } from 'rxjs';
+import { ToastService } from '../../components/shared/toast/toast.service';
 import { ThemeService } from '../../services/theme.service';
 
 @Component({
@@ -17,14 +15,13 @@ import { ThemeService } from '../../services/theme.service';
 })
 export class Login implements OnInit {
   loginForm!: FormGroup;
-
   errorMessage: string = '';
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -40,15 +37,16 @@ export class Login implements OnInit {
         next: (res) => {
           this.authService.setToken(res.token);
           this.authService.setUser(res.user);
-
-          this.router.navigate(['/dashboard']); // Redirect to dashboard
+          this.toastService.success('Login Successful');
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.errorMessage = err.error.msg || 'Invalid Credentials';
-
+          this.toastService.error(this.errorMessage);
         }
       });
     } else {
+      // ...
       this.loginForm.markAllAsTouched();
     }
   }

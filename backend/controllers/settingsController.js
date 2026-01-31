@@ -13,7 +13,7 @@ exports.getSettings = async (req, res) => {
         }
         res.json(settings);
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -36,7 +36,7 @@ exports.updateSettings = async (req, res) => {
         await settings.save();
         res.json(settings);
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         res.status(500).send('Server Error');
     }
 };

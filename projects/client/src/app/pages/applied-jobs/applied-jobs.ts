@@ -6,6 +6,8 @@ import { JobService } from '../../services/job.service';
 
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
+import { ToastService } from '../../components/shared/toast/toast.service';
+import { ModalService } from '../../components/shared/modal/modal.service';
 
 
 @Component({
@@ -26,7 +28,8 @@ export class AppliedJobs implements OnInit {
     private jobService: JobService,
     private router: Router,
     private route: ActivatedRoute,
-
+    private toastService: ToastService,
+    private modalService: ModalService
   ) { }
 
   ngOnInit(): void {
@@ -37,14 +40,19 @@ export class AppliedJobs implements OnInit {
       const data = this.route.snapshot.data['appliedJobs'];
       if (data) {
         // Resolver likely loaded data
+        this.appliedJobs = data;
       }
 
       // Subscribe to shared state
       this.jobService.appliedJobs$.subscribe(jobs => {
-        if (jobs !== null) {
+        if (jobs && jobs.length > 0) {
           this.appliedJobs = jobs;
         } else if (data) {
-          this.appliedJobs = data;
+          // Fallback to resolver data if behavior subject is empty or initial
+          // But if it was emptied on purpose, this logic might be flawed.
+          // Stick to: if jobs is emitted, use it.
+          // However, initially behavior subject is empty.
+          if (jobs.length > 0) this.appliedJobs = jobs;
         }
       });
 
@@ -65,19 +73,24 @@ export class AppliedJobs implements OnInit {
     return statusClasses[s] || 'bg-slate-100 text-slate-700';
   }
 
-  withdrawApplication(jobId: string): void {
-    if (!confirm('Are you sure you want to withdraw your application? This action cannot be undone.')) {
-      return;
-    }
+  async withdrawApplication(jobId: string): Promise<void> {
+    const confirmed = await this.modalService.confirm(
+      'Withdraw Application',
+      'Are you sure you want to withdraw your application? This action cannot be undone.',
+      'Withdraw',
+      'Cancel',
+      'danger'
+    );
+
+    if (!confirmed) return;
 
     this.jobService.withdrawApplication(jobId).subscribe({
       next: () => {
-
-        // Service updates state, view updates automatically
+        this.toastService.success('Application withdrawn successfully');
       },
-      error: (err) => {
+      error: (err: any) => {
         const msg = err.error?.msg || 'Failed to withdraw application';
-
+        this.toastService.error(msg);
       }
     });
   }

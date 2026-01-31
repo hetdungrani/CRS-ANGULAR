@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
+import { ToastService } from '../../components/shared/toast/toast.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -40,7 +41,7 @@ export class Profile implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-
+    private toastService: ToastService
   ) { }
 
   ngOnInit(): void {
@@ -180,15 +181,15 @@ export class Profile implements OnInit {
         const newUser = { ...user, ...updatedUser };
         this.authService.setUser(newUser);
         this.user = newUser;
-
+        this.toastService.success('Profile updated successfully');
       },
       error: (err) => {
         // Revert on error
         this.profileData = oldProfileData;
         this.user = oldUser;
         this.authService.setUser(oldUser);
-        console.error('Update failed:', err);
-
+        // console.error('Update failed:', err); // Suppressed for clean UX
+        this.toastService.error('Failed to update profile');
       }
     });
   }

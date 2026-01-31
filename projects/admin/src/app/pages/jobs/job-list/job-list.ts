@@ -6,6 +6,8 @@ import { JobService } from '../../../services/job.service';
 
 import { Subject, takeUntil } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { ToastService } from '../../../components/shared/toast/toast.service';
+import { ModalService } from '../../../components/shared/modal/modal.service';
 
 @Component({
     selector: 'app-job-list',
@@ -37,8 +39,9 @@ export class JobList implements OnInit, OnDestroy {
     constructor(
         private jobService: JobService,
         private route: ActivatedRoute,
-
-        private cdr: ChangeDetectorRef
+        private cdr: ChangeDetectorRef,
+        private toastService: ToastService,
+        private modalService: ModalService
     ) { }
 
     ngOnInit() {
@@ -71,18 +74,26 @@ export class JobList implements OnInit, OnDestroy {
         }
     }
 
-    deleteJob(id: string) {
-        if (confirm('Are you sure you want to delete this job drive?')) {
+    async deleteJob(id: string) {
+        const confirmed = await this.modalService.confirm(
+            'Delete Job Drive',
+            'Are you sure you want to delete this job drive?',
+            'Delete',
+            'Cancel',
+            'danger'
+        );
+
+        if (confirmed) {
             this.jobService.deleteJob(id).subscribe({
                 next: () => {
                     // Remove from both arrays
                     this.allJobs = this.allJobs.filter(job => job._id !== id);
-                    this.applyFilters(); // Recalculate filters and pagination
-
+                    this.applyFilters();
+                    this.toastService.success('Job deleted successfully');
                 },
                 error: (err) => {
                     const errorMsg = err.error?.msg || err.message || 'Failed to delete job';
-
+                    this.toastService.error(errorMsg);
                 }
             });
         }

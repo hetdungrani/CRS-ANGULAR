@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
+import { ToastService } from '../../components/shared/toast/toast.service';
 import { take } from 'rxjs';
 
 @Component({
@@ -24,7 +25,8 @@ export class Login implements OnInit {
     constructor(
         private authService: AuthService,
         private themeService: ThemeService,
-        private router: Router
+        private router: Router,
+        private toastService: ToastService
     ) { }
 
     ngOnInit() {
@@ -49,11 +51,13 @@ export class Login implements OnInit {
             next: (res) => {
                 this.authService.setToken(res.token);
                 this.authService.setAdmin(res.admin);
+                this.toastService.success('Login Successful');
                 this.router.navigate(['/dashboard']);
                 this.isLoading = false;
             },
             error: (err) => {
                 this.errorMessage = err.error?.msg || 'Login failed';
+                this.toastService.error(this.errorMessage);
                 this.isLoading = false;
             }
         });

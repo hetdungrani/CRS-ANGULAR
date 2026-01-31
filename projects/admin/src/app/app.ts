@@ -1,10 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { ToastComponent } from './components/shared/toast/toast.component';
+import { ModalComponent } from './components/shared/modal/modal.component';
 
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ToastComponent, ModalComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

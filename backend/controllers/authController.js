@@ -56,7 +56,7 @@ exports.register = async (req, res) => {
             }
         );
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -110,7 +110,7 @@ exports.login = async (req, res) => {
             }
         );
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -123,7 +123,7 @@ exports.getMe = async (req, res) => {
         const user = await User.findById(req.user.id).select('-password');
         res.json(user);
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         res.status(500).send('Server Error');
     }
 };
@@ -167,7 +167,7 @@ exports.updateProfile = async (req, res) => {
 
         res.json(user);
     } catch (err) {
-        console.error(err.message);
+        // console.error(err.message);
         res.status(500).send('Server Error');
     }
 };

@@ -4,6 +4,8 @@ import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 import { filter, take } from 'rxjs/operators';
+import { ToastService } from '../../components/shared/toast/toast.service';
+import { ModalService } from '../../components/shared/modal/modal.service';
 
 @Component({
     selector: 'app-admin-layout',
@@ -18,7 +20,9 @@ export class AdminLayout implements OnInit {
     constructor(
         private authService: AuthService,
         private themeService: ThemeService,
-        private router: Router
+        private router: Router,
+        private toastService: ToastService,
+        private modalService: ModalService
     ) { }
 
     ngOnInit() {
@@ -40,7 +44,9 @@ export class AdminLayout implements OnInit {
                     this.themeService.setTheme(settings.theme);
                 }
             },
-            error: (err) => console.error('Failed to load system theme', err)
+            error: (err) => {
+                // console.error('Failed to load system theme', err);
+            }
         });
     }
 
@@ -57,9 +63,20 @@ export class AdminLayout implements OnInit {
         this.currentTitle = titles[path] || 'Dashboard';
     }
 
-    logout() {
-        this.authService.logout();
-        this.themeService.setTheme('light');
-        this.router.navigate(['/login']);
+    async logout() {
+        const confirmed = await this.modalService.confirm(
+            'Logout',
+            'Are you sure you want to logout?',
+            'Logout',
+            'Cancel',
+            'info'
+        );
+
+        if (confirmed) {
+            this.authService.logout();
+            this.themeService.setTheme('light');
+            this.router.navigate(['/login']);
+            this.toastService.success('Logged out successfully');
+        }
     }
 }

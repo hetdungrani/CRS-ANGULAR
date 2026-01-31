@@ -29,7 +29,7 @@ app.use('/api/notifications', require('./routes/studentNotificationRoutes'));
 
 // Global Error Handler
 app.use((err, req, res, next) => {
-    console.error('Stack Trace:', err.stack);
+    // console.error('Stack Trace:', err.stack); // Suppressed
     res.status(500).json({
         msg: 'Something went wrong on the server',
         error: err.message
