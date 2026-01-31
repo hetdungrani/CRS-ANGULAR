@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { JobService } from '../../services/job.service';
-import { ToastService } from '../../services/toast.service';
+
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 
@@ -28,7 +28,7 @@ export class Jobs implements OnInit {
     private jobService: JobService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+
   ) { }
 
   ngOnInit(): void {
@@ -82,12 +82,12 @@ export class Jobs implements OnInit {
     // Pass User ID for optimistic update
     this.jobService.applyForJob(jobId, this.user._id || this.user.id).subscribe({
       next: (res) => {
-        this.toastService.success('Applied successfully!');
+
         // Service handles state update, subscription updates view automatically
       },
       error: (err) => {
         const msg = err.error?.msg || 'Application failed';
-        this.toastService.error(msg);
+
       }
     });
   }

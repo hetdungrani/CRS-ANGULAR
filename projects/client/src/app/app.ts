@@ -1,12 +1,12 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { ToastComponent } from './components/toast/toast';
+
 import { AuthService } from './services/auth.service';
 import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ToastComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

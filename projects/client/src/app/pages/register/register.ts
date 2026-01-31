@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { ToastService } from '../../services/toast.service';
+
 import { ThemeService } from '../../services/theme.service';
 import { take } from 'rxjs';
 
@@ -24,7 +24,7 @@ export class Register implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private authService: AuthService,
-    private toastService: ToastService,
+
     private cdr: ChangeDetectorRef
   ) { }
 
@@ -71,17 +71,17 @@ export class Register implements OnInit {
     if (this.registerForm.valid) {
       this.authService.register(this.registerForm.value).subscribe({
         next: (res) => {
-          this.toastService.success('Registration Successful! Please login.');
+
           this.router.navigate(['/login']);
         },
         error: (err) => {
           if (err.status === 403) {
             // Highly specific unique message for the forbidden state
-            this.toastService.warning('🚨 Access Closed: Registration is not allowed at this time.');
+
             this.errorMessage = 'Registration is not allowed';
           } else {
             this.errorMessage = err.error?.msg || 'Registration failed. Please try again.';
-            this.toastService.error(this.errorMessage);
+
           }
         }
       });

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudentService } from '../../../services/student.service';
-import { ToastService } from '../../../services/toast.service';
+
 import { Location } from '@angular/common';
 
 @Component({
@@ -19,7 +19,7 @@ export class StudentDetail implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private studentService: StudentService,
-        private toastService: ToastService,
+
         private location: Location
     ) { }
 
@@ -45,7 +45,7 @@ export class StudentDetail implements OnInit {
             error: (err) => {
                 this.loading = false;
                 const errorMsg = err.error?.msg || err.message || 'Failed to load student details';
-                this.toastService.error(`Error: ${errorMsg}`);
+
             }
         });
     }
@@ -56,7 +56,7 @@ export class StudentDetail implements OnInit {
 
     deleteStudent() {
         if (!this.student || !this.student._id) {
-            this.toastService.error('Student data not available');
+
             return;
         }
 
@@ -65,13 +65,13 @@ export class StudentDetail implements OnInit {
             this.studentService.deleteStudent(this.student._id).subscribe({
                 next: () => {
                     this.loading = false;
-                    this.toastService.success('Student deleted successfully');
+
                     this.router.navigate(['/students']);
                 },
                 error: (err) => {
                     this.loading = false;
                     const errorMsg = err.error?.msg || err.message || 'Failed to delete student';
-                    this.toastService.error(`Error: ${errorMsg}`);
+
                 }
             });
         }

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { JobService } from '../../../services/job.service';
-import { ToastService } from '../../../services/toast.service';
+
 import { Subject, takeUntil } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -37,7 +37,7 @@ export class JobList implements OnInit, OnDestroy {
     constructor(
         private jobService: JobService,
         private route: ActivatedRoute,
-        private toastService: ToastService,
+
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -78,11 +78,11 @@ export class JobList implements OnInit, OnDestroy {
                     // Remove from both arrays
                     this.allJobs = this.allJobs.filter(job => job._id !== id);
                     this.applyFilters(); // Recalculate filters and pagination
-                    this.toastService.success('Job deleted successfully!');
+
                 },
                 error: (err) => {
                     const errorMsg = err.error?.msg || err.message || 'Failed to delete job';
-                    this.toastService.error(`Error: ${errorMsg}`);
+
                 }
             });
         }

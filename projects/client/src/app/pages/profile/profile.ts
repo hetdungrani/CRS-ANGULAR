@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { ToastService } from '../../services/toast.service';
+
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 import { take } from 'rxjs';
@@ -40,7 +40,7 @@ export class Profile implements OnInit {
     private authService: AuthService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+
   ) { }
 
   ngOnInit(): void {
@@ -180,7 +180,7 @@ export class Profile implements OnInit {
         const newUser = { ...user, ...updatedUser };
         this.authService.setUser(newUser);
         this.user = newUser;
-        this.toastService.success('Profile saved!');
+
       },
       error: (err) => {
         // Revert on error
@@ -188,7 +188,7 @@ export class Profile implements OnInit {
         this.user = oldUser;
         this.authService.setUser(oldUser);
         console.error('Update failed:', err);
-        this.toastService.error(err.error?.msg || 'Failed to save to server');
+
       }
     });
   }

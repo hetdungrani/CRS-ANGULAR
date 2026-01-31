@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { ToastService } from '../../services/toast.service';
+
 import { ThemeService } from '../../services/theme.service';
 import { take } from 'rxjs';
 
@@ -29,7 +29,7 @@ export class Settings implements OnInit {
 
     constructor(
         private authService: AuthService,
-        private toastService: ToastService,
+
         private themeService: ThemeService,
         private router: Router,
         private cdr: ChangeDetectorRef
@@ -58,12 +58,12 @@ export class Settings implements OnInit {
 
     updatePassword() {
         if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-            this.toastService.error('New passwords do not match');
+
             return;
         }
 
         if (this.passwordData.newPassword.length < 6) {
-            this.toastService.error('New password must be at least 6 characters long');
+
             return;
         }
 
@@ -74,7 +74,7 @@ export class Settings implements OnInit {
         const safetyTimer = setTimeout(() => {
             if (this.loading) {
                 this.loading = false;
-                this.toastService.error('Connection timed out. Please try again.');
+
                 this.cdr.markForCheck();
             }
         }, 10000);
@@ -85,7 +85,7 @@ export class Settings implements OnInit {
         }).pipe(take(1)).subscribe({
             next: (res) => {
                 clearTimeout(safetyTimer);
-                this.toastService.success('Password updated successfully');
+
                 this.passwordData = { currentPassword: '', newPassword: '', confirmPassword: '' };
                 this.loading = false;
                 this.cdr.markForCheck();
@@ -93,7 +93,7 @@ export class Settings implements OnInit {
             error: (err) => {
                 clearTimeout(safetyTimer);
                 const errorMsg = err.error?.msg || err.message || 'Failed to update password';
-                this.toastService.error(errorMsg);
+
                 this.loading = false;
                 this.cdr.markForCheck();
             }
@@ -106,7 +106,7 @@ export class Settings implements OnInit {
 
         this.authService.updateSettings(this.systemConfig).pipe(take(1)).subscribe({
             next: (data) => {
-                this.toastService.success('System configuration updated');
+
                 this.systemConfig = data;
                 this.themeService.setTheme(this.systemConfig.theme);
                 this.loading = false;
@@ -114,7 +114,7 @@ export class Settings implements OnInit {
             },
             error: (err) => {
                 const errorMsg = err.error?.msg || err.message || 'Failed to update configuration';
-                this.toastService.error(errorMsg);
+
                 this.loading = false;
                 this.cdr.markForCheck();
             }

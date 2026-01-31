@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { JobService } from '../../services/job.service';
-import { ToastService } from '../../services/toast.service';
+
 import { Subject, takeUntil, take } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 
@@ -47,7 +47,7 @@ export class Applications implements OnInit, OnDestroy {
     constructor(
         private jobService: JobService,
         private route: ActivatedRoute,
-        private toastService: ToastService,
+
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -165,7 +165,7 @@ export class Applications implements OnInit, OnDestroy {
                 this.calculateCounts();
                 this.applyFilters();
                 const errorMsg = err.error?.msg || err.message || 'Failed to update application status';
-                this.toastService.error(`Error: ${errorMsg}`);
+
                 this.cdr.markForCheck();
             }
         });

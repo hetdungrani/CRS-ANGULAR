@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { JobService } from '../../services/job.service';
-import { ToastService } from '../../services/toast.service';
+
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 
@@ -26,7 +26,7 @@ export class AppliedJobs implements OnInit {
     private jobService: JobService,
     private router: Router,
     private route: ActivatedRoute,
-    private toastService: ToastService
+
   ) { }
 
   ngOnInit(): void {
@@ -72,12 +72,12 @@ export class AppliedJobs implements OnInit {
 
     this.jobService.withdrawApplication(jobId).subscribe({
       next: () => {
-        this.toastService.success('Application withdrawn successfully');
+
         // Service updates state, view updates automatically
       },
       error: (err) => {
         const msg = err.error?.msg || 'Failed to withdraw application';
-        this.toastService.error(msg);
+
       }
     });
   }

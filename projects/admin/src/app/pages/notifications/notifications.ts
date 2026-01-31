@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
-import { ToastService } from '../../services/toast.service';
+
 import { take } from 'rxjs';
 
 @Component({
@@ -46,7 +46,7 @@ export class Notifications implements OnInit {
     constructor(
         private route: ActivatedRoute,
         private notificationService: NotificationService,
-        private toastService: ToastService,
+
         private cdr: ChangeDetectorRef
     ) { }
 
@@ -73,7 +73,7 @@ export class Notifications implements OnInit {
             error: (err) => {
                 this.loading = false;
                 const errorMsg = err.error?.msg || err.message || 'Failed to load notifications';
-                this.toastService.error(`Error: ${errorMsg}`);
+
                 this.cdr.markForCheck();
             }
         });
@@ -86,7 +86,7 @@ export class Notifications implements OnInit {
         const message = this.newNotification.message?.trim();
 
         if (!title || !message) {
-            this.toastService.error('Please provide both a title and a message.');
+
             return;
         }
 
@@ -97,7 +97,7 @@ export class Notifications implements OnInit {
         const safetyTimer = setTimeout(() => {
             if (this.submitting) {
                 this.submitting = false;
-                this.toastService.error('Connection timed out. Please try again.');
+
                 this.cdr.markForCheck();
             }
         }, 10000);
@@ -108,7 +108,7 @@ export class Notifications implements OnInit {
                 this.notifications.unshift(data);
                 this.showForm = false;
                 this.newNotification = { title: '', message: '', type: 'general', targetGroup: 'all' };
-                this.toastService.success('Announcement broadcasted successfully!');
+
                 this.submitting = false;
                 this.cdr.markForCheck();
             },
@@ -116,7 +116,7 @@ export class Notifications implements OnInit {
                 clearTimeout(safetyTimer);
                 this.submitting = false;
                 const errorMsg = err.error?.msg || err.message || 'Failed to send notification';
-                this.toastService.error(`Error: ${errorMsg}`);
+
                 this.cdr.markForCheck();
             }
         });
@@ -127,12 +127,12 @@ export class Notifications implements OnInit {
             this.notificationService.deleteNotification(id).pipe(take(1)).subscribe({
                 next: () => {
                     this.notifications = this.notifications.filter(n => n._id !== id);
-                    this.toastService.success('Announcement deleted successfully!');
+
                     this.cdr.markForCheck();
                 },
                 error: (err) => {
                     const errorMsg = err.error?.msg || err.message || 'Failed to delete notification';
-                    this.toastService.error(`Error: ${errorMsg}`);
+
                     this.cdr.markForCheck();
                 }
             });

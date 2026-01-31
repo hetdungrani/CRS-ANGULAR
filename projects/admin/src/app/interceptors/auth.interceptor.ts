@@ -2,11 +2,11 @@ import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError, retry } from 'rxjs';
-import { ToastService } from '../services/toast.service';
+
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const router = inject(Router);
-    const toastService = inject(ToastService);
+
     const token = localStorage.getItem('admin_token');
 
     let authReq = req;
@@ -26,7 +26,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
                 localStorage.removeItem('admin_token');
                 localStorage.removeItem('admin_data');
                 router.navigate(['/login']);
-                toastService.error('Session expired. Please login again.');
+
             }
 
             const errorMsg = error.error?.msg || error.message || 'An unexpected error occurred';

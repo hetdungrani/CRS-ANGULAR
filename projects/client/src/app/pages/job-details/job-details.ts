@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { JobService } from '../../services/job.service';
-import { ToastService } from '../../services/toast.service';
+
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
 
@@ -22,7 +22,7 @@ export class JobDetails implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private jobService: JobService,
-        private toastService: ToastService
+
     ) { }
 
     ngOnInit(): void {

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { JobService } from '../../../services/job.service';
-import { ToastService } from '../../../services/toast.service';
+
 import { take } from 'rxjs';
 
 @Component({
@@ -19,7 +19,7 @@ export class JobDetail implements OnInit {
     constructor(
         private jobService: JobService,
         private route: ActivatedRoute,
-        private toastService: ToastService
+
     ) { }
 
     ngOnInit() {
@@ -45,7 +45,7 @@ export class JobDetail implements OnInit {
             error: (err) => {
                 this.loading = false;
                 const errorMsg = err.error?.msg || err.message || 'Failed to load job details';
-                this.toastService.error(`Error: ${errorMsg}`);
+
             }
         });
     }
@@ -73,7 +73,7 @@ export class JobDetail implements OnInit {
                 // Revert on error
                 application.status = oldStatus;
                 const errorMsg = err.error?.msg || err.message || 'Failed to update status';
-                this.toastService.error(`Error: ${errorMsg}`);
+
             }
         });
     }
