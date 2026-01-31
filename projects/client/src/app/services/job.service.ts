@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap, catchError, of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class JobService {
-    private apiUrl = 'http://localhost:5000/api/jobs';
+    private apiUrl = `${environment.apiUrl}/jobs`;
 
     // Central state for all jobs to ensure instant UI updates across components
     private jobsSubject = new BehaviorSubject<any[]>([]);

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
     try {
-        await mongoose.connect('mongodb://localhost:27017/crs_angular_db', {
+        await mongoose.connect(process.env.MONGO_URI, {
             // Options removed as per Mongoose 6+
         });
         console.log('MongoDB Connected Successfully');

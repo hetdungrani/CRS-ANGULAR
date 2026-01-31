@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap, of } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:5000/api/auth';
+    private apiUrl = `${environment.apiUrl}/auth`;
 
     // User state for instant UI updates
     private userSubject = new BehaviorSubject<any>(this.getUserFromStorage());
@@ -76,7 +77,7 @@ export class AuthService {
     }
 
     getSettings(): Observable<any> {
-        return this.http.get<any>(`http://localhost:5000/api/settings`);
+        return this.http.get<any>(`${environment.apiUrl}/settings`);
     }
 
     isLoggedIn(): boolean {

@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject, tap } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class NotificationService {
-    private apiUrl = 'http://localhost:5000/api/notifications';
+    private apiUrl = `${environment.apiUrl}/notifications`;
 
     // Single source of truth for notifications across the app
     private notificationsSubject = new BehaviorSubject<any[]>([]);

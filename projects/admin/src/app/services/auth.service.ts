@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
     providedIn: 'root'
 })
 export class AuthService {
-    private apiUrl = 'http://localhost:5000/api/admin';
+    private apiUrl = `${environment.apiUrl}/admin`;
 
     constructor(private http: HttpClient) { }
 
@@ -49,7 +50,7 @@ export class AuthService {
     }
 
     getPublicSettings(): Observable<any> {
-        return this.http.get<any>('http://localhost:5000/api/settings');
+        return this.http.get<any>(`${environment.apiUrl}/settings`);
     }
 
     updateSettings(data: any): Observable<any> {
