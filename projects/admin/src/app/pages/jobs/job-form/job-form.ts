@@ -86,10 +86,13 @@ export class JobForm implements OnInit {
     }
 
     onSubmit() {
-        // Valdiation checks (basic)
-        if (!this.jobData.companyName || !this.jobData.role) {
-            this.toastService.warning('Please fill require fields');
-            return;
+        // Validate CGPA if provided
+        if (this.jobData.eligibility && this.jobData.eligibility.minCGPA !== undefined && this.jobData.eligibility.minCGPA !== null) {
+            const cgpa = Number(this.jobData.eligibility.minCGPA);
+            if (!Number.isInteger(cgpa) || cgpa < 1 || cgpa > 10) {
+                this.toastService.error('Minimum CGPA must be an integer between 1 and 10');
+                return;
+            }
         }
 
         // Collect selected branches

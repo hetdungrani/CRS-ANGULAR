@@ -41,7 +41,7 @@ export class Login implements OnInit {
           this.router.navigate(['/dashboard']);
         },
         error: (err) => {
-          this.errorMessage = err.error.msg || 'Invalid Credentials';
+          this.errorMessage = err.error?.msg || 'Invalid Credentials';
           this.toastService.error(this.errorMessage);
         }
       });

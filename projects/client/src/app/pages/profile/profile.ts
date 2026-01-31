@@ -135,6 +135,15 @@ export class Profile implements OnInit {
   }
 
   updateProfile(): void {
+    // Validate CGPA if provided
+    if (this.editData.cgpa) {
+      const cgpaNum = Number(this.editData.cgpa);
+      if (!Number.isInteger(cgpaNum) || cgpaNum < 1 || cgpaNum > 10) {
+        this.toastService.error('CGPA must be an integer between 1 and 10');
+        return;
+      }
+    }
+
     // Process skills if it's a string
     let processedSkills = this.editData.skills;
     if (typeof processedSkills === 'string') {
