@@ -38,7 +38,7 @@ export class Register implements OnInit {
       confirmPassword: ['', Validators.required],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       department: ['', Validators.required],
-      cgpa: ['', [Validators.required, Validators.min(0), Validators.max(10), Validators.pattern('^[0-9]+$')]],
+      cgpa: ['', [Validators.required, Validators.min(0), Validators.max(10)]],
       gender: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
   }

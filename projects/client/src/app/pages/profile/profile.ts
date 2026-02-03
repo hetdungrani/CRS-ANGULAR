@@ -136,8 +136,8 @@ export class Profile implements OnInit {
     // Validate CGPA if provided
     if (this.editData.cgpa) {
       const cgpaNum = Number(this.editData.cgpa);
-      if (!Number.isInteger(cgpaNum) || cgpaNum < 1 || cgpaNum > 10) {
-        this.toastService.error('CGPA must be an integer between 1 and 10');
+      if (cgpaNum < 1 || cgpaNum > 10) {
+        this.toastService.error('CGPA must be between 1 and 10');
         return;
       }
     }
