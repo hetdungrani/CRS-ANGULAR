@@ -1,59 +1,111 @@
-# CrsWorkspace
+# Campus Recruitment System (CRS)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.1.
+A comprehensive campus recruitment management system built with Angular and Node.js/Express.
 
-## Development server
+## Project Structure
 
-To start a local development server, run:
+This is a monorepo containing three applications:
 
+- **Admin Application** (`projects/admin`) - Administrative interface for managing jobs, students, and applications
+- **Client Application** (`projects/client`) - Student-facing interface for browsing and applying to jobs
+- **Backend API** (`backend`) - Node.js/Express REST API with MongoDB
+
+## Prerequisites
+
+- Node.js (v18 or higher)
+- MongoDB
+- Angular CLI (v21.1.1)
+
+## Installation
+
+1. Install root dependencies:
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+2. Install backend dependencies:
 ```bash
-ng generate component component-name
+cd backend
+npm install
+cd ..
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Development
 
+### Start Backend Server
 ```bash
-ng generate --help
+cd backend
+npm start
+```
+The API will run on `http://localhost:5000`
+
+### Start Admin Application
+```bash
+ng serve admin
+```
+The admin app will run on `http://localhost:4200`
+
+### Start Client Application
+```bash
+ng serve client --port 4201
+```
+The client app will run on `http://localhost:4201`
+
+## Environment Configuration
+
+Both applications use environment files located at:
+- `projects/admin/src/environments/environment.ts`
+- `projects/client/src/environments/environment.ts`
+
+Backend configuration is in `backend/.env`
+
+## Features
+
+### Admin Application
+- Dashboard with statistics
+- Job management (create, edit, delete, close)
+- Student management and profiles
+- Application tracking and status updates
+- Notifications system
+- Settings and configurations
+
+### Client Application
+- Student registration and authentication
+- Job browsing and filtering
+- Job application submission
+- Application tracking
+- Profile management
+- Notifications
+- Statistics dashboard
+
+### Backend API
+- RESTful API endpoints
+- JWT authentication
+- Role-based access control (Admin/Student)
+- MongoDB data persistence
+- Notification system
+
+## Building for Production
+
+### Build Admin Application
+```bash
+ng build admin --configuration production
 ```
 
-## Building
-
-To build the project run:
-
+### Build Client Application
 ```bash
-ng build
+ng build client --configuration production
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Build artifacts will be stored in the `dist/` directory.
 
-## Running unit tests
+## Tech Stack
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+- **Frontend**: Angular 21, TypeScript, Tailwind CSS
+- **Backend**: Node.js, Express.js
+- **Database**: MongoDB with Mongoose
+- **Authentication**: JWT (JSON Web Tokens)
 
 ## Additional Resources
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+For more information on using the Angular CLI, visit the [Angular CLI Documentation](https://angular.dev/tools/cli).
