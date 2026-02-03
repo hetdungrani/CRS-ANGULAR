@@ -211,41 +211,18 @@
                                     profileData.address || 'Not provided' }}</p>
                             </div>
 
-                            <!-- Branch -->
+                            <!-- Department -->
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Branch /
-                                    Department</label>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Department</label>
                                 <div *ngIf="isEditMode">
-                                    <select [(ngModel)]="editData.branch" name="branch" #branch="ngModel"
+                                    <input [(ngModel)]="editData.branch" name="branch" #branch="ngModel" type="text"
+                                        placeholder="e.g. Computer Science"
                                         class="block w-full px-3 py-2 border border-gray-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-800 dark:text-white"
                                         [ngClass]="{'border-red-500': branch.invalid && branch.touched}">
-                                        <option value="">Select Branch</option>
-                                        <option value="Computer Science">Computer Science</option>
-                                        <option value="Information Technology">Information Technology</option>
-                                        <option value="Electronics">Electronics</option>
-                                        <option value="Mechanical">Mechanical</option>
-                                    </select>
                                 </div>
                                 <p *ngIf="!isEditMode" class="text-sm text-gray-900 dark:text-slate-200 py-2">{{
                                     profileData.branch || 'Not provided' }}</p>
-                            </div>
-
-                            <!-- Course -->
-                            <div>
-                                <label
-                                    class="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Course</label>
-                                <div *ngIf="isEditMode">
-                                    <select [(ngModel)]="editData.course" name="course" #course="ngModel"
-                                        class="block w-full px-3 py-2 border border-gray-300 dark:border-slate-700 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 dark:bg-slate-800 dark:text-white"
-                                        [ngClass]="{'border-red-500': course.invalid && course.touched}">
-                                        <option value="">Select Course</option>
-                                        <option value="BTech">B.Tech</option>
-                                        <option value="MTech">M.Tech</option>
-                                        <option value="Bsc">B.Sc</option>
-                                    </select>
-                                </div>
-                                <p *ngIf="!isEditMode" class="text-sm text-gray-900 dark:text-slate-200 py-2">{{
-                                    profileData.course || 'Not provided' }}</p>
                             </div>
 
                             <!-- CGPA -->

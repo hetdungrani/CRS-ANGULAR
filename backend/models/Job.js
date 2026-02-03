@@ -66,4 +66,13 @@ const jobSchema = new mongoose.Schema({
     }
 });
 
+jobSchema.pre('save', function () {
+    if (this.eligibility && Array.isArray(this.eligibility.branches)) {
+        this.eligibility.branches = this.eligibility.branches.map(b => {
+            const trimmed = b.trim();
+            return trimmed.length <= 4 ? trimmed.toUpperCase() : trimmed;
+        }).filter(b => b !== '');
+    }
+});
+
 module.exports = mongoose.model('Job', jobSchema);

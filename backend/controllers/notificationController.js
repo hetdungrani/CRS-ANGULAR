@@ -19,7 +19,8 @@ exports.createNotification = async (req, res) => {
         await notification.save();
         res.status(201).json(notification);
     } catch (err) {
-        res.status(500).json({ msg: 'Failed to create notification' });
+        console.error('Notification Creation Error:', err);
+        res.status(500).json({ msg: 'Failed to create notification', error: err.message });
     }
 };
 
@@ -47,25 +48,14 @@ exports.getStudentNotifications = async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        // Mapping student department codes to full names used in notifications
-        const deptMap = {
-            'CS': 'Computer Science',
-            'IT': 'Information Technology',
-            'ECE': 'Electronics',
-            'ME': 'Mechanical',
-            'EE': 'Electrical',
-            'CE': 'Civil'
-        };
-
-        const fullDeptName = deptMap[user.department] || user.department;
-
         // Fetch notifications targeted at 'all' or the student's department
         const notifications = await Notification.find({
-            targetGroup: { $in: ['all', user.department, fullDeptName] }
+            targetGroup: { $in: ['all', user.department] }
         }).sort({ createdAt: -1 });
         
         res.json(notifications);
     } catch (err) {
+        console.error('Error fetching student notifications:', err);
         res.status(500).json({ msg: 'Server Error' });
     }
 };
@@ -80,5 +70,22 @@ exports.deleteNotification = async (req, res) => {
         res.json({ msg: 'Notification deleted' });
     } catch (err) {
         res.status(500).json({ msg: 'Failed to delete' });
+    }
+};
+
+/**
+ * @desc    Get departments with registered students
+ * @route   GET /api/notifications/departments
+ */
+exports.getDynamicDepartments = async (req, res) => {
+    try {
+        // Find all unique departments from students
+        const departments = await User.distinct('department', { role: 'student' });
+        
+        // Return sorted list
+        res.json(departments.sort());
+    } catch (err) {
+        console.error('Error fetching dynamic departments:', err);
+        res.status(500).json({ msg: 'Server Error' });
     }
 };

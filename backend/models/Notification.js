@@ -16,7 +16,6 @@ const notificationSchema = new mongoose.Schema({
     },
     targetGroup: {
         type: String,
-        enum: ['all', 'Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Electrical', 'Civil'],
         default: 'all'
     },
     sender: {

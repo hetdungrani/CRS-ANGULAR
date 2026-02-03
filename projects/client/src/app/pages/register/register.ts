@@ -38,7 +38,6 @@ export class Register implements OnInit {
       confirmPassword: ['', Validators.required],
       mobile: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       department: ['', Validators.required],
-      course: ['', Validators.required],
       cgpa: ['', [Validators.required, Validators.min(0), Validators.max(10), Validators.pattern('^[0-9]+$')]],
       gender: ['', Validators.required]
     }, { validators: this.passwordMatchValidator });
@@ -70,7 +69,18 @@ export class Register implements OnInit {
 
   onSubmit(): void {
     if (this.registerForm.valid) {
-      this.authService.register(this.registerForm.value).subscribe({
+      const formValue = { ...this.registerForm.value };
+
+      // Normalize department
+      if (formValue.department) {
+        formValue.department = formValue.department.trim();
+        // Simple normalization: uppercase if 4 chars or less (e.g. CSE, IT), otherwise title case
+        if (formValue.department.length <= 4) {
+          formValue.department = formValue.department.toUpperCase();
+        }
+      }
+
+      this.authService.register(formValue).subscribe({
         next: (res) => {
           this.toastService.success('Registration successful! Please login.');
           this.router.navigate(['/login']);

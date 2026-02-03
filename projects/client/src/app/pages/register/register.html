@@ -81,30 +81,10 @@
                 <div>
                     <label for="department"
                         class="block text-sm font-medium text-gray-700 dark:text-slate-300">Department</label>
-                    <select formControlName="department" id="department"
-                        class="mt-1 block w-full pl-3 pr-10 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors">
-                        <option value="">Select Department</option>
-                        <option value="CS">Computer Science</option>
-                        <option value="IT">Information Technology</option>
-                        <option value="ECE">Electronics</option>
-                    </select>
+                    <input formControlName="department" type="text" id="department" placeholder="e.g. Computer Science"
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-md shadow-sm placeholder-gray-400 dark:placeholder-slate-500 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                     <div *ngIf="registerForm.get('department')?.touched && registerForm.get('department')?.invalid"
                         class="text-red-500 text-xs mt-1">Department is required</div>
-                </div>
-
-                <!-- Course -->
-                <div>
-                    <label for="course"
-                        class="block text-sm font-medium text-gray-700 dark:text-slate-300">Course</label>
-                    <select formControlName="course" id="course"
-                        class="mt-1 block w-full pl-3 pr-10 py-2 border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-colors">
-                        <option value="">Select Course</option>
-                        <option value="BTech">B.Tech</option>
-                        <option value="MTech">M.Tech</option>
-                        <option value="Bsc">B.Sc</option>
-                    </select>
-                    <div *ngIf="registerForm.get('course')?.touched && registerForm.get('course')?.invalid"
-                        class="text-red-500 text-xs mt-1">Course is required</div>
                 </div>
 
                 <!-- CGPA -->

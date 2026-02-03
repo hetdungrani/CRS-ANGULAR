@@ -26,11 +26,7 @@ const userSchema = new mongoose.Schema({
     },
     department: {
         type: String,
-        required: [true, 'Please select a department']
-    },
-    course: {
-        type: String,
-        required: [true, 'Please select a course']
+        required: [true, 'Please add a department']
     },
     cgpa: {
         type: Number,
@@ -72,6 +68,15 @@ const userSchema = new mongoose.Schema({
     createdAt: {
         type: Date,
         default: Date.now
+    }
+});
+
+userSchema.pre('save', function () {
+    if (this.department) {
+        this.department = this.department.trim();
+        if (this.department.length <= 4) {
+            this.department = this.department.toUpperCase();
+        }
     }
 });
 

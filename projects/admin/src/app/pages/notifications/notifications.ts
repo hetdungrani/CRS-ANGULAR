@@ -34,15 +34,7 @@ export class Notifications implements OnInit {
         { id: 'general', label: 'General Announcement' }
     ];
 
-    groups = [
-        { id: 'all', label: 'All Students' },
-        { id: 'Computer Science', label: 'Computer Science' },
-        { id: 'Information Technology', label: 'Information Technology' },
-        { id: 'Electronics', label: 'Electronics' },
-        { id: 'Mechanical', label: 'Mechanical' },
-        { id: 'Electrical', label: 'Electrical' },
-        { id: 'Civil', label: 'Civil' }
-    ];
+    groups: any[] = [{ id: 'all', label: 'All Students' }];
 
     constructor(
         private route: ActivatedRoute,
@@ -53,6 +45,7 @@ export class Notifications implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.loadDepartments();
         // Use resolved data from route to prevent infinite loading
         const resolvedData = this.route.snapshot.data['notifications'];
         if (resolvedData) {
@@ -61,6 +54,21 @@ export class Notifications implements OnInit {
         } else {
             this.loadNotifications();
         }
+    }
+
+    loadDepartments() {
+        this.notificationService.getDepartments().pipe(take(1)).subscribe({
+            next: (depts) => {
+                this.groups = [
+                    { id: 'all', label: 'All Students' },
+                    ...depts.map(d => ({ id: d, label: d }))
+                ];
+                this.cdr.markForCheck();
+            },
+            error: (err) => {
+                console.error('Failed to load departments:', err);
+            }
+        });
     }
 
     loadNotifications() {

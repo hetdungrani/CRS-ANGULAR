@@ -13,6 +13,7 @@ import { ToastService } from '../../../components/shared/toast/toast.service';
 })
 export class JobForm implements OnInit {
     isEdit = false;
+    branchesInput: string = '';
     loading = false;
     jobData: any = {
         companyName: '',
@@ -28,9 +29,6 @@ export class JobForm implements OnInit {
         lastDate: '',
         location: 'On-site'
     };
-
-    allBranches = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Electrical', 'Civil'];
-    selectedBranches: { [key: string]: boolean } = {};
 
     constructor(
         private jobService: JobService,
@@ -51,9 +49,6 @@ export class JobForm implements OnInit {
                 // Fallback if resolver failed
                 this.loadJob(id);
             }
-        } else {
-            // Initialize checkboxes for new job
-            this.allBranches.forEach(b => this.selectedBranches[b] = false);
         }
     }
 
@@ -63,10 +58,10 @@ export class JobForm implements OnInit {
         if (this.jobData.lastDate) {
             this.jobData.lastDate = new Date(this.jobData.lastDate).toISOString().split('T')[0];
         }
-        // Update checkboxes
-        this.allBranches.forEach(b => {
-            this.selectedBranches[b] = this.jobData.eligibility.branches.includes(b);
-        });
+        // Set branches input from array
+        if (this.jobData.eligibility && Array.isArray(this.jobData.eligibility.branches)) {
+            this.branchesInput = this.jobData.eligibility.branches.join(', ');
+        }
     }
 
     // Fallback method only used if resolver fails
@@ -87,7 +82,7 @@ export class JobForm implements OnInit {
 
     onSubmit() {
         // Validate CGPA if provided
-        if (this.jobData.eligibility && this.jobData.eligibility.minCGPA !== undefined && this.jobData.eligibility.minCGPA !== null) {
+        if (this.jobData.eligibility && (this.jobData.eligibility.minCGPA !== undefined && this.jobData.eligibility.minCGPA !== null)) {
             const cgpa = Number(this.jobData.eligibility.minCGPA);
             if (!Number.isInteger(cgpa) || cgpa < 1 || cgpa > 10) {
                 this.toastService.error('Minimum CGPA must be an integer between 1 and 10');
@@ -95,8 +90,19 @@ export class JobForm implements OnInit {
             }
         }
 
-        // Collect selected branches
-        this.jobData.eligibility.branches = Object.keys(this.selectedBranches).filter(b => this.selectedBranches[b]);
+        // Process free-text branches into array
+        if (this.branchesInput) {
+            this.jobData.eligibility.branches = this.branchesInput
+                .split(',')
+                .map(b => b.trim())
+                .filter(b => b !== '')
+                .map(b => {
+                    // Normalize: Uppercase if 4 chars or less
+                    return b.length <= 4 ? b.toUpperCase() : b;
+                });
+        } else {
+            this.jobData.eligibility.branches = [];
+        }
 
         if (this.isEdit) {
             this.jobService.updateJob(this.jobData._id, this.jobData).subscribe({

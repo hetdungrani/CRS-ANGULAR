@@ -76,8 +76,7 @@ export class StudentList implements OnInit, OnDestroy {
             filtered = filtered.filter(student =>
                 student.fullName?.toLowerCase().includes(searchLower) ||
                 student.email?.toLowerCase().includes(searchLower) ||
-                student.department?.toLowerCase().includes(searchLower) ||
-                student.course?.toLowerCase().includes(searchLower)
+                student.department?.toLowerCase().includes(searchLower)
             );
         }
 

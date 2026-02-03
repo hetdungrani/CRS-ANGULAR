@@ -29,7 +29,6 @@ export class Profile implements OnInit {
     dateOfBirth: '',
     address: '',
     cgpa: '',
-    course: '',
     gender: '',
     skills: [] as string[]
   };
@@ -75,7 +74,6 @@ export class Profile implements OnInit {
       cgpa: this.user.cgpa !== undefined && this.user.cgpa !== null ? `${this.user.cgpa}` : '',
       dateOfBirth: this.user.dateOfBirth || '',
       address: this.user.address || '',
-      course: this.user.course || '',
       gender: this.user.gender || '',
       skills: this.user.skills || []
     };
@@ -174,14 +172,18 @@ export class Profile implements OnInit {
       fullName: this.editData.fullName,
       email: this.editData.email,
       mobile: this.editData.phone,
-      department: this.editData.branch,
+      department: (this.editData.branch || '').trim(),
       cgpa: this.editData.cgpa ? parseFloat(this.editData.cgpa) : 0,
-      course: this.editData.course,
       gender: this.editData.gender,
       dateOfBirth: this.editData.dateOfBirth,
       address: this.editData.address,
       skills: processedSkills
     };
+
+    // Normalize department (branch) and course
+    if (updateData.department.length <= 4) {
+      updateData.department = updateData.department.toUpperCase();
+    }
 
     // Async background update
     this.authService.updateProfile(updateData).pipe(take(1)).subscribe({

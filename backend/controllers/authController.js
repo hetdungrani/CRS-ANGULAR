@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
             return res.status(403).json({ msg: 'Registration is not allowed' });
         }
 
-        const { fullName, email, password, mobile, department, course, cgpa, gender } = req.body;
+        const { fullName, email, password, mobile, department, cgpa, gender } = req.body;
 
         // Check if user exists
         let user = await User.findOne({ email });
@@ -28,7 +28,6 @@ exports.register = async (req, res) => {
             password,
             mobile,
             department,
-            course,
             cgpa,
             gender
         });
@@ -51,13 +50,16 @@ exports.register = async (req, res) => {
             process.env.JWT_SECRET || 'secret', // Default secret for dev
             { expiresIn: 360000 },
             (err, token) => {
-                if (err) throw err;
+                if (err) {
+                    console.error('JWT Sign Error:', err);
+                    return res.status(500).json({ msg: 'Token generation failed' });
+                }
                 res.json({ token, user: { id: user.id, fullName: user.fullName, email: user.email, role: user.role } });
             }
         );
     } catch (err) {
-        // console.error(err.message);
-        res.status(500).send('Server Error');
+        console.error('Registration Error Details:', err);
+        res.status(500).json({ msg: err.message || 'Server Error' });
     }
 };
 
@@ -102,7 +104,6 @@ exports.login = async (req, res) => {
                         role: user.role,
                         mobile: user.mobile,
                         department: user.department,
-                        course: user.course,
                         cgpa: user.cgpa,
                         gender: user.gender
                     }
@@ -133,14 +134,13 @@ exports.getMe = async (req, res) => {
 // @access  Private
 exports.updateProfile = async (req, res) => {
     try {
-    const { fullName, email, mobile, department, course, cgpa, gender, dateOfBirth, address, skills } = req.body;
+    const { fullName, email, mobile, department, cgpa, gender, dateOfBirth, address, skills } = req.body;
 
         // Build user object
         const profileFields = {};
         if (fullName) profileFields.fullName = fullName;
         if (mobile) profileFields.mobile = mobile;
         if (department) profileFields.department = department;
-        if (course) profileFields.course = course;
         if (cgpa !== undefined) profileFields.cgpa = cgpa;
         if (gender) profileFields.gender = gender;
         if (dateOfBirth) profileFields.dateOfBirth = dateOfBirth;

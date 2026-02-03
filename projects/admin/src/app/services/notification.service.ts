@@ -21,4 +21,8 @@ export class NotificationService {
     deleteNotification(id: string): Observable<any> {
         return this.http.delete<any>(`${this.apiUrl}/${id}`);
     }
+
+    getDepartments(): Observable<string[]> {
+        return this.http.get<string[]>(`${this.apiUrl}/departments`);
+    }
 }

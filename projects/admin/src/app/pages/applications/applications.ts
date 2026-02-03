@@ -34,8 +34,6 @@ export class Applications implements OnInit, OnDestroy {
         department: ''
     };
 
-    departments = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Electrical', 'Civil'];
-
     // Pagination
     Math = Math;
     currentPage = 1;
@@ -100,7 +98,8 @@ export class Applications implements OnInit, OnDestroy {
                 app.role.toLowerCase().includes(this.filters.search.toLowerCase());
 
             const matchesStatus = !this.filters.status || app.status === this.filters.status;
-            const matchesDept = !this.filters.department || app.student?.department === this.filters.department;
+            const matchesDept = !this.filters.department ||
+                app.student?.department?.toLowerCase().includes(this.filters.department.toLowerCase());
 
             return matchesSearch && matchesStatus && matchesDept;
         });

@@ -63,7 +63,7 @@ exports.getAllStudents = async (req, res) => {
         const { branch, cgpa, skills } = req.query;
         let query = { role: 'student' };
 
-        if (branch) query.department = branch;
+        if (branch) query.department = new RegExp(branch, 'i');
         if (cgpa) query.cgpa = { $gte: parseFloat(cgpa) };
         
         // Search by name or department (or skills)
