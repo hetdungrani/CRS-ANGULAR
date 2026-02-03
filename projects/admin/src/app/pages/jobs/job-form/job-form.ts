@@ -84,8 +84,8 @@ export class JobForm implements OnInit {
         // Validate CGPA if provided
         if (this.jobData.eligibility && (this.jobData.eligibility.minCGPA !== undefined && this.jobData.eligibility.minCGPA !== null)) {
             const cgpa = Number(this.jobData.eligibility.minCGPA);
-            if (!Number.isInteger(cgpa) || cgpa < 1 || cgpa > 10) {
-                this.toastService.error('Minimum CGPA must be an integer between 1 and 10');
+            if (cgpa < 1 || cgpa > 10) {
+                this.toastService.error('Minimum CGPA must be between 1 and 10');
                 return;
             }
         }

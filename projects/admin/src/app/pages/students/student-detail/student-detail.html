@@ -58,24 +58,6 @@
                 <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ student.gender || 'N/A'
                     }}</dd>
             </div>
-            <div class="bg-white dark:bg-gray-800 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Placement Status</dt>
-                <dd class="mt-1 text-sm sm:mt-0 sm:col-span-2">
-                    <span [ngClass]="{
-                        'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400': student.placementStatus === 'placed',
-                        'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400': student.placementStatus === 'offered',
-                        'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400': student.placementStatus === 'unplaced' || !student.placementStatus
-                    }" class="px-2 py-1 rounded-full text-xs font-bold uppercase">
-                        {{ student.placementStatus || 'unplaced' }}
-                    </span>
-                </dd>
-            </div>
-            <div *ngIf="student.placementStatus === 'placed'"
-                class="bg-gray-50 dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-                <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Placed Company</dt>
-                <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">{{ student.placedCompany ||
-                    'N/A' }}</dd>
-            </div>
             <div class="bg-white dark:bg-gray-700 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
                 <dt class="text-sm font-medium text-gray-500 dark:text-gray-300">Skills</dt>
                 <dd class="mt-1 text-sm text-gray-900 dark:text-white sm:mt-0 sm:col-span-2">
