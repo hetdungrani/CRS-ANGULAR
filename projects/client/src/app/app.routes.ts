@@ -45,7 +45,8 @@ export const routes: Routes = [
         path: 'notifications',
         component: Notifications,
         canActivate: [authGuard],
-        resolve: { notifications: notificationsResolver }
+        resolve: { notifications: notificationsResolver },
+        runGuardsAndResolvers: 'always'
     },
     {
         path: 'statistics',

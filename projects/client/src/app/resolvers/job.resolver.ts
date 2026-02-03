@@ -23,7 +23,7 @@ export const appliedJobsResolver: ResolveFn<any> = (route, state) => {
 };
 
 export const notificationsResolver: ResolveFn<any> = (route, state) => {
-    return inject(NotificationService).getMyNotifications();
+    return inject(NotificationService).resolveInitialData();
 };
 
 export const profileResolver: ResolveFn<any> = (route, state) => {

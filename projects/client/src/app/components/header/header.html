@@ -28,8 +28,28 @@
 
                 <a routerLink="/notifications"
                     [class]="activeRoute === 'notifications' ? 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800'"
-                    class="px-4 py-2 rounded-xl text-sm font-bold transition-all relative">
-                    Notifications{{ unreadCount > 0 ? unreadCount : '' }}
+                    class="px-4 py-2 rounded-xl text-sm font-bold transition-all relative flex items-center space-x-2 group">
+                    <div class="relative">
+                        <svg [class.bell-shake]="unreadCount > 0"
+                            class="w-5 h-5 transition-transform group-hover:rotate-12" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                            </path>
+                        </svg>
+                        <!-- Ping effect for new notifications -->
+                        <span *ngIf="unreadCount > 0" class="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                            <span
+                                class="relative inline-flex rounded-full h-3 w-3 bg-red-500 ring-2 ring-white dark:ring-slate-900"></span>
+                        </span>
+                    </div>
+                    <span>Notifications</span>
+                    <span *ngIf="unreadCount > 0"
+                        class="bg-indigo-600 text-white px-1.5 py-0.5 rounded-md text-[10px] font-black leading-none ml-1 transform transition-transform group-hover:scale-110">
+                        {{ unreadCount }}
+                    </span>
                 </a>
             </nav>
 
@@ -96,10 +116,27 @@
         <a routerLink="/statistics"
             class="block px-4 py-3 rounded-xl font-bold text-slate-600 dark:text-slate-300">Statistics</a>
         <a routerLink="/notifications"
-            class="block px-4 py-3 rounded-xl font-bold text-slate-600 dark:text-slate-300 flex justify-between">
-            Notifications
+            class="block px-4 py-3 rounded-xl font-bold text-slate-600 dark:text-slate-300 flex justify-between items-center group active:bg-slate-50 dark:active:bg-slate-800 transition-colors">
+            <div class="flex items-center space-x-3">
+                <div class="relative">
+                    <svg class="w-6 h-6 transition-transform group-active:rotate-12" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9">
+                        </path>
+                    </svg>
+                    <span *ngIf="unreadCount > 0" class="absolute -top-0.5 -right-0.5 flex h-2.5 w-2.5">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                    </span>
+                </div>
+                <span>Notifications</span>
+            </div>
             <span *ngIf="unreadCount > 0"
-                class="bg-indigo-600 text-white px-2 py-0.5 rounded-full text-xs animate-pulse">{{unreadCount}}</span>
+                class="bg-indigo-600 text-white px-2.5 py-1 rounded-full text-xs font-black shadow-lg shadow-indigo-200 dark:shadow-none animate-pulse">
+                {{unreadCount}}
+            </span>
         </a>
         <div class="border-t border-slate-100 dark:border-slate-800 my-2 pt-2">
             <button (click)="toggleTheme()"

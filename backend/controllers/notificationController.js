@@ -38,7 +38,7 @@ exports.getNotifications = async (req, res) => {
 };
 
 /**
- * @desc    Get notifications for the logged-in student
+ * @desc    Get notifications for the logged-in student (with pagination)
  * @route   GET /api/notifications/my
  */
 exports.getStudentNotifications = async (req, res) => {
@@ -48,12 +48,28 @@ exports.getStudentNotifications = async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        // Fetch notifications targeted at 'all' or the student's department
-        const notifications = await Notification.find({
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        const query = {
             targetGroup: { $in: ['all', user.department] }
-        }).sort({ createdAt: -1 });
+        };
+
+        // Fetch paginated notifications
+        const notifications = await Notification.find(query)
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
         
-        res.json(notifications);
+        const total = await Notification.countDocuments(query);
+        
+        res.json({
+            notifications,
+            total,
+            page,
+            pages: Math.ceil(total / limit)
+        });
     } catch (err) {
         console.error('Error fetching student notifications:', err);
         res.status(500).json({ msg: 'Server Error' });

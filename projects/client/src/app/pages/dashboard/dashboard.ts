@@ -44,27 +44,36 @@ export class Dashboard implements OnInit {
   }
 
   loadDashboardData(): void {
+    // 1. Immediate sync from service state (Instant)
+    this.updateNotificationsState(this.notificationService.getLatestValue());
+
+    // 2. Initial load from resolver (if still used) or background subscribe
     const results = this.route.snapshot.data['data'];
     if (results) {
-      // Handle notifications
-      this.notifications = results.notifications || [];
-      this.dashboardStats.unreadNotifications = this.notifications.length;
-      this.recentActivities = this.notifications.slice(0, 4).map(n => ({
-        id: n._id,
-        type: n.type,
-        message: n.title + ': ' + n.message.substring(0, 50) + '...',
-        time: this.formatTime(n.createdAt),
-        icon: this.getIconForType(n.type)
-      }));
-
-      // Handle job stats
       const allJobs = results.allJobs || [];
       const appliedJobs = results.appliedJobs || [];
-
       this.dashboardStats.availableJobs = allJobs.filter((j: any) => j.status === 'open').length;
       this.dashboardStats.appliedJobs = appliedJobs.length;
       this.dashboardStats.shortlisted = appliedJobs.filter((a: any) => a.status === 'shortlisted').length;
     }
+
+    // 3. Keep live for notifications
+    this.notificationService.notifications$.subscribe(notifications => {
+      this.updateNotificationsState(notifications);
+    });
+  }
+
+  private updateNotificationsState(notifications: any[]): void {
+    const readIds = JSON.parse(localStorage.getItem('readNotifications') || '[]');
+    this.notifications = notifications;
+    this.dashboardStats.unreadNotifications = notifications.filter(n => !readIds.includes(n._id)).length;
+    this.recentActivities = notifications.slice(0, 4).map(n => ({
+      id: n._id,
+      type: n.type,
+      message: n.title + ': ' + n.message.substring(0, 50) + '...',
+      time: this.formatTime(n.createdAt),
+      icon: this.getIconForType(n.type)
+    }));
   }
 
   getIconForType(type: string): string {

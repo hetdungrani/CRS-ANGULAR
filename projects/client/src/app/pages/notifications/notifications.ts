@@ -1,10 +1,10 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
 import { Header } from '../../components/header/header';
 import { Footer } from '../../components/footer/footer';
-import { Subscription } from 'rxjs';
+import { Subscription, take } from 'rxjs';
 
 @Component({
   selector: 'app-notifications',
@@ -16,32 +16,55 @@ import { Subscription } from 'rxjs';
 export class Notifications implements OnInit, OnDestroy {
   notifications: any[] = [];
   loading = false;
+  loadingMore = false;
+  total = 0;
   selectedFilter = 'all';
   private sub: Subscription | null = null;
+  private totalSub: Subscription | null = null;
 
   constructor(
     private notificationService: NotificationService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) { }
 
   ngOnInit(): void {
-    // 1. Process data from the route resolver if available
+    // 1. Process data from the route resolver (This ensures we have data IMMEDIATELY on page visit)
     const resolverData = this.route.snapshot.data['notifications'];
-    if (resolverData) {
-      this.processRawData(resolverData);
+    if (resolverData && resolverData.notifications) {
+      this.processRawData(resolverData.notifications);
+      this.total = resolverData.total;
     }
 
-    // 2. Subscribe to the service state for instant updates
+    // 2. Subscribe to the live service state for real-time broadcasts
     this.sub = this.notificationService.notifications$.subscribe(data => {
       this.processRawData(data);
+      this.cdr.markForCheck();
     });
 
-    // 3. Force a refresh to ensure absolute latest data on page open
-    this.notificationService.refreshState();
+    // 3. Track total count for pagination
+    this.totalSub = this.notificationService.total$.subscribe(val => {
+      this.total = val;
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnDestroy(): void {
     if (this.sub) this.sub.unsubscribe();
+    if (this.totalSub) this.totalSub.unsubscribe();
+  }
+
+  loadMore() {
+    if (this.loadingMore || !this.canLoadMore) return;
+    this.loadingMore = true;
+    this.notificationService.loadMore().pipe(take(1)).subscribe({
+      next: () => this.loadingMore = false,
+      error: () => this.loadingMore = false
+    });
+  }
+
+  get canLoadMore(): boolean {
+    return this.notifications.length < this.total;
   }
 
   private processRawData(data: any[]): void {
@@ -68,22 +91,11 @@ export class Notifications implements OnInit, OnDestroy {
   }
 
   markAsRead(id: string) {
-    const readIds = JSON.parse(localStorage.getItem('readNotifications') || '[]');
-    if (!readIds.includes(id)) {
-      readIds.push(id);
-      localStorage.setItem('readNotifications', JSON.stringify(readIds));
-      // Trigger a re-process of local state
-      this.processRawData(this.notifications);
-    }
+    this.notificationService.markAsRead(id);
   }
 
   markAllAsRead() {
-    const readIds = JSON.parse(localStorage.getItem('readNotifications') || '[]');
-    this.notifications.forEach(n => {
-      if (!readIds.includes(n._id)) readIds.push(n._id);
-    });
-    localStorage.setItem('readNotifications', JSON.stringify(readIds));
-    this.processRawData(this.notifications);
+    this.notificationService.markAllAsRead();
   }
 
   private getReadStatus(id: string): boolean {
