@@ -68,6 +68,18 @@ export class Jobs implements OnInit {
   }
 
   async applyForJob(jobId: string): Promise<void> {
+    const job = this.jobs.find(j => j._id === jobId);
+    if (!job) return;
+
+    // Check Eligibility
+    const minCGPA = job.eligibility?.minCGPA || 0;
+    const userCGPA = this.user?.cgpa || 0;
+
+    if (userCGPA < minCGPA) {
+      this.toastService.error(`Not eligible: Your CGPA (${userCGPA}) is below the minimum required (${minCGPA})`);
+      return;
+    }
+
     const confirmed = await this.modalService.confirm(
       'Apply for Job',
       'Are you sure you want to apply for this position?',

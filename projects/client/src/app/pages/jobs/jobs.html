@@ -66,10 +66,8 @@
 
                     <!-- Card Footer: Info & Action -->
                     <div class="p-6 pt-4 mt-auto">
-                        <div class="mb-4 text-xs font-medium text-slate-400 dark:text-slate-500">
-                            Apply by: <span class="text-slate-600 dark:text-slate-300">{{ job.lastDate ? (job.lastDate |
-                                date:'mediumDate')
-                                : 'N/A' }}</span>
+<div class="mb-4 text-xs font-medium text-slate-400 dark:text-slate-500">
+                            Eligibility Criteria: <span class="text-slate-600 dark:text-slate-300 font-bold">Min CGPA {{ job.eligibility?.minCGPA || 0 }}</span>
                         </div>
 
                         <!-- BUTTON LOGIC -->

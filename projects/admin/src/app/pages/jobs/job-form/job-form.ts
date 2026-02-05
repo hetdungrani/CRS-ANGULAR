@@ -26,7 +26,6 @@ export class JobForm implements OnInit {
         },
         package: '',
         status: 'open',
-        lastDate: '',
         location: 'On-site'
     };
 
@@ -54,10 +53,7 @@ export class JobForm implements OnInit {
 
     loadJobData(data: any) {
         this.jobData = data;
-        // Convert date for input type="date"
-        if (this.jobData.lastDate) {
-            this.jobData.lastDate = new Date(this.jobData.lastDate).toISOString().split('T')[0];
-        }
+
         // Set branches input from array
         if (this.jobData.eligibility && Array.isArray(this.jobData.eligibility.branches)) {
             this.branchesInput = this.jobData.eligibility.branches.join(', ');

@@ -37,10 +37,7 @@ const jobSchema = new mongoose.Schema({
         enum: ['open', 'closed', 'cancelled'],
         default: 'open'
     },
-    lastDate: {
-        type: Date,
-        required: [true, 'Please add last date to apply']
-    },
+
     location: {
         type: String,
         default: 'On-site'

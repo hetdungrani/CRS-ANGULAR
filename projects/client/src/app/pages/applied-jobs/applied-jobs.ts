@@ -37,22 +37,17 @@ export class AppliedJobs implements OnInit {
     if (userStr) {
       this.user = JSON.parse(userStr);
 
+      // Initial data from resolver
       const data = this.route.snapshot.data['appliedJobs'];
       if (data) {
-        // Resolver likely loaded data
         this.appliedJobs = data;
       }
 
-      // Subscribe to shared state
+      // Subscribe to shared state for live updates
       this.jobService.appliedJobs$.subscribe(jobs => {
-        if (jobs && jobs.length > 0) {
+        // Fix: Allow empty arrays to update the view (e.g. after withdrawing last job)
+        if (jobs !== null && jobs !== undefined) {
           this.appliedJobs = jobs;
-        } else if (data) {
-          // Fallback to resolver data if behavior subject is empty or initial
-          // But if it was emptied on purpose, this logic might be flawed.
-          // Stick to: if jobs is emitted, use it.
-          // However, initially behavior subject is empty.
-          if (jobs.length > 0) this.appliedJobs = jobs;
         }
       });
 
@@ -84,9 +79,15 @@ export class AppliedJobs implements OnInit {
 
     if (!confirmed) return;
 
+    // Optimistic UI update is handled by JobService
     this.jobService.withdrawApplication(jobId).subscribe({
       next: () => {
         this.toastService.success('Application withdrawn successfully');
+        // Live Pagination: Reload resolver to ensure data consistency
+        this.router.navigate([], {
+          relativeTo: this.route,
+          onSameUrlNavigation: 'reload'
+        });
       },
       error: (err: any) => {
         const msg = err.error?.msg || 'Failed to withdraw application';
