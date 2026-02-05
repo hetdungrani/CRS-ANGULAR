@@ -1,9 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Custom modern aesthetic overrides if needed */
-body {
-    @apply bg-gray-50 text-gray-900;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+/* Global component styles for the root application */
+:host {
+    display: block;
+    min-height: 100vh;
 }

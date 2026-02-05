@@ -16,6 +16,7 @@ import { ModalService } from '../../components/shared/modal/modal.service';
 export class AdminLayout implements OnInit {
     admin: any;
     currentTitle = 'Dashboard';
+    isSidebarOpen = false;
 
     constructor(
         private authService: AuthService,
@@ -34,7 +35,16 @@ export class AdminLayout implements OnInit {
             filter(event => event instanceof NavigationEnd)
         ).subscribe((event: any) => {
             this.updateTitle(event.urlAfterRedirects);
+            this.isSidebarOpen = false;
         });
+    }
+
+    toggleSidebar() {
+        this.isSidebarOpen = !this.isSidebarOpen;
+    }
+
+    closeSidebar() {
+        this.isSidebarOpen = false;
     }
 
     private loadSystemTheme() {
