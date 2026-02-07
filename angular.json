@@ -43,6 +43,12 @@
                   "maximumError": "8kB"
                 }
               ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/admin/src/environments/environment.ts",
+                  "with": "projects/admin/src/environments/environment.prod.ts"
+                }
+              ],
               "outputHashing": "all"
             },
             "development": {
@@ -104,6 +110,12 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "600kB",
                   "maximumError": "2MB"
+                }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "projects/client/src/environments/environment.ts",
+                  "with": "projects/client/src/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"
