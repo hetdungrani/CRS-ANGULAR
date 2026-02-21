@@ -1,50 +1,118 @@
-<div class="space-y-6">
-    <!-- Header -->
+ <div class="space-y-6">
+
+    <!-- Page Header -->
     <div class="sm:flex sm:items-center sm:justify-between">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Student Applications</h1>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">Student Applications</h1>
             <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Manage student shortlisting and selection across
                 all job drives.</p>
         </div>
-        <!-- <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-            <button (click)="exportToCSV()" [disabled]="filteredApplications.length === 0"
-                class="inline-flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600 disabled:opacity-50">
-                <svg class="-ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                </svg>
-                Export CSV
-            </button>
-        </div> -->
     </div>
 
     <!-- Stats Overview -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Applications</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ allApplications.length }}</p>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center shrink-0">
+                <svg class="h-5 w-5 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total</p>
+                <p class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ allApplications.length }}</p>
+            </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <p class="text-xs font-bold text-blue-400 uppercase tracking-widest">Shortlisted</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-                {{ statusCounts.shortlisted }}
-            </p>
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center shrink-0">
+                <svg class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-blue-400 uppercase tracking-widest">Shortlisted</p>
+                <p class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ statusCounts.shortlisted }}</p>
+            </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <p class="text-xs font-bold text-green-400 uppercase tracking-widest">Selected</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-                {{ statusCounts.selected }}
-            </p>
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-3">
+            <div
+                class="h-10 w-10 rounded-xl bg-emerald-50 dark:bg-emerald-900/30 flex items-center justify-center shrink-0">
+                <svg class="h-5 w-5 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">Selected</p>
+                <p class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ statusCounts.selected }}</p>
+            </div>
         </div>
-        <div class="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700">
-            <p class="text-xs font-bold text-red-400 uppercase tracking-widest">Rejected</p>
-            <p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-                {{ statusCounts.rejected }}
-            </p>
+        <div
+            class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-3">
+            <div class="h-10 w-10 rounded-xl bg-red-50 dark:bg-red-900/30 flex items-center justify-center shrink-0">
+                <svg class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <div>
+                <p class="text-[10px] font-bold text-red-400 uppercase tracking-widest">Rejected</p>
+                <p class="text-2xl font-extrabold text-gray-900 dark:text-white">{{ statusCounts.rejected }}</p>
+            </div>
         </div>
     </div>
 
-
+    <!-- Filters Bar -->
+    <div
+        class="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-wrap gap-3 items-end">
+        <!-- Search -->
+        <div class="flex-1 min-w-[180px]">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Search</label>
+            <div class="relative">
+                <input type="text" [(ngModel)]="filters.search" (ngModelChange)="onSearchChange()"
+                    placeholder="Student name, company, role..."
+                    class="w-full pl-9 pr-4 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all">
+                <svg class="absolute left-3 top-2.5 h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+        </div>
+        <!-- Status Filter -->
+        <div class="w-44">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Status</label>
+            <select [(ngModel)]="filters.status" (change)="applyFilters()"
+                class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all">
+                <option value="">All Statuses</option>
+                <option value="applied">Applied</option>
+                <option value="shortlisted">Shortlisted</option>
+                <option value="selected">Selected</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+        <!-- Department Filter -->
+        <div class="w-44">
+            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1.5">Department</label>
+            <input type="text" [(ngModel)]="filters.department" (ngModelChange)="onSearchChange()"
+                placeholder="e.g. Computer Science"
+                class="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all">
+        </div>
+        <!-- Results count -->
+        <div class="ml-auto self-end pb-0.5">
+            <p class="text-xs text-gray-400 dark:text-gray-500 font-medium whitespace-nowrap">
+                {{ filteredApplications.length }} result{{ filteredApplications.length !== 1 ? 's' : '' }}
+            </p>
+        </div>
+    </div>
 
     <!-- Table Section -->
     <div
@@ -52,65 +120,86 @@
         <div class="overflow-x-auto">
             <table class="w-full text-left">
                 <thead>
-                    <tr class="bg-gray-50 dark:bg-gray-700/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                        <th class="px-6 py-4">Student</th>
-                        <th class="px-6 py-4">Job Info</th>
-                        <th class="px-6 py-4 text-center">CGPA</th>
-                        <th class="px-6 py-4">Status</th>
-                        <th class="px-6 py-4 text-right">Actions</th>
+                    <tr
+                        class="bg-gray-50 dark:bg-gray-700/40 text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider border-b border-gray-100 dark:border-gray-700">
+                        <th class="px-5 py-3.5">Student</th>
+                        <th class="px-5 py-3.5">Job Info</th>
+                        <th class="px-5 py-3.5 text-center">CGPA</th>
+                        <th class="px-5 py-3.5">Status</th>
+                        <th class="px-5 py-3.5 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                <tbody class="divide-y divide-gray-50 dark:divide-gray-700/60">
                     <tr *ngFor="let app of paginatedApplications; trackBy: trackByApplicationId"
-                        class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center">
+                        class="hover:bg-gray-50/60 dark:hover:bg-gray-700/20 transition-colors duration-100">
+
+                        <!-- Student -->
+                        <td class="px-5 py-4">
+                            <div class="flex items-center gap-3">
                                 <div
-                                    class="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-700 dark:text-indigo-400 font-bold">
-                                    {{ app.student?.fullName?.[0] }}
+                                    class="h-9 w-9 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-700 dark:text-indigo-400 font-bold text-sm shrink-0">
+                                    {{ app.student?.fullName?.[0]?.toUpperCase() }}
                                 </div>
-                                <div class="ml-3">
-                                    <div class="text-sm font-bold text-gray-900 dark:text-white">{{
-                                        app.student?.fullName }}</div>
-                                    <div class="text-xs text-gray-500 dark:text-gray-400">{{ app.student?.department }}
-                                    </div>
+                                <div>
+                                    <a [routerLink]="['/students', app.student?._id]"
+                                        class="text-sm font-semibold text-gray-900 dark:text-white hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
+                                        {{ app.student?.fullName }}
+                                    </a>
+                                    <p class="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{{
+                                        app.student?.department }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4">
-                            <div class="text-sm font-medium text-gray-900 dark:text-white">{{ app.role }}</div>
-                            <div class="text-xs text-indigo-500">{{ app.companyName }}</div>
+
+                        <!-- Job Info -->
+                        <td class="px-5 py-4">
+                            <p class="text-sm font-semibold text-gray-800 dark:text-white">{{ app.role }}</p>
+                            <p class="text-xs text-indigo-500 mt-0.5">{{ app.companyName }}</p>
                         </td>
-                        <td class="px-6 py-4 text-center text-sm font-bold text-gray-900 dark:text-white">
-                            {{ app.student?.cgpa }}
+
+                        <!-- CGPA -->
+                        <td class="px-5 py-4 text-center">
+                            <span class="inline-block px-2.5 py-1 rounded-full text-xs font-bold" [ngClass]="{
+                                    'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': app.student?.cgpa >= 8,
+                                    'bg-yellow-50 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400': app.student?.cgpa >= 6 && app.student?.cgpa < 8,
+                                    'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400': app.student?.cgpa < 6
+                                }">
+                                {{ app.student?.cgpa }}
+                            </span>
                         </td>
-                        <td class="px-6 py-4">
+
+                        <!-- Status -->
+                        <td class="px-5 py-4">
                             <span [ngClass]="{
-                                'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': app.status === 'applied',
-                                'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400': app.status === 'shortlisted',
-                                'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400': app.status === 'selected',
-                                'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400': app.status === 'rejected'
+                                'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400': app.status === 'applied',
+                                'bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400': app.status === 'shortlisted',
+                                'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400': app.status === 'selected',
+                                'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-400': app.status === 'rejected'
                             }" class="px-2.5 py-1 rounded-full text-xs font-bold">
                                 {{ app.status | uppercase }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-right">
-                            <div class="flex justify-end space-x-2">
+
+                        <!-- Actions -->
+                        <td class="px-5 py-4 text-right">
+                            <div class="flex justify-end items-center gap-1.5">
                                 <button *ngIf="app.status === 'applied'"
                                     (click)="updateStatus(app.jobId, app._id, 'shortlisted')"
-                                    class="px-3 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 dark:hover:bg-purple-900/50 text-xs font-bold rounded-md transition-all">
+                                    class="px-3 py-1.5 bg-violet-50 hover:bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400 dark:hover:bg-violet-900/50 text-xs font-bold rounded-lg transition-all duration-150">
                                     Shortlist
                                 </button>
                                 <button *ngIf="app.status === 'shortlisted'"
                                     (click)="updateStatus(app.jobId, app._id, 'selected')"
-                                    class="px-3 py-1 bg-green-50 hover:bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 dark:hover:bg-green-900/50 text-xs font-bold rounded-md transition-all">
+                                    class="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 dark:hover:bg-emerald-900/50 text-xs font-bold rounded-lg transition-all duration-150">
                                     Select
                                 </button>
                                 <button *ngIf="app.status !== 'rejected' && app.status !== 'selected'"
                                     (click)="updateStatus(app.jobId, app._id, 'rejected')"
-                                    class="px-3 py-1 bg-red-50 hover:bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 text-xs font-bold rounded-md transition-all">
+                                    class="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 dark:hover:bg-red-900/50 text-xs font-bold rounded-lg transition-all duration-150">
                                     Reject
                                 </button>
+                                <span *ngIf="app.status === 'selected' || app.status === 'rejected'"
+                                    class="text-xs text-gray-400 dark:text-gray-500 italic">—</span>
                             </div>
                         </td>
                     </tr>
@@ -118,81 +207,53 @@
             </table>
         </div>
 
-        <!-- Pagination Controls -->
-        <div *ngIf="totalPages > 1"
-            class="bg-white dark:bg-gray-800 px-4 py-3 flex items-center justify-between border-t border-gray-200 dark:border-gray-700 sm:px-6">
-            <div class="flex-1 flex justify-between sm:hidden">
-                <button (click)="prevPage()" [disabled]="currentPage === 1"
-                    class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50">
-                    Previous
-                </button>
-                <button (click)="nextPage()" [disabled]="currentPage === totalPages"
-                    class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50">
-                    Next
-                </button>
-            </div>
-            <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                <div>
-                    <p class="text-sm text-gray-700 dark:text-gray-400">
-                        Showing
-                        <span class="font-medium">{{ (currentPage - 1) * pageSize + 1 }}</span>
-                        to
-                        <span class="font-medium">{{ Math.min(currentPage * pageSize, totalItems) }}</span>
-                        of
-                        <span class="font-medium">{{ totalItems }}</span>
-                        results
-                    </p>
-                </div>
-                <div>
-                    <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                        <button (click)="prevPage()" [disabled]="currentPage === 1"
-                            class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50">
-                            <span class="sr-only">Previous</span>
-                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </button>
-
-                        <button *ngFor="let page of [].constructor(totalPages); let i = index" (click)="goToPage(i + 1)"
-                            [class.z-10]="currentPage === i + 1" [class.bg-indigo-50]="currentPage === i + 1"
-                            [class.border-indigo-500]="currentPage === i + 1"
-                            [class.text-indigo-600]="currentPage === i + 1" [class.bg-white]="currentPage !== i + 1"
-                            [class.border-gray-300]="currentPage !== i + 1"
-                            [class.text-gray-500]="currentPage !== i + 1"
-                            class="relative inline-flex items-center px-4 py-2 border text-sm font-medium hover:bg-gray-50">
-                            {{ i + 1 }}
-                        </button>
-
-                        <button (click)="nextPage()" [disabled]="currentPage === totalPages"
-                            class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50">
-                            <span class="sr-only">Next</span>
-                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd"
-                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                    clip-rule="evenodd" />
-                            </svg>
-                        </button>
-                    </nav>
-                </div>
-            </div>
-        </div>
-
         <!-- Empty State -->
-        <div *ngIf="!loading && paginatedApplications.length === 0" class="py-12 text-center">
-            <svg class="mx-auto h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No applications found</h3>
-            <p class="mt-1 text-sm text-gray-500">Try adjusting your search or filters.</p>
+        <div *ngIf="!loading && paginatedApplications.length === 0" class="py-16 text-center">
+            <div
+                class="h-14 w-14 rounded-2xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center mx-auto mb-4">
+                <svg class="h-7 w-7 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                    stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            </div>
+            <h3 class="text-sm font-semibold text-gray-700 dark:text-white">No applications found</h3>
+            <p class="mt-1 text-sm text-gray-400 dark:text-gray-500">Try adjusting your search or filter criteria.</p>
         </div>
 
         <!-- Loader -->
-        <div *ngIf="loading" class="py-12 flex flex-col items-center">
-            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
-            <p class="mt-2 text-sm text-gray-500">Loading applications...</p>
+        <div *ngIf="loading" class="py-16 flex flex-col items-center">
+            <div class="animate-spin rounded-full h-8 w-8 border-2 border-indigo-200 border-t-indigo-600"></div>
+            <p class="mt-3 text-sm text-gray-400">Loading applications...</p>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div *ngIf="totalPages > 1"
+            class="px-5 py-3 flex items-center justify-between border-t border-gray-100 dark:border-gray-700">
+            <p class="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
+                Showing <span class="font-semibold text-gray-700 dark:text-gray-200">{{ (currentPage - 1) * pageSize + 1
+                    }}</span>
+                – <span class="font-semibold text-gray-700 dark:text-gray-200">{{ Math.min(currentPage * pageSize,
+                    totalItems) }}</span>
+                of <span class="font-semibold text-gray-700 dark:text-gray-200">{{ totalItems }}</span>
+            </p>
+            <nav class="flex items-center gap-1">
+                <button (click)="prevPage()" [disabled]="currentPage === 1"
+                    class="px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                    ← Prev
+                </button>
+                <button *ngFor="let page of [].constructor(totalPages); let i = index" (click)="goToPage(i + 1)"
+                    [class.bg-indigo-600]="currentPage === i + 1" [class.text-white]="currentPage === i + 1"
+                    [class.border-indigo-600]="currentPage === i + 1" [class.text-gray-600]="currentPage !== i + 1"
+                    [class.dark:text-gray-300]="currentPage !== i + 1"
+                    class="w-8 h-8 flex items-center justify-center text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">
+                    {{ i + 1 }}
+                </button>
+                <button (click)="nextPage()" [disabled]="currentPage === totalPages"
+                    class="px-3 py-1.5 text-sm font-medium rounded-lg border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                    Next →
+                </button>
+            </nav>
         </div>
     </div>
 </div>
