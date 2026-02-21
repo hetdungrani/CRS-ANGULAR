@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Location } from '@angular/common';
 import { JobService } from '../../services/job.service';
 
 import { Header } from '../../components/header/header';
@@ -22,7 +23,7 @@ export class JobDetails implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private jobService: JobService,
-
+        private location: Location
     ) { }
 
     ngOnInit(): void {
@@ -39,7 +40,6 @@ export class JobDetails implements OnInit {
     }
 
     goBack(): void {
-        // Navigate back to applied jobs (user likely came from there)
-        this.router.navigate(['/applied-jobs']);
+        this.location.back();
     }
 }

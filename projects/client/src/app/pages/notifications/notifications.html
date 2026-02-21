@@ -1,36 +1,51 @@
 <div class="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 font-sans transition-colors duration-300">
-    <app-header activeRoute="notifications"></app-header>
+    <app-header [activeRoute]="'notifications'"></app-header>
 
     <main class="flex-grow pt-24 pb-12">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            <div class="flex items-center justify-between mb-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
                 <div>
-                    <h1 class="text-3xl font-extrabold text-slate-900 dark:text-white">Notifications</h1>
-                    <p class="text-slate-500 dark:text-slate-400 mt-1">Updates on your recruitment process</p>
+                    <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">Notifications</h1>
+                    <p class="mt-2 text-lg text-slate-500 dark:text-slate-400">Stay updated on your recruitment journey.
+                    </p>
                 </div>
                 <button *ngIf="unreadCount > 0" (click)="markAllAsRead()"
-                    class="text-sm font-semibold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors">
+                    class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-all border border-transparent hover:border-indigo-100 dark:hover:border-indigo-900/30">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                    </svg>
                     Mark all as read
                 </button>
             </div>
 
             <!-- Filter Navbar -->
-            <div class="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-none">
+            <div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-none">
                 <button (click)="setFilter('all')"
-                    [class]="selectedFilter === 'all' ? 'bg-indigo-600 text-white shadow-indigo-200 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'"
-                    class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
-                    All
+                    [class]="selectedFilter === 'all' 
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 dark:shadow-none' 
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800'"
+                    class="px-5 py-2.5 rounded-2xl text-sm font-bold border transition-all whitespace-nowrap">
+                    All Activity
                 </button>
                 <button (click)="setFilter('unread')"
-                    [class]="selectedFilter === 'unread' ? 'bg-indigo-600 text-white shadow-indigo-200 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'"
-                    class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
-                    Unread ({{unreadCount}})
+                    [class]="selectedFilter === 'unread' 
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 dark:shadow-none' 
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800'"
+                    class="px-5 py-2.5 rounded-2xl text-sm font-bold border transition-all whitespace-nowrap flex items-center gap-2">
+                    Unread
+                    <span *ngIf="unreadCount > 0"
+                        [class]="selectedFilter === 'unread' ? 'bg-white text-indigo-600' : 'bg-indigo-100 text-indigo-600 dark:bg-indigo-900/50 dark:text-indigo-400'"
+                        class="px-1.5 py-0.5 rounded-md text-[10px] font-black">
+                        {{unreadCount}}
+                    </span>
                 </button>
                 <button (click)="setFilter('job')"
-                    [class]="selectedFilter === 'job' ? 'bg-indigo-600 text-white shadow-indigo-200 dark:shadow-indigo-900/20' : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800'"
-                    class="px-4 py-2 rounded-full text-sm font-bold border transition-all whitespace-nowrap shadow-sm">
-                    Jobs
+                    [class]="selectedFilter === 'job' 
+                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-100 dark:shadow-none' 
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800 hover:border-indigo-200 dark:hover:border-indigo-800'"
+                    class="px-5 py-2.5 rounded-2xl text-sm font-bold border transition-all whitespace-nowrap">
+                    Job Updates
                 </button>
             </div>
 
@@ -38,45 +53,56 @@
             <div class="space-y-4">
                 <div *ngFor="let n of filteredNotifications; trackBy: trackById" (click)="markAsRead(n._id)"
                     [class.opacity-60]="n.isRead"
-                    class="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md dark:hover:shadow-indigo-900/10 transition-all cursor-pointer relative group">
+                    class="group bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer relative overflow-hidden">
 
-                    <div class="flex gap-4">
+                    <!-- Read/Unread vertical accent -->
+                    <div *ngIf="!n.isRead" class="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600"></div>
+
+                    <div class="flex gap-5">
                         <div
-                            class="w-12 h-12 rounded-xl bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-2xl flex-shrink-0">
-                            {{ n.icon }}
+                            class="w-12 h-12 rounded-2xl bg-slate-50 dark:bg-slate-800/50 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">
+                            {{ n.icon || '🔔' }}
                         </div>
-                        <div class="flex-grow">
-                            <div class="flex items-center justify-between mb-1">
-                                <h3 class="font-bold text-slate-900 dark:text-white">{{ n.title }}</h3>
-                                <span class="text-xs font-medium text-slate-400 dark:text-slate-500">{{ n.time }}</span>
+                        <div class="flex-grow min-w-0">
+                            <div class="flex items-center justify-between gap-3 mb-1">
+                                <h3 class="font-bold text-slate-900 dark:text-white truncate">{{ n.title }}</h3>
+                                <span
+                                    class="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest whitespace-nowrap">{{
+                                    n.time }}</span>
                             </div>
                             <p class="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{{ n.message }}</p>
                         </div>
                     </div>
 
-                    <!-- Unread Indicator -->
-                    <div *ngIf="!n.isRead"
-                        class="absolute right-4 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-indigo-600 shadow-lg shadow-indigo-200 dark:shadow-indigo-900/40">
+                    <!-- Pulsing Unread Dot -->
+                    <div *ngIf="!n.isRead" class="absolute right-5 top-1/2 -translate-y-1/2 flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-600"></span>
                     </div>
                 </div>
 
                 <!-- Empty State -->
                 <div *ngIf="filteredNotifications.length === 0"
-                    class="text-center py-20 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
-                    <div class="text-4xl mb-4 text-slate-300 dark:text-slate-700">📭</div>
-                    <h3 class="font-bold text-slate-900 dark:text-white">No notifications found</h3>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm">You are all caught up!</p>
+                    class="text-center py-24 bg-white dark:bg-slate-900 rounded-3xl border border-dashed border-slate-300 dark:border-slate-700">
+                    <div
+                        class="h-20 w-20 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center mx-auto mb-6 text-4xl">
+                        📭
+                    </div>
+                    <h3 class="text-xl font-extrabold text-slate-900 dark:text-white mb-2">No notifications found</h3>
+                    <p class="text-slate-500 dark:text-slate-400 max-w-xs mx-auto">You're all caught up! New updates
+                        will appear here as they arrive.</p>
                 </div>
 
                 <!-- Pagination / Load More -->
-                <div *ngIf="canLoadMore && selectedFilter === 'all'" class="flex justify-center pt-8">
+                <div *ngIf="canLoadMore && selectedFilter === 'all'" class="flex justify-center pt-10">
                     <button (click)="loadMore()" [disabled]="loadingMore"
-                        class="px-8 py-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl text-sm font-bold text-indigo-600 dark:text-indigo-400 shadow-sm hover:shadow-md transition-all flex items-center space-x-2 disabled:opacity-50">
-                        <span *ngIf="!loadingMore">Load More Discoveries</span>
+                        class="group relative px-8 py-3.5 bg-indigo-600 text-white rounded-2xl text-sm font-bold shadow-lg shadow-indigo-100 dark:shadow-none hover:bg-indigo-700 transition-all active:scale-[0.98] disabled:opacity-50 flex items-center gap-3">
+                        <span *ngIf="!loadingMore">View Older Notifications</span>
                         <div *ngIf="loadingMore"
-                            class="h-4 w-4 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin">
+                            class="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin">
                         </div>
-                        <span *ngIf="loadingMore">Synchronizing...</span>
+                        <span *ngIf="loadingMore">Fetching...</span>
                     </button>
                 </div>
             </div>
