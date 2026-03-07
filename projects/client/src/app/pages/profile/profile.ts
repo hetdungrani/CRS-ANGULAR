@@ -35,6 +35,7 @@ export class Profile implements OnInit {
 
   // Temporary data for editing
   editData: any = {};
+  maxDate: string = '';
 
   constructor(
     private authService: AuthService,
@@ -45,12 +46,15 @@ export class Profile implements OnInit {
 
   ngOnInit(): void {
     // Check if user is logged in
-    const userStr = localStorage.getItem('user');
+    const userStr = sessionStorage.getItem('user');
     if (!userStr) {
       this.router.navigate(['/login']);
       return;
     }
     this.user = JSON.parse(userStr);
+
+    // Set max date for date picker
+    this.maxDate = new Date().toISOString().split('T')[0];
 
     // Use data from resolver if available - take(1) for auto-cleanup
     this.route.data.pipe(take(1)).subscribe(data => {
@@ -133,6 +137,30 @@ export class Profile implements OnInit {
   }
 
   updateProfile(): void {
+    // Validate Birthdate (at least 18 years old and not in the future)
+    if (this.editData.dateOfBirth) {
+      const dob = new Date(this.editData.dateOfBirth);
+      const today = new Date();
+      
+      // Check for future date
+      if (dob > today) {
+        this.toastService.error('Birthdate cannot be in the future');
+        return;
+      }
+
+      // Check for 18 years old
+      let age = today.getFullYear() - dob.getFullYear();
+      const monthDiff = today.getMonth() - dob.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+
+      if (age < 18) {
+        this.toastService.error('You must be at least 18 years old to use this platform');
+        return;
+      }
+    }
+
     // Validate CGPA if provided
     if (this.editData.cgpa) {
       const cgpaNum = Number(this.editData.cgpa);
@@ -141,6 +169,7 @@ export class Profile implements OnInit {
         return;
       }
     }
+    
 
     // Process skills if it's a string
     let processedSkills = this.editData.skills;
@@ -188,7 +217,7 @@ export class Profile implements OnInit {
     // Async background update
     this.authService.updateProfile(updateData).pipe(take(1)).subscribe({
       next: (updatedUser) => {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        const user = JSON.parse(sessionStorage.getItem('user') || '{}');
         const newUser = { ...user, ...updatedUser };
         this.authService.setUser(newUser);
         this.user = newUser;

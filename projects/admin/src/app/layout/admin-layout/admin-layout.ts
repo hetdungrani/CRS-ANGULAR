@@ -27,6 +27,10 @@ export class AdminLayout implements OnInit {
     ) { }
 
     ngOnInit() {
+        if (!this.authService.isLoggedIn()) {
+            this.router.navigate(['/login']);
+            return;
+        }
         this.admin = this.authService.getAdmin();
         this.updateTitle(this.router.url);
         this.loadSystemTheme();

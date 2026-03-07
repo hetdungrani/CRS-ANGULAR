@@ -7,7 +7,7 @@ import { catchError, throwError, retry } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const router = inject(Router);
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     let authReq = req;
     if (token) {
@@ -23,9 +23,9 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
         catchError((error: HttpErrorResponse) => {
             if (error.status === 401 || (error.status === 404 && error.error?.msg === 'User not found')) {
                 // Auto logout if 401 response or 404 User Not Found returned from api
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                localStorage.removeItem('userProfile');
+                sessionStorage.removeItem('token');
+                sessionStorage.removeItem('user');
+                sessionStorage.removeItem('userProfile');
                 router.navigate(['/login'], { queryParams: { deleted: 'true' } });
 
                 const msg = error.error?.msg || 'Session expired. Please login again.';

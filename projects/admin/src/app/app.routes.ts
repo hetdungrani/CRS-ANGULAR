@@ -22,13 +22,13 @@ import {
 } from './resolvers/admin.resolver';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     { path: 'login', component: Login },
     {
         path: '',
         component: AdminLayout,
         canActivate: [AuthGuard],
         children: [
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
             {
                 path: 'dashboard',
                 component: Dashboard,

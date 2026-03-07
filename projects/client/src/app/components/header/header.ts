@@ -36,7 +36,7 @@ export class Header implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit(): void {
-    const userStr = localStorage.getItem('user');
+    const userStr = sessionStorage.getItem('user');
     if (userStr) this.user = JSON.parse(userStr);
 
     // Subscribe to shared notifications state to keep the counter updated instantly

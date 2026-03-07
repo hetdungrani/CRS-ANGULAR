@@ -32,7 +32,7 @@ export class Jobs implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    const userStr = localStorage.getItem('user');
+    const userStr = sessionStorage.getItem('user');
     if (userStr) {
       this.user = JSON.parse(userStr);
 

@@ -18,7 +18,7 @@ export class AuthService {
     constructor(private http: HttpClient) { }
 
     private getUserFromStorage(): any {
-        const user = localStorage.getItem('user');
+        const user = sessionStorage.getItem('user');
         return user ? JSON.parse(user) : null;
     }
 
@@ -33,23 +33,23 @@ export class AuthService {
     }
 
     getToken(): string | null {
-        return localStorage.getItem('token');
+        return sessionStorage.getItem('token');
     }
 
     setToken(token: string): void {
-        localStorage.setItem('token', token);
+        sessionStorage.setItem('token', token);
     }
 
     logout(): void {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        localStorage.removeItem('userProfile');
+        sessionStorage.removeItem('token');
+        sessionStorage.removeItem('user');
+        sessionStorage.removeItem('userProfile');
         this.userSubject.next(null);
         this.cachedUser = null;
     }
 
     setUser(user: any): void {
-        localStorage.setItem('user', JSON.stringify(user));
+        sessionStorage.setItem('user', JSON.stringify(user));
         this.userSubject.next(user);
         this.cachedUser = user;
     }
@@ -70,8 +70,9 @@ export class AuthService {
     updateProfile(data: any): Observable<any> {
         return this.http.put<any>(`${this.apiUrl}/profile`, data).pipe(
             tap(updatedUser => {
-                const currentUser = this.userSubject.value || {};
-                this.setUser({ ...currentUser, ...updatedUser });
+                const updatedSessionUser = JSON.parse(sessionStorage.getItem('user') || '{}');
+                const newUser = { ...updatedSessionUser, ...updatedUser };
+                this.setUser(newUser);
             })
         );
     }

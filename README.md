@@ -1,7 +1,7 @@
 # Campus Recruitment System (CRS) - Full Project Documentation
 
 ## 1. Project Title
-**Campus Recruitment System (CRS)**
+**~Campus Recruitment System (CRS)~**
 *A Modern, Automated, and Scalable Solution for Academic Placement Management.*
 
 ---

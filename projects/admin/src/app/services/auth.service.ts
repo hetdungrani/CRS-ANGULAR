@@ -20,25 +20,25 @@ export class AuthService {
     }
 
     setToken(token: string): void {
-        localStorage.setItem('admin_token', token);
+        sessionStorage.setItem('admin_token', token);
     }
 
     getToken(): string | null {
-        return localStorage.getItem('admin_token');
+        return sessionStorage.getItem('admin_token');
     }
 
     setAdmin(admin: any): void {
-        localStorage.setItem('admin_data', JSON.stringify(admin));
+        sessionStorage.setItem('admin_data', JSON.stringify(admin));
     }
 
     getAdmin(): any {
-        const data = localStorage.getItem('admin_data');
+        const data = sessionStorage.getItem('admin_data');
         return data ? JSON.parse(data) : null;
     }
 
     logout(): void {
-        localStorage.removeItem('admin_token');
-        localStorage.removeItem('admin_data');
+        sessionStorage.removeItem('admin_token');
+        sessionStorage.removeItem('admin_data');
     }
 
     changePassword(data: any): Observable<any> {
@@ -58,6 +58,7 @@ export class AuthService {
     }
 
     isLoggedIn(): boolean {
-        return !!this.getToken();
+        const token = this.getToken();
+        return !!token && token !== 'null' && token !== 'undefined';
     }
 }

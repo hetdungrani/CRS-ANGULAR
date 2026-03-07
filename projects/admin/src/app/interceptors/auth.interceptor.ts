@@ -7,7 +7,7 @@ import { catchError, throwError, retry } from 'rxjs';
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
     const router = inject(Router);
 
-    const token = localStorage.getItem('admin_token');
+    const token = sessionStorage.getItem('admin_token');
 
     let authReq = req;
     if (token) {
@@ -23,8 +23,8 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
         catchError((error: HttpErrorResponse) => {
             if (error.status === 401) {
                 // Auto logout if 401 response returned from api
-                localStorage.removeItem('admin_token');
-                localStorage.removeItem('admin_data');
+                sessionStorage.removeItem('admin_token');
+                sessionStorage.removeItem('admin_data');
                 router.navigate(['/login']);
 
             }
