@@ -1,8 +1,8 @@
 <div class="max-w-4xl mx-auto">
     <div class="mb-6">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ isEdit ? 'Edit Job Drive' : 'Post New Job Drive'
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ isEdit ? 'Edit Job ' : 'Post New Job '
             }}</h1>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Enter the details for the placement drive below.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Enter the details for the job posting below.</p>
     </div>
 
     <form (ngSubmit)="onSubmit()" #jobForm="ngForm"
