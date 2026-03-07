@@ -267,9 +267,13 @@ exports.getAppliedJobs = async (req, res) => {
                 companyName: job.companyName,
                 role: job.role,
                 location: job.location,
+                description: job.description,
+                package: job.package,
+                requirements: job.requirements,
+                branches: job.eligibility?.branches || [],
+                minCGPA: job.eligibility?.minCGPA || 0,
                 status: application.status,
                 appliedAt: application.appliedAt,
-                // Add status for open/closed to allow decision making if needed
                 jobStatus: job.status
             };
         });
