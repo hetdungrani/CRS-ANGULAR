@@ -233,7 +233,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50 dark:divide-gray-700/60">
-                            <tr *ngFor="let job of jobs" [class.hidden]="job.status !== 'open'"
+                            <tr *ngFor="let job of activeJobs"
                                 class="hover:bg-gray-50/70 dark:hover:bg-gray-700/20 transition-colors duration-100">
                                 <td class="px-5 py-3.5 whitespace-nowrap">
                                     <div class="flex items-center gap-2.5">
@@ -294,7 +294,7 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-50 dark:divide-gray-700/60">
-                            <tr *ngFor="let job of jobs" [class.hidden]="job.status !== 'closed'"
+                            <tr *ngFor="let job of closedJobs"
                                 class="hover:bg-gray-50/70 dark:hover:bg-gray-700/20 transition-colors duration-100">
                                 <td class="px-5 py-3.5 whitespace-nowrap">
                                     <div class="flex items-center gap-2.5">

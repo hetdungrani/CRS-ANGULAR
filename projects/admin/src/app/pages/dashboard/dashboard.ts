@@ -20,6 +20,8 @@ export class Dashboard implements OnInit {
     };
 
     activities: any[] = [];
+    activeJobs: any[] = [];
+    closedJobs: any[] = [];
     jobs: any[] = [];
     students: any[] = [];
     notifications: any[] = [];
@@ -46,6 +48,20 @@ export class Dashboard implements OnInit {
             this.stats.students = this.students.length;
             this.stats.drives = this.jobs.filter((j: any) => j.status === 'open').length;
             this.stats.closedJobs = this.jobs.filter((j: any) => j.status === 'closed').length;
+
+            // Sort jobs by creation date (latest first)
+            // Using _id fallback since MongoDB _id usually encodes timestamp
+            const sortedJobs = [...this.jobs].sort((a, b) => {
+                const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 
+                              (a._id ? parseInt(a._id.substring(0, 8), 16) : 0);
+                const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 
+                              (b._id ? parseInt(b._id.substring(0, 8), 16) : 0);
+                return dateB - dateA;
+            });
+
+            // Get only the latest 4 for dashboard tables
+            this.activeJobs = sortedJobs.filter(j => j.status === 'open').slice(0, 4);
+            this.closedJobs = sortedJobs.filter(j => j.status === 'closed').slice(0, 4);
 
             // Calculate total unique applications across all jobs
             const totalApps = this.jobs.reduce((sum, job) => sum + (job.applications?.length || 0), 0);
