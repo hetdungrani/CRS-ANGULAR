@@ -125,6 +125,7 @@
                         <th class="px-5 py-3.5">Student</th>
                         <th class="px-5 py-3.5">Job Info</th>
                         <th class="px-5 py-3.5 text-center">CGPA</th>
+                        <th class="px-5 py-3.5">Applied On</th>
                         <th class="px-5 py-3.5">Status</th>
                         <th class="px-5 py-3.5 text-right">Actions</th>
                     </tr>
@@ -166,6 +167,16 @@
                                 }">
                                 {{ app.student?.cgpa }}
                             </span>
+                        </td>
+
+                        <!-- Date -->
+                        <td class="px-5 py-4">
+                            <p class="text-xs font-medium text-gray-600 dark:text-gray-400">
+                                {{ app.appliedAt | date:'mediumDate' }}
+                            </p>
+                            <p class="text-[10px] text-gray-400">
+                                {{ app.appliedAt | date:'shortTime' }}
+                            </p>
                         </td>
 
                         <!-- Status -->

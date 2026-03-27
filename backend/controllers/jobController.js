@@ -35,10 +35,11 @@ exports.getJobs = async (req, res) => {
             .populate('applications.student', '_id')
             .sort({ createdAt: -1 });
 
-        // Filter out applications with deleted students for each job before sending
         const sanitizedJobs = jobs.map(job => {
             const jobObj = job.toObject();
-            jobObj.applications = jobObj.applications.filter(app => app.student !== null);
+            jobObj.applications = jobObj.applications
+                .filter(app => app.student !== null)
+                .sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
             return jobObj;
         });
 
@@ -62,9 +63,12 @@ exports.getJobById = async (req, res) => {
         }
 
         // Filter out applications where the student record has been deleted
-        job.applications = job.applications.filter(app => app.student !== null);
+        const jobObj = job.toObject();
+        jobObj.applications = jobObj.applications
+            .filter(app => app.student !== null)
+            .sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
 
-        res.json(job);
+        res.json(jobObj);
     } catch (err) {
         // console.error(err.message);
         if (err.kind === 'ObjectId') {
@@ -146,7 +150,10 @@ exports.updateApplicantStatus = async (req, res) => {
         const populatedJob = await Job.findById(req.params.id)
             .populate('applications.student', 'fullName email mobile department cgpa skills');
 
-        res.json(populatedJob);
+        const jobObj = populatedJob.toObject();
+        jobObj.applications.sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
+
+        res.json(jobObj);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -177,6 +184,9 @@ exports.getAllApplications = async (req, res) => {
                 }
             });
         });
+
+        // Sort applications by appliedAt desc
+        allApplications.sort((a, b) => new Date(b.appliedAt) - new Date(a.appliedAt));
 
         res.json(allApplications);
     } catch (err) {
