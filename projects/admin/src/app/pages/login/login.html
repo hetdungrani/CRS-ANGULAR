@@ -18,23 +18,43 @@
                 Placement Cell Authentication
             </p>
         </div>
-        <form class="mt-8 space-y-6" (ngSubmit)="login()">
+        <form #loginForm="ngForm" class="mt-8 space-y-6" (ngSubmit)="loginForm.form.valid && login()">
             <div class="space-y-4">
                 <div>
                     <label for="email-address"
                         class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email address</label>
-                    <input id="email-address" name="email" type="email" autocomplete="email" required
+                    <input id="email-address" name="email" type="email" autocomplete="email" required email #emailCtrl="ngModel"
                         [(ngModel)]="credentials.email"
                         class="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                        placeholder="admin@example.com">
+                        placeholder="admin@gmail.com">
+                    <div *ngIf="emailCtrl.touched && emailCtrl.invalid" class="text-red-500 text-xs mt-1.5 font-medium flex flex-col gap-1">
+                        <div *ngIf="emailCtrl.errors?.['required']" class="flex items-center gap-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                            Email is required
+                        </div>
+                        <div *ngIf="emailCtrl.errors?.['email']" class="flex items-center gap-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                            Please enter a valid email address
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label for="password"
                         class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Password</label>
-                    <input id="password" name="password" type="password" autocomplete="current-password" required
+                    <input id="password" name="password" type="password" autocomplete="current-password" required minlength="6" #passwordCtrl="ngModel"
                         [(ngModel)]="credentials.password"
                         class="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-600 placeholder-gray-400 dark:placeholder-gray-500 text-gray-900 dark:text-white bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
                         placeholder="••••••••">
+                    <div *ngIf="passwordCtrl.touched && passwordCtrl.invalid" class="text-red-500 text-xs mt-1.5 font-medium flex flex-col gap-1">
+                        <div *ngIf="passwordCtrl.errors?.['required']" class="flex items-center gap-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                            Password is required
+                        </div>
+                        <div *ngIf="passwordCtrl.errors?.['minlength']" class="flex items-center gap-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
+                            Password must be at least 6 characters
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -56,7 +76,7 @@
                 </div>
             </div>
 
-            <button type="submit" [disabled]="isLoading"
+            <button type="submit" [disabled]="isLoading || loginForm.invalid"
                 class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-bold rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-indigo-200 dark:shadow-none">
                 <span *ngIf="!isLoading">Sign in to Dashboard</span>
                 <span *ngIf="isLoading" class="flex items-center">

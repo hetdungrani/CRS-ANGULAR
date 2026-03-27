@@ -40,15 +40,21 @@
                     <input formControlName="email" id="email-address" name="email" type="email" autocomplete="email"
                         required
                         class="block w-full px-4 py-3 border border-gray-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-slate-500 text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white dark:focus:bg-slate-800 transition-all text-sm"
-                        placeholder="you@example.com">
+                        placeholder="you@gmail.com">
                     <div *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.invalid"
-                        class="text-red-500 text-xs mt-1.5 font-medium flex items-center gap-1">
-                        <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        Valid email is required
+                        class="text-red-500 text-xs mt-1.5 font-medium flex flex-col gap-1">
+                        <div *ngIf="loginForm.get('email')?.errors?.['required']" class="flex items-center gap-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Email is required
+                        </div>
+                        <div *ngIf="loginForm.get('email')?.errors?.['email']" class="flex items-center gap-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Please enter a valid email address
+                        </div>
                     </div>
                 </div>
 
@@ -62,13 +68,19 @@
                         class="block w-full px-4 py-3 border border-gray-200 dark:border-slate-700 placeholder-gray-400 dark:placeholder-slate-500 text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white dark:focus:bg-slate-800 transition-all text-sm"
                         placeholder="••••••••">
                     <div *ngIf="loginForm.get('password')?.touched && loginForm.get('password')?.invalid"
-                        class="text-red-500 text-xs mt-1.5 font-medium flex items-center gap-1">
-                        <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                                clip-rule="evenodd"></path>
-                        </svg>
-                        Password is required
+                        class="text-red-500 text-xs mt-1.5 font-medium flex flex-col gap-1">
+                        <div *ngIf="loginForm.get('password')?.errors?.['required']" class="flex items-center gap-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Password is required
+                        </div>
+                        <div *ngIf="loginForm.get('password')?.errors?.['minlength']" class="flex items-center gap-1">
+                            <svg class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                            Password must be at least 6 characters
+                        </div>
                     </div>
                 </div>
 

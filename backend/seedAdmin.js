@@ -9,18 +9,18 @@ connectDB();
 
 const seedAdmin = async () => {
     try {
-        const adminExists = await Admin.findOne({ email: 'admin@crs.com' });
+        const adminExists = await Admin.findOne({ email: 'shrey@crs.com' });
         if (adminExists) {
             console.log('Admin already exists');
             process.exit();
         }
 
         const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash('admin123', salt);
+        const hashedPassword = await bcrypt.hash('12312345', salt);
 
         const admin = new Admin({
-            username: 'SuperAdmin',
-            email: 'admin@crs.com',
+            username: 'Shrey',
+            email: 'shrey@crs.com',
             password: hashedPassword
         });
 
